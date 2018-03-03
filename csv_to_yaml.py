@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='Convert each row of an CSV '
 parser.add_argument('csv', metavar='CSVFILE', help='A CSV file')
 args = parser.parse_args()
 
-in_file  = open(args.csv, "r")
+in_file  = open(args.csv, 'r')
 
 
 def convert_to_yaml(header, line, counter):
