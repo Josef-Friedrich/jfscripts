@@ -18,7 +18,9 @@ def convert_to_yaml(header, line, counter):
         values[key.lower()] = line[index]
 
     out = open('{}.yml'.format(counter), 'w')
+    out.write('---\n')
     out.write(yaml.dump(values, default_flow_style=False))
+    out.write('---\n')
     out.close()
 
 try:
