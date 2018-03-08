@@ -29,7 +29,7 @@ class TestUnits(unittest.TestCase):
 
         result = replace.get_pdf_info('test.pdf')
         self.assertEqual(result, {'width': '658.8', 'height': '866.52',
-                         'page_count': '3'})
+                         'page_count': 3})
 
     @mock.patch('jfscripts.replace_pdfpage.subprocess.run')
     def test_convert_image_to_pdf_page(self, mock):
@@ -41,23 +41,23 @@ class TestUnits(unittest.TestCase):
         self.assertEqual(args[0], 'convert')
         self.assertEqual(args[1], 'test.png')
         self.assertEqual(args[2], '-page')
-        self.assertEqual(args[3], '111.1x222.2\!')
+        self.assertEqual(args[3], '111.1x222.2')
         self.assertTrue('tmp.pdf' in args[4])
 
     @mock.patch('jfscripts.replace_pdfpage.subprocess.run')
     def test_assemble_pdf(self, mock):
 
         replace.assemble_pdf('m.pdf', 'i.pdf', 5, 1)
-        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'B1', 'A2-end',
-                                 'output', 'out.pdf'])
+        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'B1',
+                                 'A2-end', 'output', 'out.pdf'])
 
         replace.assemble_pdf('m.pdf', 'i.pdf', 5, 2)
-        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'A1', 'B1',
-                                 'A3-end', 'output', 'out.pdf'])
+        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'A1',
+                                 'B1', 'A3-end', 'output', 'out.pdf'])
 
         replace.assemble_pdf('m.pdf', 'i.pdf', 5, 5)
-        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'A1-4', 'B1',
-                                 'output', 'out.pdf'])
+        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'A1-4',
+                                 'B1', 'output', 'out.pdf'])
 
 
 if __name__ == '__main__':
