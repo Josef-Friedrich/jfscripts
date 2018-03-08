@@ -41,9 +41,24 @@ def convert_image_to_pdf_page(image_file, page_width, page_height):
 
 def assemble_pdf(main_pdf, insert_pdf, page_count, page_number):
     # pdftk A=book.pdf B=image.pdf cat A1-12 B3 A14-end output out.pdf
-    subprocess.run(['convert',
-                    'A={}'.format(main_pdf),
-                    'B={}'.format(insert_pdf)])
+
+    command = ['pdftk',
+               'A={}'.format(main_pdf),
+               'B={}'.format(insert_pdf)]
+
+    if page_number > 1:
+        pre_insert = 'A1'
+        if page_number > 2:
+            pre_insert += '-{}'.format(page_number - 1)
+        command.append(pre_insert)
+
+    command.append('B1')
+
+    if page_number < page_count:
+        command.append('A{}-end'.format(page_number + 1))
+
+    command += ['output', 'out.pdf']
+    subprocess.run(command)
 
 
 def main():
