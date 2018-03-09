@@ -1,5 +1,10 @@
 import versioneer
 from setuptools import setup
+import six
+
+if six.PY2:
+    raise SystemError('jfscripts are not compatible to python2. Use python3!')
+
 
 setup(
     name='jfscripts',
