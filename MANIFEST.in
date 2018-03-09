@@ -1,0 +1,2 @@
+include versioneer.py
+include jfscripts/_version.py

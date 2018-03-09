@@ -1,3 +1,4 @@
+import versioneer
 from setuptools import setup
 
 setup(
@@ -5,6 +6,8 @@ setup(
     author='Josef Friedrich',
     author_email='josef@friedrich.rocks',
     description=('A collection of my scripts.'),
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     license='MIT',
     packages=['jfscripts'],
     url='https://github.com/Josef-Friedrich/python-scripts',
