@@ -59,10 +59,12 @@ class TestUnits(unittest.TestCase):
         mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'A1-4',
                                  'B1', 'output', 'out.pdf'])
 
-    def test_main(self):
+    @mock.patch('jfscripts.replace_pdfpage.check_executable')
+    def test_main(self, check_executable):
         with unittest.mock.patch('sys.argv',  ['cmd']):
             with self.assertRaises(SystemExit):
                 replace.main()
+
 
 if __name__ == '__main__':
     unittest.main()
