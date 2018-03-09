@@ -9,5 +9,6 @@ matrix:
 
 install:
     - pip install tox
+    - pip install six
 
 script: tox
