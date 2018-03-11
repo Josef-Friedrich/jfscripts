@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 from jfscripts import replace_pdfpage as replace
+import subprocess
 
 
 class TestUnits(unittest.TestCase):
@@ -64,6 +65,21 @@ class TestUnits(unittest.TestCase):
         with unittest.mock.patch('sys.argv',  ['cmd']):
             with self.assertRaises(SystemExit):
                 replace.main()
+
+
+class TestIntegration(unittest.TestCase):
+
+    def test_without_arguments(self):
+        run = subprocess.run(['replace-pdfpage.py'], encoding='utf-8',
+                             stderr=subprocess.PIPE)
+        self.assertEqual(run.returncode, 2)
+        self.assertTrue('usage: replace-pdfpage.py' in run.stderr)
+
+    def test_help(self):
+        run = subprocess.run(['replace-pdfpage.py', '-h'], encoding='utf-8',
+                             stdout=subprocess.PIPE)
+        self.assertEqual(run.returncode, 0)
+        self.assertTrue('usage: replace-pdfpage.py' in run.stdout)
 
 
 if __name__ == '__main__':
