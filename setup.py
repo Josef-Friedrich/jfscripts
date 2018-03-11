@@ -19,6 +19,7 @@ setup(
     entry_points = {
         'console_scripts': [
             'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
+            'extract-pdftext.py = jfscripts.extract_pdftext:main',
         ],
     },
     )

@@ -7,15 +7,9 @@ import re
 import tempfile
 import textwrap
 
+
 tmp_dir = tempfile.mkdtemp()
-
 output_file = open('export.txt', 'w')
-
-parser = argparse.ArgumentParser()
-parser.add_argument("file", help="A PDF file containing text")
-args = parser.parse_args()
-
-pdf_file = os.path.abspath(args.file)
 
 
 def output(line):
@@ -58,14 +52,22 @@ def get_text_per_page(pdf_file, page):
         output(line)
 
 
-page_count = get_page_count(pdf_file)
+def main():
 
-output('# ' + os.path.basename(pdf_file))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file", help="A PDF file containing text")
+    args = parser.parse_args()
 
-for i in range(1, page_count + 1):
-    output('')
-    output('-----------------------------------------------------------------')
-    output('')
-    output('## Seite ' + str(i))
-    output('')
-    get_text_per_page(pdf_file, i)
+    pdf_file = os.path.abspath(args.file)
+
+    page_count = get_page_count(pdf_file)
+
+    output('# ' + os.path.basename(pdf_file))
+
+    for i in range(1, page_count + 1):
+        output('')
+        output('-------------------------------------------------------------')
+        output('')
+        output('## Seite ' + str(i))
+        output('')
+        get_text_per_page(pdf_file, i)
