@@ -1,16 +1,11 @@
 #! /usr/bin/env python3
 
 import argparse
-import shutil
 import subprocess
 import re
 import tempfile
+from jfscripts._utils import check_executables
 import os
-
-
-def check_executable(command):
-    if not shutil.which(command):
-        raise SystemError('Command “{}” not found.'.format(command))
 
 
 def get_pdf_info(pdf_file):
@@ -66,8 +61,6 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number):
 
 
 def main():
-    check_executable('pdfinfo')
-
     parser = argparse.ArgumentParser(description='Replace one page in a PDF '
                                      'file with an image file.')
     parser.add_argument('pdf',
@@ -77,6 +70,8 @@ def main():
     parser.add_argument('image',
                         help='The image file to replace the PDF page with')
     args = parser.parse_args()
+
+    check_executables('pdfinfo', 'pdftk', 'convert')
 
     info = get_pdf_info(args.pdf)
     image_pdf = convert_image_to_pdf_page(args.image, info['width'],
