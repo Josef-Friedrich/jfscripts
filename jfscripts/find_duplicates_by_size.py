@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
-import sys
 import os
+import argparse
 
 
 def check_for_duplicates(path):
@@ -32,7 +32,14 @@ def check_for_duplicates(path):
     print('Duplicates found: ' + str(count))
 
 
-if sys.argv[1:]:
-    check_for_duplicates(sys.argv[1])
-else:
-    print('Please pass the path to check as parameters to the script')
+def main():
+    parser = argparse.ArgumentParser(
+        description='Find duplicate files by size.',
+    )
+    parser.add_argument(
+        'path',
+        help='A directory to recursively search for duplicate files.',
+    )
+    args = parser.parse_args()
+
+    check_for_duplicates(args.path)

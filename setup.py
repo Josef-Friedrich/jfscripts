@@ -18,8 +18,9 @@ setup(
     url='https://github.com/Josef-Friedrich/python-scripts',
     entry_points = {
         'console_scripts': [
-            'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
             'extract-pdftext.py = jfscripts.extract_pdftext:main',
+            'find-duplicates-by-size.py = jfscripts.find_duplicates_by_size:main',
+            'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
         ],
     },
     )
