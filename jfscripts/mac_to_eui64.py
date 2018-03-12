@@ -1,28 +1,11 @@
 #! /usr/bin/env python3
 
-import socket
+import sys
 import ipaddress
-import re
 
 
-def get_ipv6(dns_name):
-    result = socket.getaddrinfo(dns_name, port=None)
-
-    for entry in result:
-        #
-        # entry:
-        #
-        # (family, type, proto, canonname, sockaddr)
-        #
-        # (
-        #     <AddressFamily.AF_INET6: 10>,
-        #     <SocketKind.SOCK_RAW: 3>,
-        #     0,
-        #     '',
-        #     ('2003:68:4c06:3300:1e98:ecff:fe0f:d330', 0, 0, 0)
-        # )
-        if entry[0] == 10 and entry[2] == 0:
-            return entry[4][0]
+# n = [int(x, 16) for x in sys.argv[1].split(":")]
+# print('fe80::%02x%02x:%02xff:fe%02x:%02x%02x' % tuple([n[0] ^ 2]+n[1:]))
 
 
 def mac_to_eui64(mac, prefix=None):
@@ -49,9 +32,13 @@ def mac_to_eui64(mac, prefix=None):
             return
 
 
-ipv6 = get_ipv6('wnas.jf-dyndns.cf')
+def main():
+    parser = argparse.ArgumentParser(
+        description='Convert mac addresses to EUI64 ipv6 addresses.',
+    )
+    parser.add_argument('mac', help='The mac address.')
+    parser.add_argument('prefix', help='The ipv6 /64 prefix.')
 
-prefix = ipaddress.ip_network(ipv6 + '/64', strict=False)
+    args = parser.parse_args()
 
-eui64 = mac_to_eui64('5c:51:4f:cf:0a:5d', prefix)
-print(eui64)
+    print(mac_to_eui64(args.mac, args.prefix))
