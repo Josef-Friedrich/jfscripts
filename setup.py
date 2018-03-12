@@ -19,7 +19,7 @@ setup(
     entry_points = {
         'console_scripts': [
             'extract-pdftext.py = jfscripts.extract_pdftext:main',
-            'find-duplicates-by-size.py = jfscripts.find_duplicates_by_size:main',
+            'find-dupes-by-size.py = jfscripts.find_dupes_by_size:main',
             'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
         ],
     },
