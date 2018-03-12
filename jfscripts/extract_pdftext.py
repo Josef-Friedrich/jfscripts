@@ -74,3 +74,7 @@ def main():
         output('## Seite ' + str(i))
         output('')
         get_text_per_page(pdf_file, i)
+
+
+if __name__ == '__main__':
+    main()

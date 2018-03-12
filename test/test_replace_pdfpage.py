@@ -75,6 +75,13 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(run.returncode, 2)
         self.assertTrue('usage: replace-pdfpage.py' in run.stderr)
 
+    def test_direct_execution(self):
+        run = subprocess.run(['./jfscripts/replace_pdfpage.py'],
+                             encoding='utf-8',
+                             stderr=subprocess.PIPE)
+        self.assertEqual(run.returncode, 2)
+        self.assertTrue('usage: replace_pdfpage.py' in run.stderr)
+
     def test_help(self):
         run = subprocess.run(['replace-pdfpage.py', '-h'], encoding='utf-8',
                              stdout=subprocess.PIPE)

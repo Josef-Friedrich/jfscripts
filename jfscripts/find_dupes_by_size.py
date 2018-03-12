@@ -43,3 +43,7 @@ def main():
     args = parser.parse_args()
 
     check_for_duplicates(args.path)
+
+
+if __name__ == '__main__':
+    main()

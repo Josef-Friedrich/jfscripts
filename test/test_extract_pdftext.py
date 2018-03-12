@@ -10,6 +10,13 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(run.returncode, 2)
         self.assertTrue('usage: extract-pdftext.py' in run.stderr)
 
+    def test_direct_execution(self):
+        run = subprocess.run(['./jfscripts/extract_pdftext.py'],
+                             encoding='utf-8',
+                             stderr=subprocess.PIPE)
+        self.assertEqual(run.returncode, 2)
+        self.assertTrue('usage: extract_pdftext.py' in run.stderr)
+
     def test_help(self):
         run = subprocess.run(['extract-pdftext.py', '-h'], encoding='utf-8',
                              stdout=subprocess.PIPE)
