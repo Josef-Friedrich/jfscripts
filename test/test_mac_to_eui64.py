@@ -6,7 +6,6 @@ import subprocess
 
 class TestUnits(unittest.TestCase):
 
-
     @mock.patch('jfscripts.replace_pdfpage.check_executables')
     def test_main(self, check_executable):
         with unittest.mock.patch('sys.argv',  ['cmd']):

@@ -2,7 +2,6 @@
 
 import socket
 import ipaddress
-import re
 
 
 def get_ipv6(dns_name):
@@ -25,9 +24,9 @@ def get_ipv6(dns_name):
             return entry[4][0]
 
 
-ipv6 = get_ipv6('wnas.jf-dyndns.cf')
+def main():
+    ipv6 = get_ipv6('wnas.jf-dyndns.cf')
 
-prefix = ipaddress.ip_network(ipv6 + '/64', strict=False)
+    prefix = ipaddress.ip_network(ipv6 + '/64', strict=False)
 
-eui64 = mac_to_eui64('5c:51:4f:cf:0a:5d', prefix)
-print(eui64)
+    print(prefix)
