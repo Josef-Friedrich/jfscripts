@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 from jfscripts import replace_pdfpage as replace
-import subprocess
+from _helper import TestCase
 
 
 class TestUnits(unittest.TestCase):
@@ -67,26 +67,10 @@ class TestUnits(unittest.TestCase):
                 replace.main()
 
 
-class TestIntegration(unittest.TestCase):
+class TestIntetration(TestCase):
 
-    def test_without_arguments(self):
-        run = subprocess.run(['replace-pdfpage.py'], encoding='utf-8',
-                             stderr=subprocess.PIPE)
-        self.assertEqual(run.returncode, 2)
-        self.assertTrue('usage: replace-pdfpage.py' in run.stderr)
-
-    def test_direct_execution(self):
-        run = subprocess.run(['./jfscripts/replace_pdfpage.py'],
-                             encoding='utf-8',
-                             stderr=subprocess.PIPE)
-        self.assertEqual(run.returncode, 2)
-        self.assertTrue('usage: replace_pdfpage.py' in run.stderr)
-
-    def test_help(self):
-        run = subprocess.run(['replace-pdfpage.py', '-h'], encoding='utf-8',
-                             stdout=subprocess.PIPE)
-        self.assertEqual(run.returncode, 0)
-        self.assertTrue('usage: replace-pdfpage.py' in run.stdout)
+    def test_command_line_interface(self):
+        self.assertIsExecutable('replace_pdfpage')
 
 
 if __name__ == '__main__':
