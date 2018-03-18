@@ -2,6 +2,7 @@
 
 import socket
 import ipaddress
+import argparse
 
 
 def get_ipv6(dns_name):
@@ -25,8 +26,21 @@ def get_ipv6(dns_name):
 
 
 def main():
-    ipv6 = get_ipv6('wnas.jf-dyndns.cf')
+    parser = argparse.ArgumentParser(
+        description='Get the ipv6 prefix from a DNS name.'
+    )
+    parser.add_argument(
+        'dnsname',
+        help='The DNS name, e. g. josef-friedrich.de',
+    )
+
+    args = parser.parse_args()
+    ipv6 = get_ipv6(args.dnsname)
 
     prefix = ipaddress.ip_network(ipv6 + '/64', strict=False)
 
     print(prefix)
+
+
+if __name__ == '__main__':
+    main()
