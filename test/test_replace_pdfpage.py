@@ -67,7 +67,7 @@ class TestUnits(unittest.TestCase):
                 replace.main()
 
 
-class TestIntetration(TestCase):
+class TestIntegration(TestCase):
 
     def test_command_line_interface(self):
         self.assertIsExecutable('replace_pdfpage')
