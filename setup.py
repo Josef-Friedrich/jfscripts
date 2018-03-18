@@ -20,6 +20,7 @@ setup(
         'console_scripts': [
             'extract-pdftext.py = jfscripts.extract_pdftext:main',
             'find-dupes-by-size.py = jfscripts.find_dupes_by_size:main',
+            'mac-to-eui64.py = jfscripts.mac_to_eui64:main',
             'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
         ],
     },

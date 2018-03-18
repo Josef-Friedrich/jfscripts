@@ -43,3 +43,7 @@ def main():
     args = parser.parse_args()
 
     print(mac_to_eui64(args.mac, args.prefix))
+
+
+if __name__ == '__main__':
+    main()
