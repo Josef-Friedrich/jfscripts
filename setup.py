@@ -21,6 +21,7 @@ setup(
             'dns-ipv6-prefix.py = jfscripts.dns_ipv6_prefix:main',
             'extract-pdftext.py = jfscripts.extract_pdftext:main',
             'find-dupes-by-size.py = jfscripts.find_dupes_by_size:main',
+            'imagemagick-imslp.py = jfscripts.imagemagick_imslp:main',
             'mac-to-eui64.py = jfscripts.mac_to_eui64:main',
             'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
         ],

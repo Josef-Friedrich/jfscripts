@@ -47,6 +47,47 @@ find-dupes-by-size.py
     optional arguments:
       -h, --help  show this help message and exit
 
+imagemagick-imslp.py
+--------------------
+
+.. code-block:: text
+
+    usage: imagemagick-imslp.py [-h] [-b BACKUP] [-c COMPRESSION]
+                                [-e ENLIGHTEN_BORDER] [-f FORCE] [-i IMSLP]
+                                [-j JOIN] [-r RESIZE] [-S THRESHOLD_SERIES]
+                                [-t THRESHOLD]
+                                files
+    
+    A wrapper script for imagemagick to process image files suitable for imslp.org
+    (International Music Score Library Project). See also
+    http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern
+    
+    positional arguments:
+      files                 files to process.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -b BACKUP, --backup BACKUP
+                            Backup original images (add .bak to filename).
+      -c COMPRESSION, --compression COMPRESSION
+                            Use CCITT Group 4 compression. This options generates
+                            a PDF file.
+      -e ENLIGHTEN_BORDER, --enlighten-border ENLIGHTEN_BORDER
+                            Enlighten the border.
+      -f FORCE, --force FORCE
+                            force
+      -i IMSLP, --imslp IMSLP
+                            Use the best options to publish on IMSLP. (--compress,
+                            --join, --resize)
+      -j JOIN, --join JOIN  Join single paged PDF files to one PDF file.
+      -r RESIZE, --resize RESIZE
+                            Resize 200 percent.
+      -S THRESHOLD_SERIES, --threshold-series THRESHOLD_SERIES
+                            Convert the samge image with different threshold
+                            values to find the best threshold value.
+      -t THRESHOLD, --threshold THRESHOLD
+                            threshold, default 50 percent.
+
 mac-to-eui64.py
 ---------------
 
