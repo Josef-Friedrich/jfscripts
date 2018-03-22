@@ -1,5 +1,5 @@
-mscxyz
-======
+jfscripts
+=========
 
 .. toctree::
    :maxdepth: 4
