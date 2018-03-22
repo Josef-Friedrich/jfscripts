@@ -25,4 +25,4 @@ setup(
             'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
         ],
     },
-    )
+)
