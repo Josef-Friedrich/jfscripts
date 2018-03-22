@@ -35,18 +35,18 @@ def main():
 
     header = open(path('README_header.rst'), 'r')
     readme = open_file('README.rst')
-    # sphinx = open_file('doc', 'source', 'cli.rst')
-    #
-    # sphinx_header = (
-    #     'Comande line interface\n',
-    #     '======================\n',
-    #     '\n',
-    #     '.. code-block:: text\n',
-    #     '\n',
-    # )
+    sphinx = open_file('doc', 'source', 'cli.rst')
 
-    # for line in sphinx_header:
-    #     sphinx.write(str(line))
+    sphinx_header = (
+        'Comande line interface\n',
+        '======================\n',
+        '\n',
+        '.. code-block:: text\n',
+        '\n',
+    )
+
+    for line in sphinx_header:
+        sphinx.write(str(line))
 
     # footer = open(path('README_footer.rst'), 'r')
 
@@ -59,11 +59,12 @@ def main():
         _help = get_help(command)
         _help.wait()
         readme.write(heading(command))
+        sphinx.write(heading(command))
 
         for line in _help.stdout:
             indented_line = '    ' + line.decode('utf-8')
             readme.write(indented_line)
-            #sphinx.write(indented_line)
+            sphinx.write(indented_line)
 
     # for line in footer:
     #     readme.write(line)
