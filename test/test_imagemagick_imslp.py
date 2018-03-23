@@ -19,6 +19,8 @@ class TestUnit(TestCase):
             args = mock_run.call_args[0][0]
             self.assertEqual(args[0], 'pdfimages')
             self.assertEqual(args[1], '-tiff')
+            self.assertEqual(args[2],
+                             os.path.join(imagemagick_imslp.cwd, 'test.pdf'))
             self.assertIn('test.pdf', args[2])
             self.assertEqual(len(args[3]), 36)
 
