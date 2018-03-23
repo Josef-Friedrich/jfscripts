@@ -19,8 +19,8 @@ class TestUnit(TestCase):
             args = mock_run.call_args[0][0]
             self.assertEqual(args[0], 'pdfimages')
             self.assertEqual(args[1], '-tiff')
-            self.assertEqual(args[2], 'test.pdf')
-            # self.assertEqual(args[3], 'test.pdf')
+            self.assertIn('test.pdf', args[2])
+            self.assertEqual(len(args[3]), 36)
 
 
 class TestIntegration(TestCase):

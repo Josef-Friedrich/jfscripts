@@ -8,6 +8,7 @@ import os
 
 job_identifier = str(uuid.uuid1())
 tmp_dir = tempfile.mkdtemp()
+cwd = os.getcwd()
 
 
 def get_args():
@@ -91,12 +92,13 @@ def get_args():
 
 
 def pdf_to_images(pdf_file):
+    print(tmp_dir)
     subprocess.run([
         'pdfimages',
         '-tiff',
-        pdf_file,
-        os.path.join(tmp_dir, job_identifier),
-    ])
+        os.path.join(cwd, pdf_file),
+        job_identifier,
+    ], cwd=tmp_dir)
 
 
 def main():
