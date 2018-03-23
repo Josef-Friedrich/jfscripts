@@ -60,37 +60,30 @@ imagemagick-imslp.py
 
 .. code-block:: text
 
-    usage: imagemagick-imslp.py [-h] [-b BACKUP] [-c COMPRESSION]
-                                [-e ENLIGHTEN_BORDER] [-f FORCE] [-i IMSLP]
-                                [-j JOIN] [-r RESIZE] [-S THRESHOLD_SERIES]
+    usage: imagemagick-imslp.py [-h] [-b] [-c] [-e] [-f] [-i] [-j] [-r] [-S]
                                 [-t THRESHOLD]
-                                files
+                                input_files
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
     http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern
     
     positional arguments:
-      files                 files to process.
+      input_files           files to process.
     
     optional arguments:
       -h, --help            show this help message and exit
-      -b BACKUP, --backup BACKUP
-                            Backup original images (add .bak to filename).
-      -c COMPRESSION, --compression COMPRESSION
-                            Use CCITT Group 4 compression. This options generates
+      -b, --backup          Backup original images (add .bak to filename).
+      -c, --compression     Use CCITT Group 4 compression. This options generates
                             a PDF file.
-      -e ENLIGHTEN_BORDER, --enlighten-border ENLIGHTEN_BORDER
+      -e, --enlighten-border
                             Enlighten the border.
-      -f FORCE, --force FORCE
-                            force
-      -i IMSLP, --imslp IMSLP
-                            Use the best options to publish on IMSLP. (--compress,
+      -f, --force           force
+      -i, --imslp           Use the best options to publish on IMSLP. (--compress,
                             --join, --resize)
-      -j JOIN, --join JOIN  Join single paged PDF files to one PDF file.
-      -r RESIZE, --resize RESIZE
-                            Resize 200 percent.
-      -S THRESHOLD_SERIES, --threshold-series THRESHOLD_SERIES
+      -j, --join            Join single paged PDF files to one PDF file.
+      -r, --resize          Resize 200 percent.
+      -S, --threshold-series
                             Convert the samge image with different threshold
                             values to find the best threshold value.
       -t THRESHOLD, --threshold THRESHOLD
