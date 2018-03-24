@@ -47,14 +47,14 @@ find-dupes-by-size.py
     optional arguments:
       -h, --help  show this help message and exit
 
-imagemagick-imslp.py
---------------------
+magick-imslp.py
+---------------
 
 .. code-block:: text
 
-    usage: imagemagick-imslp.py [-h] [-b] [-c] [-e] [-f] [-i] [-j] [-r] [-S]
-                                [-t THRESHOLD]
-                                input_files [input_files ...]
+    usage: magick-imslp.py [-h] [-b] [-c] [-e] [-f] [-i] [-j] [-r] [-S]
+                           [-t THRESHOLD]
+                           input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
