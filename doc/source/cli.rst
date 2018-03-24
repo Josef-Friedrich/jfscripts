@@ -52,7 +52,7 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-c] [-e] [-f] [-i] [-j] [-r] [-S]
+    usage: magick-imslp.py [-h] [-b] [-B] [-c] [-e] [-f] [-i] [-j] [-r] [-S]
                            [-t THRESHOLD]
                            input_files [input_files ...]
     
@@ -66,6 +66,7 @@ magick-imslp.py
     optional arguments:
       -h, --help            show this help message and exit
       -b, --backup          Backup original images (add .bak to filename).
+      -B, --border          Add a white border
       -c, --compression     Use CCITT Group 4 compression. This options generates
                             a PDF file.
       -e, --enlighten-border

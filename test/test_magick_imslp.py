@@ -3,7 +3,7 @@ from _helper import TestCase
 from jfscripts import magick_imslp
 import os
 from unittest import mock
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 
 class TestUnit(TestCase):
@@ -24,6 +24,13 @@ class TestUnit(TestCase):
                              os.path.join(magick_imslp.cwd, 'test.pdf'))
             self.assertIn('test.pdf', args[2])
             self.assertEqual(len(args[3]), 36)
+
+    def test_do_magick(self):
+        with mock.patch('subprocess.run') as subprocess_run:
+            args = Mock()
+            magick_imslp.do_magick('test.tif', args)
+            call_args = subprocess_run.call_args[0][0]
+            self.assertEqual(call_args[0], 'convert')
 
     def test_multiple_input_files(self):
         with patch('sys.argv',  ['cmd', 'one.tif', 'two.tif']):

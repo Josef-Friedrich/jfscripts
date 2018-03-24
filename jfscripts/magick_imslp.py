@@ -26,6 +26,13 @@ def get_args():
     )
 
     parser.add_argument(
+        '-B',
+        '--border',
+        action='store_true',
+        help='Add a white border',
+    )
+
+    parser.add_argument(
         '-c',
         '--compression',
         action='store_true',
@@ -80,6 +87,7 @@ def get_args():
     parser.add_argument(
         '-t',
         '--threshold',
+        default='50%',
         help='threshold, default 50 percent.',
     )
 
@@ -100,6 +108,28 @@ def pdf_to_images(pdf_file):
         os.path.join(cwd, pdf_file),
         job_identifier,
     ], cwd=tmp_dir)
+
+
+def do_magick(input_file, args):
+    cmd_args = ['convert']
+    # cmd_args += ['-fuzz', '98%']
+
+    if args.border:
+        cmd_args += ['-border', '100x100', '-bordercolor', '#FFFFFF']
+
+    if args.resize:
+        cmd_args += ['-resize', '200%']
+
+    cmd_args += ['-deskew', '40%']
+    cmd_args += ['-threshold', args.threshold]
+    cmd_args += ['-trim', '+repage']
+
+    if args.compression:
+        cmd_args += ['-compress', 'Group4', '-monochrome']
+
+    cmd_args.append(input_file)
+    cmd_args.append(input_file + '.pdf')
+    subprocess.run(cmd_args)
 
 
 def per_file(input_file):
