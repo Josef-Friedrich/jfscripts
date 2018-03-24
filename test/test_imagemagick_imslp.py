@@ -3,6 +3,7 @@ from _helper import TestCase
 from jfscripts import imagemagick_imslp
 import os
 from unittest import mock
+from unittest.mock import patch
 
 
 class TestUnit(TestCase):
@@ -23,6 +24,12 @@ class TestUnit(TestCase):
                              os.path.join(imagemagick_imslp.cwd, 'test.pdf'))
             self.assertIn('test.pdf', args[2])
             self.assertEqual(len(args[3]), 36)
+
+    def test_multiple_input_files(self):
+        with patch('sys.argv',  ['cmd', 'one.tif', 'two.tif']):
+            with patch('jfscripts.imagemagick_imslp.per_file') as per_file:
+                imagemagick_imslp.main()
+                self.assertEqual(per_file.call_count, 2)
 
 
 class TestIntegration(TestCase):

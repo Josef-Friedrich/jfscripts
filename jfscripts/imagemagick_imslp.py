@@ -86,6 +86,7 @@ def get_args():
     parser.add_argument(
         'input_files',
         help='files to process.',
+        nargs='+',
     )
 
     return parser.parse_args()
@@ -101,11 +102,17 @@ def pdf_to_images(pdf_file):
     ], cwd=tmp_dir)
 
 
+def per_file(input_file):
+    extension = os.path.splitext(input_file)[1][1:]
+    if extension.lower() == 'pdf':
+        pdf_to_images(input_file)
+
+
 def main():
     args = get_args()
-    extension = os.path.splitext(args.input_files)[1][1:]
-    if extension.lower() == 'pdf':
-        pdf_to_images(args.input_files)
+
+    for input_file in args.input_files:
+        per_file(input_file)
 
 
 if __name__ == '__main__':

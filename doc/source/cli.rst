@@ -54,7 +54,7 @@ imagemagick-imslp.py
 
     usage: imagemagick-imslp.py [-h] [-b] [-c] [-e] [-f] [-i] [-j] [-r] [-S]
                                 [-t THRESHOLD]
-                                input_files
+                                input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
