@@ -6,6 +6,7 @@ import re
 import subprocess
 import tempfile
 import uuid
+from jfscripts._utils import check_executables
 
 
 job_identifier = str(uuid.uuid1())
@@ -167,6 +168,11 @@ def do_magick(input_file, args):
     subprocess.run(cmd_args)
 
 
+def join_to_pdf():
+    pass
+    # pdftk *.pdf cat output out.pdf
+
+
 def per_file(input_file, args):
     print(input_file.get())
     if input_file._extension == 'pdf':
@@ -177,6 +183,13 @@ def per_file(input_file, args):
 
 def main():
     args = get_args()
+
+    check_executables(
+        ('convert', 'imagemagick'),
+        ('identify', 'imagemagick'),
+        ('pdfimages', 'poppler'),
+        'pdftk',
+    )
 
     for input_file in args.input_files:
         per_file(FilePath(input_file, absolute=True), args)
