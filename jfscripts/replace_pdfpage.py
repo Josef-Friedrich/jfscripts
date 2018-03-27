@@ -4,7 +4,7 @@ import argparse
 import subprocess
 import re
 import tempfile
-from jfscripts._utils import check_executables
+from jfscripts._utils import check_bin
 import os
 
 
@@ -71,7 +71,7 @@ def main():
                         help='The image file to replace the PDF page with')
     args = parser.parse_args()
 
-    check_executables('pdfinfo', 'pdftk', 'convert')
+    check_bin('pdfinfo', 'pdftk', 'convert')
 
     info = get_pdf_info(args.pdf)
     image_pdf = convert_image_to_pdf_page(args.image, info['width'],

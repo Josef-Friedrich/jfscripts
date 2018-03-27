@@ -6,7 +6,7 @@ import re
 import subprocess
 import tempfile
 import uuid
-from jfscripts._utils import check_executables
+from jfscripts._utils import check_bin
 
 
 job_identifier = str(uuid.uuid1())
@@ -184,7 +184,7 @@ def per_file(input_file, args):
 def main():
     args = get_args()
 
-    check_executables(
+    check_bin(
         ('convert', 'imagemagick'),
         ('identify', 'imagemagick'),
         ('pdfimages', 'poppler'),

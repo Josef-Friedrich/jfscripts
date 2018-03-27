@@ -54,8 +54,8 @@ class TestUnit(TestCase):
         )
 
     @patch('jfscripts.magick_imslp.per_file')
-    @patch('jfscripts.magick_imslp.check_executables')
-    def test_multiple_input_files(self, check_executables, per_file):
+    @patch('jfscripts.magick_imslp.check_bin')
+    def test_multiple_input_files(self, check_bin, per_file):
         with patch('sys.argv',  ['cmd', 'one.tif', 'two.tif']):
             magick_imslp.main()
             self.assertEqual(per_file.call_count, 2)

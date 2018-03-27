@@ -1,7 +1,7 @@
 import shutil
 
 
-def check_executables(*executables):
+def check_bin(*executables):
     errors = []
     for executable in executables:
         if isinstance(executable, tuple):

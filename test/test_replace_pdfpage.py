@@ -60,7 +60,7 @@ class TestUnits(unittest.TestCase):
         mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'A1-4',
                                  'B1', 'output', 'out.pdf'])
 
-    @mock.patch('jfscripts.replace_pdfpage.check_executables')
+    @mock.patch('jfscripts.replace_pdfpage.check_bin')
     def test_main(self, check_executable):
         with unittest.mock.patch('sys.argv',  ['cmd']):
             with self.assertRaises(SystemExit):

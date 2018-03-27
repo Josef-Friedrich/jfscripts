@@ -6,7 +6,7 @@ import os
 import re
 import tempfile
 import textwrap
-from jfscripts._utils import check_executables
+from jfscripts._utils import check_bin
 
 
 tmp_dir = tempfile.mkdtemp()
@@ -59,7 +59,7 @@ def main():
     parser.add_argument("file", help="A PDF file containing text")
     args = parser.parse_args()
 
-    check_executables('pdftotext', 'pdfinfo')
+    check_bin('pdftotext', 'pdfinfo')
 
     pdf_file = os.path.abspath(args.file)
 
