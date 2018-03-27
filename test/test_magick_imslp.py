@@ -53,11 +53,12 @@ class TestUnit(TestCase):
              '+repage', 'test.tif', 'test.png']
         )
 
-    def test_multiple_input_files(self):
+    @patch('jfscripts.magick_imslp.per_file')
+    @patch('jfscripts.magick_imslp.check_executables')
+    def test_multiple_input_files(self, check_executables, per_file):
         with patch('sys.argv',  ['cmd', 'one.tif', 'two.tif']):
-            with patch('jfscripts.magick_imslp.per_file') as per_file:
-                magick_imslp.main()
-                self.assertEqual(per_file.call_count, 2)
+            magick_imslp.main()
+            self.assertEqual(per_file.call_count, 2)
 
 
 class TestClassFilePath(TestCase):
