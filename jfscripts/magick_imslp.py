@@ -167,16 +167,19 @@ def do_magick(input_file, args):
     subprocess.run(cmd_args)
 
 
-def per_file(input_file):
+def per_file(input_file, args):
+    print(input_file.get())
     if input_file._extension == 'pdf':
         pdf_to_images(input_file)
+    else:
+        do_magick(input_file, args)
 
 
 def main():
     args = get_args()
 
     for input_file in args.input_files:
-        per_file(FilePath(input_file, absolute=True))
+        per_file(FilePath(input_file, absolute=True), args)
 
 
 if __name__ == '__main__':
