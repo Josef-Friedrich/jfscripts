@@ -25,12 +25,33 @@ class TestUnit(TestCase):
             self.assertIn('test.pdf', args[2])
             self.assertEqual(len(args[3]), 36)
 
-    def test_do_magick(self):
-        with mock.patch('subprocess.run') as subprocess_run:
-            args = Mock()
-            magick_imslp.do_magick(FilePath('test.tif'), args)
-            call_args = subprocess_run.call_args[0][0]
-            self.assertEqual(call_args[0], 'convert')
+    @patch('jfscripts.magick_imslp.subprocess.run')
+    def test_do_magick(self, subprocess_run):
+        args = Mock()
+        args.threshold = '50%'
+        magick_imslp.do_magick(FilePath('test.tif'), args)
+        subprocess_run.assert_called_with(
+            ['convert', '-border', '100x100', '-bordercolor', '#FFFFFF',
+             '-resize', '200%', '-deskew', '40%', '-threshold', '50%', '-trim',
+             '+repage', '-compress', 'Group4', '-monochrome', 'test.tif',
+             'test.pdf']
+        )
+
+        args.border = False
+        magick_imslp.do_magick(FilePath('test.tif'), args)
+        subprocess_run.assert_called_with(
+            ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
+             '50%', '-trim', '+repage', '-compress', 'Group4', '-monochrome',
+             'test.tif', 'test.pdf']
+        )
+
+        args.compression = False
+        args.resize = False
+        magick_imslp.do_magick(FilePath('test.tif'), args)
+        subprocess_run.assert_called_with(
+            ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
+             '+repage', 'test.tif', 'test.png']
+        )
 
     def test_multiple_input_files(self):
         with patch('sys.argv',  ['cmd', 'one.tif', 'two.tif']):
