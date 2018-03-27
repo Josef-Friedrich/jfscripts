@@ -134,7 +134,7 @@ def pdf_to_images(pdf_file):
     subprocess.run([
         'pdfimages',
         '-tiff',
-        os.path.join(cwd, pdf_file),
+        pdf_file.get(),
         job_identifier,
     ], cwd=tmp_dir)
 
@@ -156,14 +156,19 @@ def do_magick(input_file, args):
     if args.compression:
         cmd_args += ['-compress', 'Group4', '-monochrome']
 
-    cmd_args.append(input_file)
-    cmd_args.append(input_file + '.pdf')
+    cmd_args.append(input_file.get())
+
+    if args.compression:
+        extension = 'pdf'
+    else:
+        extension = 'png'
+
+    cmd_args.append(input_file.extension(extension))
     subprocess.run(cmd_args)
 
 
 def per_file(input_file):
-    extension = os.path.splitext(input_file)[1][1:]
-    if extension.lower() == 'pdf':
+    if input_file._extension == 'pdf':
         pdf_to_images(input_file)
 
 
@@ -171,7 +176,7 @@ def main():
     args = get_args()
 
     for input_file in args.input_files:
-        per_file(input_file)
+        per_file(FilePath(input_file, absolute=True))
 
 
 if __name__ == '__main__':

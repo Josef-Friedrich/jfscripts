@@ -17,19 +17,18 @@ class TestUnit(TestCase):
 
     def test_pdf_to_images(self):
         with mock.patch('subprocess.run') as mock_run:
-            magick_imslp.pdf_to_images('test.pdf')
+            magick_imslp.pdf_to_images(FilePath('test.pdf'))
             args = mock_run.call_args[0][0]
             self.assertEqual(args[0], 'pdfimages')
             self.assertEqual(args[1], '-tiff')
-            self.assertEqual(args[2],
-                             os.path.join(magick_imslp.cwd, 'test.pdf'))
+            self.assertEqual(args[2], 'test.pdf')
             self.assertIn('test.pdf', args[2])
             self.assertEqual(len(args[3]), 36)
 
     def test_do_magick(self):
         with mock.patch('subprocess.run') as subprocess_run:
             args = Mock()
-            magick_imslp.do_magick('test.tif', args)
+            magick_imslp.do_magick(FilePath('test.tif'), args)
             call_args = subprocess_run.call_args[0][0]
             self.assertEqual(call_args[0], 'convert')
 
