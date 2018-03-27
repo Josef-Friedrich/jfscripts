@@ -1,14 +1,43 @@
 #! /usr/bin/env python3
 
 import argparse
-import subprocess
-import uuid
-import tempfile
 import os
+import re
+import subprocess
+import tempfile
+import uuid
+
 
 job_identifier = str(uuid.uuid1())
 tmp_dir = tempfile.mkdtemp()
 cwd = os.getcwd()
+
+
+class FilePath(object):
+
+    def __init__(self, path, absolute=False):
+        if absolute:
+            self._path = os.path.abspath(path)
+        else:
+            self._path = os.path.relpath(path)
+        self._extension = os.path.splitext(self._path)[1][1:]
+
+    def extension(self, extension):
+        return re.sub(
+            '\.{}$'.format(self._extension),
+            '.{}'.format(extension),
+            self._path
+        )
+
+    def backup(self):
+        return re.sub(
+            '\.{}$'.format(self._extension),
+            '_backup.{}'.format(self._extension),
+            self._path
+        )
+
+    def get(self):
+        return self._path
 
 
 def get_args():

@@ -1,6 +1,7 @@
 import unittest
 from _helper import TestCase
 from jfscripts import magick_imslp
+from jfscripts.magick_imslp import FilePath
 import os
 from unittest import mock
 from unittest.mock import patch, Mock
@@ -37,6 +38,21 @@ class TestUnit(TestCase):
             with patch('jfscripts.magick_imslp.per_file') as per_file:
                 magick_imslp.main()
                 self.assertEqual(per_file.call_count, 2)
+
+
+class TestClassFilePath(TestCase):
+
+    def test_class_argument(self):
+        file_path = FilePath('test.jpg', absolute=True)
+        self.assertEqual(file_path.get(), os.path.abspath('test.jpg'))
+
+    def test_method_extension(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.extension('png'), 'test.png')
+
+    def test_method_backup(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.backup(), 'test_backup.jpg')
 
 
 class TestIntegration(TestCase):
