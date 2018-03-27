@@ -65,7 +65,11 @@ class TestClassFilePath(TestCase):
 
     def test_class_argument(self):
         file_path = FilePath('test.jpg', absolute=True)
-        self.assertEqual(file_path.get(), os.path.abspath('test.jpg'))
+        self.assertEqual(str(file_path), os.path.abspath('test.jpg'))
+
+    def test_class_magic_method(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(str(file_path), 'test.jpg')
 
     def test_method_extension(self):
         file_path = FilePath('test.jpg')

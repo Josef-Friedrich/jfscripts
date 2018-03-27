@@ -23,6 +23,9 @@ class FilePath(object):
             self._path = os.path.relpath(path)
         self._extension = os.path.splitext(self._path)[1][1:]
 
+    def __str__(self):
+        return self._path
+
     def extension(self, extension):
         return re.sub(
             '\.{}$'.format(self._extension),
@@ -36,9 +39,6 @@ class FilePath(object):
             '_backup.{}'.format(self._extension),
             self._path
         )
-
-    def get(self):
-        return self._path
 
 
 def get_args():
@@ -135,7 +135,7 @@ def pdf_to_images(pdf_file):
     subprocess.run([
         'pdfimages',
         '-tiff',
-        pdf_file.get(),
+        str(pdf_file),
         job_identifier,
     ], cwd=tmp_dir)
 
@@ -157,15 +157,18 @@ def do_magick(input_file, args):
     if args.compression:
         cmd_args += ['-compress', 'Group4', '-monochrome']
 
-    cmd_args.append(input_file.get())
+    cmd_args.append(str(input_file))
 
     if args.compression:
         extension = 'pdf'
     else:
         extension = 'png'
 
-    cmd_args.append(input_file.extension(extension))
+    target = FilePath(input_file.extension(extension))
+    cmd_args.append(str(target))
+
     subprocess.run(cmd_args)
+    return target
 
 
 def join_to_pdf():
@@ -174,7 +177,7 @@ def join_to_pdf():
 
 
 def per_file(input_file, args):
-    print(input_file.get())
+    print(str(input_file))
     if input_file._extension == 'pdf':
         pdf_to_images(input_file)
     else:
