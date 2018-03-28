@@ -73,11 +73,11 @@ class TestClassFilePath(TestCase):
 
     def test_method_extension(self):
         file_path = FilePath('test.jpg')
-        self.assertEqual(file_path.extension('png'), 'test.png')
+        self.assertEqual(str(file_path.change_extension('png')), 'test.png')
 
     def test_method_backup(self):
         file_path = FilePath('test.jpg')
-        self.assertEqual(file_path.backup(), 'test_backup.jpg')
+        self.assertEqual(str(file_path.get_backup_path()), 'test_backup.jpg')
 
 
 class TestIntegration(TestCase):

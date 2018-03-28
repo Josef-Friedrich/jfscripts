@@ -17,28 +17,29 @@ cwd = os.getcwd()
 class FilePath(object):
 
     def __init__(self, path, absolute=False):
-        if absolute:
-            self._path = os.path.abspath(path)
+        self.absolute = absolute
+        if self.absolute:
+            self.path = os.path.abspath(path)
         else:
-            self._path = os.path.relpath(path)
-        self._extension = os.path.splitext(self._path)[1][1:]
+            self.path = os.path.relpath(path)
+        self.extension = os.path.splitext(self.path)[1][1:]
 
     def __str__(self):
-        return self._path
+        return self.path
 
-    def extension(self, extension):
-        return re.sub(
-            '\.{}$'.format(self._extension),
+    def change_extension(self, extension):
+        return FilePath(re.sub(
+            '\.{}$'.format(self.extension),
             '.{}'.format(extension),
-            self._path
-        )
+            self.path
+        ), self.absolute)
 
-    def backup(self):
-        return re.sub(
-            '\.{}$'.format(self._extension),
-            '_backup.{}'.format(self._extension),
-            self._path
-        )
+    def get_backup_path(self):
+        return FilePath(re.sub(
+            '\.{}$'.format(self.extension),
+            '_backup.{}'.format(self.extension),
+            self.path
+        ), self.absolute)
 
 
 def get_args():
@@ -164,7 +165,7 @@ def do_magick(input_file, args):
     else:
         extension = 'png'
 
-    target = FilePath(input_file.extension(extension))
+    target = input_file.change_extension(extension)
     cmd_args.append(str(target))
 
     subprocess.run(cmd_args)
@@ -178,7 +179,7 @@ def join_to_pdf():
 
 def per_file(input_file, args):
     print(str(input_file))
-    if input_file._extension == 'pdf':
+    if input_file.extension == 'pdf':
         pdf_to_images(input_file)
     else:
         do_magick(input_file, args)
