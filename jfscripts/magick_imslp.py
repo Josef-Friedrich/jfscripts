@@ -13,6 +13,17 @@ from jfscripts._utils import check_bin
 job_identifier = str(uuid.uuid1())
 tmp_dir = tempfile.mkdtemp()
 cwd = os.getcwd()
+state = None
+
+
+def set_state():
+    global state
+    state = {
+        'args': get_args(),
+        'tmp_dir': tempfile.mkdtemp(),
+        'job_identifier': str(uuid.uuid1()),
+        'cwd': os.getcwd(),
+    }
 
 
 class FilePath(object):
