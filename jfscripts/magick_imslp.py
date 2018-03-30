@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import multiprocessing
 import argparse
 import os
 import re
@@ -177,7 +178,10 @@ def join_to_pdf():
     # pdftk *.pdf cat output out.pdf
 
 
-def per_file(input_file, args):
+def per_file(arguments):
+    input_file = arguments[0]
+    args = arguments[1]
+    input_file = FilePath(input_file, absolute=True)
     print(str(input_file))
     if input_file.extension == 'pdf':
         pdf_to_images(input_file)
@@ -195,8 +199,15 @@ def main():
         'pdftk',
     )
 
+    mp_data = []
     for input_file in args.input_files:
-        per_file(FilePath(input_file, absolute=True), args)
+        mp_data.append((input_file, args))
+
+    # for input_file in args.input_files:
+    #     per_file(input_file, args)
+
+    p = multiprocessing.Pool()
+    p.map(per_file, mp_data)
 
 
 if __name__ == '__main__':

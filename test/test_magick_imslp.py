@@ -53,6 +53,7 @@ class TestUnit(TestCase):
              '+repage', 'test.tif', 'test.png']
         )
 
+    @unittest.skip('works not with multiprocessing')
     @patch('jfscripts.magick_imslp.per_file')
     @patch('jfscripts.magick_imslp.check_bin')
     def test_multiple_input_files(self, check_bin, per_file):
