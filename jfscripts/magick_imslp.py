@@ -145,7 +145,9 @@ def pdf_to_images(pdf_file):
 def collect_images():
     out = []
     for input_file in os.listdir(tmp_dir):
-        out.append(os.path.join(tmp_dir, input_file))
+        if input_file.startswith(job_identifier) and \
+           os.path.getsize(input_file) > 0:
+            out.append(os.path.join(tmp_dir, input_file))
 
     out.sort()
     return out

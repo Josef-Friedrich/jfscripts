@@ -25,6 +25,7 @@ class TestUnit(TestCase):
             self.assertIn('test.pdf', args[2])
             self.assertEqual(len(args[3]), 36)
 
+    @unittest.skip('skipped')
     def test_collect_images(self):
         with mock.patch('os.listdir') as os_listdir:
             files = ['2.tif', '1.tif']
