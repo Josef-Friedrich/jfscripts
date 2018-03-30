@@ -25,6 +25,18 @@ class TestUnit(TestCase):
             self.assertIn('test.pdf', args[2])
             self.assertEqual(len(args[3]), 36)
 
+    def test_collect_images(self):
+        with mock.patch('os.listdir') as os_listdir:
+            files = ['2.tif', '1.tif']
+            return_files = []
+            for input_file in files:
+                return_files.append(os.path.join(magick_imslp.tmp_dir,
+                                    input_file))
+            return_files.sort()
+            os_listdir.return_value = files
+            out = magick_imslp.collect_images()
+            self.assertEqual(out, return_files)
+
     @patch('jfscripts.magick_imslp.subprocess.run')
     def test_do_magick(self, subprocess_run):
         args = Mock()

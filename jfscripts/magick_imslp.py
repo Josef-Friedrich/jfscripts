@@ -142,6 +142,15 @@ def pdf_to_images(pdf_file):
     ], cwd=tmp_dir)
 
 
+def collect_images():
+    out = []
+    for input_file in os.listdir(tmp_dir):
+        out.append(os.path.join(tmp_dir, input_file))
+
+    out.sort()
+    return out
+
+
 def do_magick(input_file, args):
     cmd_args = ['convert']
     # cmd_args += ['-fuzz', '98%']
