@@ -5,8 +5,6 @@ import argparse
 import os
 import re
 import subprocess
-import tempfile
-import uuid
 from jfscripts._utils import check_bin
 
 
@@ -135,24 +133,21 @@ def pdf_page_count(pdf_file):
 
 
 def pdf_to_images(pdf_file, state):
-    state.setup_tmp_dir()
-    cwd = state.cwd
+    state.pdf_env(pdf_file)
     subprocess.run([
         'pdfimages',
         '-tiff',
         str(pdf_file),
         state.job_identifier,
-    ], cwd=cwd)
+    ], cwd=state.pdf_dir)
 
 
 def collect_images(state):
     out = []
-    cwd = state.cwd
-    # cwd = state.tmp_dir
-    for input_file in os.listdir(cwd):
+    for input_file in os.listdir(state.pdf_dir):
         if input_file.startswith(state.job_identifier) and \
            os.path.getsize(input_file) > 200:
-            out.append(os.path.join(cwd, input_file))
+            out.append(os.path.join(state.pdf_dir, input_file))
     out.sort()
     return out
 
@@ -206,9 +201,10 @@ class State(object):
     def __init__(self, args):
         self.args = args
 
-    def setup_tmp_dir(self):
-        self.job_identifier = str(uuid.uuid1())
-        self.tmp_dir = tempfile.mkdtemp()
+    def pdf_env(self, pdf_file):
+        pdf_file = str(pdf_file)
+        self.pdf_dir = os.path.dirname(pdf_file)
+        self.job_identifier = os.path.basename(pdf_file)
         self.cwd = os.getcwd()
 
 

@@ -15,7 +15,7 @@ def get_state(complete=False):
     args.threshold = '50%'
     state = State(args)
     if complete:
-        state.setup_tmp_dir()
+        state.pdf_env('test.pdf')
     return state
 
 
@@ -55,7 +55,7 @@ class TestUnit(TestCase):
             self.assertEqual(args[1], '-tiff')
             self.assertEqual(args[2], 'test.pdf')
             self.assertIn('test.pdf', args[2])
-            self.assertEqual(len(args[3]), 36)
+            self.assertEqual(args[3], 'test.pdf')
 
     @unittest.skip('skipped')
     def test_collect_images(self):
@@ -132,18 +132,6 @@ class TestClassState(TestCase):
     def test_class_without_tmp_dir(self):
         state = get_state()
         self.assertTrue(state.args)
-
-    def test_class_with_tmp_dir(self):
-        state = get_state(complete=True)
-
-        self.assertTrue(state.job_identifier)
-        self.assertEqual(len(state.job_identifier), 36)
-
-        self.assertTrue(state.tmp_dir)
-        self.assertTrue(os.path.exists(state.tmp_dir))
-
-        self.assertTrue(state.cwd)
-        self.assertTrue(os.path.exists(state.cwd))
 
 
 class TestIntegration(TestCase):
