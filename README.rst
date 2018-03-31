@@ -60,8 +60,7 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-B] [-c] [-e] [-f] [-i] [-j] [-r] [-S]
-                           [-t THRESHOLD]
+    usage: magick-imslp.py [-h] [-b] [-e] [-j] [-p] [-r] [-S] [-t THRESHOLD]
                            input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -74,15 +73,11 @@ magick-imslp.py
     optional arguments:
       -h, --help            show this help message and exit
       -b, --backup          Backup original images (add .bak to filename).
-      -B, --border          Add a white border
-      -c, --compression     Use CCITT Group 4 compression. This options generates
-                            a PDF file.
       -e, --enlighten-border
                             Enlighten the border.
-      -f, --force           force
-      -i, --imslp           Use the best options to publish on IMSLP. (--compress,
-                            --join, --resize)
-      -j, --join            Join single paged PDF files to one PDF file.
+      -j, --join            Join single paged PDF files to one PDF file. This
+                            option takes only effect with the option --pdf.
+      -p, --pdf             Generate a PDF file using CCITT Group 4 compression.
       -r, --resize          Resize 200 percent.
       -S, --threshold-series
                             Convert the samge image with different threshold

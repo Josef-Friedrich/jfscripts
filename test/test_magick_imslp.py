@@ -80,21 +80,13 @@ class TestUnit(TestCase):
         state = get_state()
         magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
-            ['convert', '-border', '100x100', '-bordercolor', '#FFFFFF',
-             '-resize', '200%', '-deskew', '40%', '-threshold', '50%', '-trim',
-             '+repage', '-compress', 'Group4', '-monochrome', 'test.tif',
+            ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
+             '50%', '-trim', '+repage', '-compress', 'Group4', '-monochrome',
+             'test.tif',
              'test.pdf']
         )
 
-        state.args.border = False
-        magick_imslp.do_magick([FilePath('test.tif'), state])
-        subprocess_run.assert_called_with(
-            ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
-             '50%', '-trim', '+repage', '-compress', 'Group4', '-monochrome',
-             'test.tif', 'test.pdf']
-        )
-
-        state.args.compression = False
+        state.args.pdf = False
         state.args.resize = False
         magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(

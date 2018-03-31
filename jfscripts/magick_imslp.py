@@ -59,21 +59,6 @@ def get_args():
     )
 
     parser.add_argument(
-        '-B',
-        '--border',
-        action='store_true',
-        help='Add a white border',
-    )
-
-    parser.add_argument(
-        '-c',
-        '--compression',
-        action='store_true',
-        help='Use CCITT Group 4 compression. This options generates a PDF \
-        file.',
-    )
-
-    parser.add_argument(
         '-e',
         '--enlighten-border',
         action='store_true',
@@ -81,25 +66,18 @@ def get_args():
     )
 
     parser.add_argument(
-        '-f',
-        '--force',
-        action='store_true',
-        help='force',
-    )
-
-    parser.add_argument(
-        '-i',
-        '--imslp',
-        action='store_true',
-        help='Use the best options to publish on IMSLP. (--compress, \
-        --join, --resize)',
-    )
-
-    parser.add_argument(
         '-j',
         '--join',
         action='store_true',
-        help='Join single paged PDF files to one PDF file.',
+        help='Join single paged PDF files to one PDF file. This option takes '
+        'only effect with the option --pdf.',
+    )
+
+    parser.add_argument(
+        '-p',
+        '--pdf',
+        action='store_true',
+        help='Generate a PDF file using CCITT Group 4 compression.',
     )
 
     parser.add_argument(
@@ -164,10 +142,6 @@ def do_magick(arguments):
     input_file = arguments[0]
     state = arguments[1]
     cmd_args = ['convert']
-    # cmd_args += ['-fuzz', '98%']
-
-    if state.args.border:
-        cmd_args += ['-border', '100x100', '-bordercolor', '#FFFFFF']
 
     if state.args.resize:
         cmd_args += ['-resize', '200%']
@@ -176,12 +150,12 @@ def do_magick(arguments):
     cmd_args += ['-threshold', state.args.threshold]
     cmd_args += ['-trim', '+repage']
 
-    if state.args.compression:
+    if state.args.pdf:
         cmd_args += ['-compress', 'Group4', '-monochrome']
 
     cmd_args.append(str(input_file))
 
-    if state.args.compression:
+    if state.args.pdf:
         extension = 'pdf'
     else:
         extension = 'png'
@@ -242,7 +216,8 @@ def main():
     else:
         images = do_multiprocessing_magick(state.args.input_files, state)
 
-    join_to_pdf(images)
+    if state.args.pdf:
+        join_to_pdf(images)
 
 
 if __name__ == '__main__':
