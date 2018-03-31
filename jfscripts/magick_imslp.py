@@ -43,6 +43,9 @@ class FilePath(object):
             self.path
         ), self.absolute)
 
+    def remove(self):
+        os.remove(self.path)
+
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -56,6 +59,13 @@ def get_args():
         '--backup',
         action='store_true',
         help='Backup original images (add .bak to filename).',
+    )
+
+    parser.add_argument(
+        '-c',
+        '--cleanup',
+        action='store_true',
+        help='Delete temporary generated files.',
     )
 
     parser.add_argument(
@@ -171,7 +181,7 @@ def do_multiprocessing_magick(input_files, state):
     pool = multiprocessing.Pool()
     data = []
     for input_file in input_files:
-        data.append((FilePath(input_file, absolute=True), state))
+        data.append((input_file, state))
     return pool.map(do_magick, data)
 
 
@@ -210,13 +220,23 @@ def main():
         if len(state.args.input_files) > 1:
             raise ValueError('Specify only one PDF file.')
         pdf_to_images(first_input_file, state)
-        collected_input_files = collect_images(state)
-        images = do_multiprocessing_magick(collected_input_files, state)
+        input_files = collect_images(state)
     else:
-        images = do_multiprocessing_magick(state.args.input_files, state)
+        input_files = state.args.input_files
 
-    if state.args.join:
-        join_to_pdf(images, state)
+    input_files = map(lambda i: FilePath(i, True), input_files)
+    output_files = do_multiprocessing_magick(input_files, state)
+
+    if state.args.join and state.args.pdf:
+        join_to_pdf(output_files, state)
+
+    if state.args.cleanup:
+        for input_file in input_files:
+            input_file.remove()
+
+        if state.args.join:
+            for output_file in output_files:
+                output_file.remove()
 
 
 if __name__ == '__main__':

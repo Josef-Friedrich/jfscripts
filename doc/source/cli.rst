@@ -52,7 +52,7 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-e] [-j] [-p] [-r] [-S] [-t THRESHOLD]
+    usage: magick-imslp.py [-h] [-b] [-c] [-e] [-j] [-p] [-r] [-S] [-t THRESHOLD]
                            input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -65,6 +65,7 @@ magick-imslp.py
     optional arguments:
       -h, --help            show this help message and exit
       -b, --backup          Backup original images (add .bak to filename).
+      -c, --cleanup         Delete temporary generated files.
       -e, --enlighten-border
                             Enlighten the border.
       -j, --join            Join single paged PDF files to one PDF file. This
