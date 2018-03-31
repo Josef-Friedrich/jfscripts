@@ -122,13 +122,13 @@ class TestClassFilePath(TestCase):
         file_path = FilePath('test.jpg')
         self.assertEqual(str(file_path), 'test.jpg')
 
-    def test_method_extension(self):
+    def test_method_ext(self):
         file_path = FilePath('test.jpg')
-        self.assertEqual(str(file_path.change_extension('png')), 'test.png')
+        self.assertEqual(str(file_path.ext('png')), 'test.png')
 
-    def test_method_backup(self):
+    def test_method_append(self):
         file_path = FilePath('test.jpg')
-        self.assertEqual(str(file_path.get_backup_path()), 'test_backup.jpg')
+        self.assertEqual(str(file_path.append('_lol')), 'test_lol.jpg')
 
 
 class TestClassState(TestCase):

@@ -29,17 +29,10 @@ class FilePath(object):
     def __str__(self):
         return self.path
 
-    def change_extension(self, extension):
+    def ext(self, extension):
         return FilePath(re.sub(
             '\.{}$'.format(self.extension),
             '.{}'.format(extension),
-            self.path
-        ), self.absolute)
-
-    def get_backup_path(self):
-        return FilePath(re.sub(
-            '\.{}$'.format(self.extension),
-            '_backup.{}'.format(self.extension),
             self.path
         ), self.absolute)
 
@@ -177,7 +170,7 @@ def do_magick(arguments):
     else:
         extension = 'png'
 
-    target = input_file.change_extension(extension)
+    target = input_file.ext(extension)
     cmd_args.append(str(target))
 
     subprocess.run(cmd_args)
@@ -185,8 +178,8 @@ def do_magick(arguments):
 
 
 def threshold(input_file, threshold, state):
-    out = input_file.append('_threshold-{}'.format(threshold)) \
-        .change_extension('png')
+    appendix = '_threshold-{}'.format(threshold)
+    out = input_file.append(appendix).ext('png')
     subprocess.run(['convert',
                     '-threshold',
                     '{}%'.format(threshold),
