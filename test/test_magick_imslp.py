@@ -1,23 +1,27 @@
 import unittest
 from _helper import TestCase
 from jfscripts import magick_imslp
-from jfscripts.magick_imslp import FilePath
+from jfscripts.magick_imslp import FilePath, State
 import os
 from unittest import mock
 from unittest.mock import patch, Mock
 
 
+def get_state(complete=False):
+    args = Mock()
+    args.threshold = '50%'
+    state = State(args)
+    if complete:
+        state.setup_tmp_dir()
+    return state
+
+
 class TestUnit(TestCase):
 
-    def test_job_identifier(self):
-        self.assertEqual(len(magick_imslp.job_identifier), 36)
-
-    def test_tmp_dir(self):
-        self.assertTrue(os.path.exists(magick_imslp.tmp_dir))
-
     def test_pdf_to_images(self):
+        state = get_state(complete=True)
         with mock.patch('subprocess.run') as mock_run:
-            magick_imslp.pdf_to_images(FilePath('test.pdf'))
+            magick_imslp.pdf_to_images(FilePath('test.pdf'), state)
             args = mock_run.call_args[0][0]
             self.assertEqual(args[0], 'pdfimages')
             self.assertEqual(args[1], '-tiff')
@@ -27,6 +31,8 @@ class TestUnit(TestCase):
 
     @unittest.skip('skipped')
     def test_collect_images(self):
+        state = get_state(complete=True)
+
         with mock.patch('os.listdir') as os_listdir:
             files = ['2.tif', '1.tif']
             return_files = []
@@ -35,14 +41,13 @@ class TestUnit(TestCase):
                                     input_file))
             return_files.sort()
             os_listdir.return_value = files
-            out = magick_imslp.collect_images()
+            out = magick_imslp.collect_images(state)
             self.assertEqual(out, return_files)
 
     @patch('jfscripts.magick_imslp.subprocess.run')
     def test_do_magick(self, subprocess_run):
-        args = Mock()
-        args.threshold = '50%'
-        magick_imslp.do_magick(FilePath('test.tif'), args)
+        state = get_state()
+        magick_imslp.do_magick(FilePath('test.tif'), state)
         subprocess_run.assert_called_with(
             ['convert', '-border', '100x100', '-bordercolor', '#FFFFFF',
              '-resize', '200%', '-deskew', '40%', '-threshold', '50%', '-trim',
@@ -50,17 +55,17 @@ class TestUnit(TestCase):
              'test.pdf']
         )
 
-        args.border = False
-        magick_imslp.do_magick(FilePath('test.tif'), args)
+        state.args.border = False
+        magick_imslp.do_magick(FilePath('test.tif'), state)
         subprocess_run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
              '50%', '-trim', '+repage', '-compress', 'Group4', '-monochrome',
              'test.tif', 'test.pdf']
         )
 
-        args.compression = False
-        args.resize = False
-        magick_imslp.do_magick(FilePath('test.tif'), args)
+        state.args.compression = False
+        state.args.resize = False
+        magick_imslp.do_magick(FilePath('test.tif'), state)
         subprocess_run.assert_called_with(
             ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
              '+repage', 'test.tif', 'test.png']
@@ -92,6 +97,25 @@ class TestClassFilePath(TestCase):
     def test_method_backup(self):
         file_path = FilePath('test.jpg')
         self.assertEqual(str(file_path.get_backup_path()), 'test_backup.jpg')
+
+
+class TestClassState(TestCase):
+
+    def test_class_without_tmp_dir(self):
+        state = get_state()
+        self.assertTrue(state.args)
+
+    def test_class_with_tmp_dir(self):
+        state = get_state(complete=True)
+
+        self.assertTrue(state.job_identifier)
+        self.assertEqual(len(state.job_identifier), 36)
+
+        self.assertTrue(state.tmp_dir)
+        self.assertTrue(os.path.exists(state.tmp_dir))
+
+        self.assertTrue(state.cwd)
+        self.assertTrue(os.path.exists(state.cwd))
 
 
 class TestIntegration(TestCase):

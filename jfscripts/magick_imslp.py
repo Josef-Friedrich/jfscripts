@@ -10,22 +10,6 @@ import uuid
 from jfscripts._utils import check_bin
 
 
-job_identifier = str(uuid.uuid1())
-tmp_dir = tempfile.mkdtemp()
-cwd = os.getcwd()
-state = None
-
-
-def set_state():
-    global state
-    state = {
-        'args': get_args(),
-        'tmp_dir': tempfile.mkdtemp(),
-        'job_identifier': str(uuid.uuid1()),
-        'cwd': os.getcwd(),
-    }
-
-
 class FilePath(object):
 
     def __init__(self, path, absolute=False):
@@ -143,47 +127,47 @@ def get_args():
     return parser.parse_args()
 
 
-def pdf_to_images(pdf_file):
-    print(tmp_dir)
+def pdf_to_images(pdf_file, state):
+    state.setup_tmp_dir()
     subprocess.run([
         'pdfimages',
         '-tiff',
         str(pdf_file),
-        job_identifier,
-    ], cwd=tmp_dir)
+        state.job_identifier,
+    ], cwd=state.tmp_dir)
 
 
-def collect_images():
+def collect_images(state):
     out = []
-    for input_file in os.listdir(tmp_dir):
-        if input_file.startswith(job_identifier) and \
+    for input_file in os.listdir(state.tmp_dir):
+        if input_file.startswith(state.job_identifier) and \
            os.path.getsize(input_file) > 0:
-            out.append(os.path.join(tmp_dir, input_file))
+            out.append(os.path.join(state.tmp_dir, input_file))
 
     out.sort()
     return out
 
 
-def do_magick(input_file, args):
+def do_magick(input_file, state):
     cmd_args = ['convert']
     # cmd_args += ['-fuzz', '98%']
 
-    if args.border:
+    if state.args.border:
         cmd_args += ['-border', '100x100', '-bordercolor', '#FFFFFF']
 
-    if args.resize:
+    if state.args.resize:
         cmd_args += ['-resize', '200%']
 
     cmd_args += ['-deskew', '40%']
-    cmd_args += ['-threshold', args.threshold]
+    cmd_args += ['-threshold', state.args.threshold]
     cmd_args += ['-trim', '+repage']
 
-    if args.compression:
+    if state.args.compression:
         cmd_args += ['-compress', 'Group4', '-monochrome']
 
     cmd_args.append(str(input_file))
 
-    if args.compression:
+    if state.args.compression:
         extension = 'pdf'
     else:
         extension = 'png'
@@ -202,17 +186,29 @@ def join_to_pdf():
 
 def per_file(arguments):
     input_file = arguments[0]
-    args = arguments[1]
+    state = arguments[1]
     input_file = FilePath(input_file, absolute=True)
     print(str(input_file))
     if input_file.extension == 'pdf':
-        pdf_to_images(input_file)
+        pdf_to_images(input_file, state)
     else:
-        do_magick(input_file, args)
+        do_magick(input_file, state)
+
+
+class State(object):
+
+    def __init__(self, args):
+        self.args = args
+
+    def setup_tmp_dir(self):
+        self.job_identifier = str(uuid.uuid1())
+        self.tmp_dir = tempfile.mkdtemp()
+        self.cwd = os.getcwd()
 
 
 def main():
     args = get_args()
+    state = State(args)
 
     check_bin(
         ('convert', 'imagemagick'),
@@ -222,8 +218,8 @@ def main():
     )
 
     mp_data = []
-    for input_file in args.input_files:
-        mp_data.append((input_file, args))
+    for input_file in state.args.input_files:
+        mp_data.append((input_file, state))
 
     # for input_file in args.input_files:
     #     per_file(input_file, args)
