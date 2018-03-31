@@ -49,6 +49,15 @@ class TestUnit(TestCase):
         result = magick_imslp.pdf_page_count('test.pdf')
         self.assertEqual(result, 3)
 
+    @patch('jfscripts.magick_imslp.subprocess.run')
+    def test_threshold(self, run):
+        state = get_state(complete=True)
+        magick_imslp.threshold(FilePath('test.jpg'), 99, state)
+        run.assert_called_with(
+            ['convert', '-threshold', '99%', 'test.jpg',
+             'test_threshold-99.png']
+        )
+
     def test_pdf_to_images(self):
         state = get_state(complete=True)
         with mock.patch('subprocess.run') as mock_run:

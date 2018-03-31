@@ -43,6 +43,13 @@ class FilePath(object):
             self.path
         ), self.absolute)
 
+    def append(self, string):
+        return FilePath(re.sub(
+            '\.{}$'.format(self.extension),
+            '{}.{}'.format(string, self.extension),
+            self.path
+        ), self.absolute)
+
     def remove(self):
         os.remove(self.path)
 
@@ -175,6 +182,21 @@ def do_magick(arguments):
 
     subprocess.run(cmd_args)
     return target
+
+
+def threshold(input_file, threshold, state):
+    out = input_file.append('_threshold-{}'.format(threshold)) \
+        .change_extension('png')
+    subprocess.run(['convert',
+                    '-threshold',
+                    '{}%'.format(threshold),
+                    str(input_file),
+                    str(out)
+                    ])
+
+
+def threshold_series():
+    pass
 
 
 def do_multiprocessing_magick(input_files, state):
