@@ -6,6 +6,8 @@ import os
 from unittest import mock
 from unittest.mock import patch, Mock
 import subprocess
+from urllib.request import urlretrieve
+import tempfile
 
 
 def get_state(complete=False):
@@ -155,6 +157,13 @@ class TestIntegration(TestCase):
                              stderr=subprocess.PIPE)
         self.assertEqual(run.returncode, 1)
         self.assertIn('Specify only one PDF file.', run.stderr)
+
+    def test_with_real_pdf(self):
+        tmp_dir = tempfile.mkdtemp()
+        local_pdf = os.path.join(tmp_dir, 'scans.pdf')
+        urlretrieve('https://github.com/Josef-Friedrich/test-files/raw/'
+                    'master/pdf/scans.pdf', local_pdf)
+        self.assertTrue(os.path.exists(local_pdf))
 
 
 if __name__ == '__main__':
