@@ -142,6 +142,7 @@ class TestIntegration(TestCase):
     def test_command_line_interface(self):
         self.assertIsExecutable('magick_imslp')
 
+    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_input_file_pdf_exception(self):
         run = subprocess.run(['magick-imslp.py', 'test1.pdf', 'test2.pdf'],
                              encoding='utf-8',
