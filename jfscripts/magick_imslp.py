@@ -154,13 +154,15 @@ def collect_images(state):
     out = []
     for input_file in os.listdir(state.pdf_dir):
         if input_file.startswith(state.job_identifier) and \
-           os.path.getsize(input_file) > 200:
+           os.path.getsize(os.path.join(state.pdf_dir, input_file)) > 200:
             out.append(os.path.join(state.pdf_dir, input_file))
     out.sort()
     return out
 
 
-def do_magick(input_file, state):
+def do_magick(arguments):
+    input_file = arguments[0]
+    state = arguments[1]
     cmd_args = ['convert']
     # cmd_args += ['-fuzz', '98%']
 
@@ -195,7 +197,7 @@ def do_multiprocessing_magick(input_files, state):
     pool = multiprocessing.Pool()
     data = []
     for input_file in input_files:
-        data.append((input_file, state))
+        data.append((FilePath(input_file, absolute=True), state))
     pool.map(do_magick, data)
 
 

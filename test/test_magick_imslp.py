@@ -78,7 +78,7 @@ class TestUnit(TestCase):
     @patch('jfscripts.magick_imslp.subprocess.run')
     def test_do_magick(self, subprocess_run):
         state = get_state()
-        magick_imslp.do_magick(FilePath('test.tif'), state)
+        magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
             ['convert', '-border', '100x100', '-bordercolor', '#FFFFFF',
              '-resize', '200%', '-deskew', '40%', '-threshold', '50%', '-trim',
@@ -87,7 +87,7 @@ class TestUnit(TestCase):
         )
 
         state.args.border = False
-        magick_imslp.do_magick(FilePath('test.tif'), state)
+        magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
              '50%', '-trim', '+repage', '-compress', 'Group4', '-monochrome',
@@ -96,7 +96,7 @@ class TestUnit(TestCase):
 
         state.args.compression = False
         state.args.resize = False
-        magick_imslp.do_magick(FilePath('test.tif'), state)
+        magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
             ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
              '+repage', 'test.tif', 'test.png']
@@ -157,6 +157,10 @@ class TestIntegration(TestCase):
         urlretrieve('https://github.com/Josef-Friedrich/test-files/raw/'
                     'master/pdf/scans.pdf', local_pdf)
         self.assertTrue(os.path.exists(local_pdf))
+        subprocess.run(['magick-imslp.py', local_pdf])
+        self.assertTrue(os.path.exists(local_pdf + '-000.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-001.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-002.tif'))
 
 
 if __name__ == '__main__':
