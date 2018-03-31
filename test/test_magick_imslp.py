@@ -1,5 +1,5 @@
 import unittest
-from _helper import TestCase
+from _helper import TestCase, check_bin
 from jfscripts import magick_imslp
 from jfscripts.magick_imslp import FilePath, State
 import os
@@ -8,6 +8,9 @@ from unittest.mock import patch, Mock
 import subprocess
 from urllib.request import urlretrieve
 import tempfile
+
+
+dependencies = check_bin(*magick_imslp.dependencies)
 
 
 def get_state(complete=False):
@@ -146,6 +149,7 @@ class TestIntegration(TestCase):
         self.assertEqual(run.returncode, 1)
         self.assertIn('Specify only one PDF file.', run.stderr)
 
+    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf(self):
         tmp_dir = tempfile.mkdtemp()
         local_pdf = os.path.join(tmp_dir, 'scans.pdf')

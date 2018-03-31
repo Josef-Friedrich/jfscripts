@@ -1,5 +1,19 @@
 import unittest
 import subprocess
+import shutil
+
+
+def check_bin(*executables):
+    for executable in executables:
+        if isinstance(executable, tuple):
+            if not shutil.which(executable[0]):
+                return False
+
+        else:
+            if not shutil.which(executable):
+                return False
+
+    return True
 
 
 class TestCase(unittest.TestCase):

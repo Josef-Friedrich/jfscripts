@@ -7,6 +7,14 @@ import re
 import subprocess
 from jfscripts._utils import check_bin
 
+dependencies = (
+    ('convert', 'imagemagick'),
+    ('identify', 'imagemagick'),
+    ('pdfimages', 'poppler'),
+    ('pdfinfo', 'poppler'),
+    'pdftk',
+)
+
 
 class FilePath(object):
 
@@ -212,13 +220,7 @@ def main():
     args = get_args()
     state = State(args)
 
-    check_bin(
-        ('convert', 'imagemagick'),
-        ('identify', 'imagemagick'),
-        ('pdfimages', 'poppler'),
-        ('pdfinfo', 'poppler'),
-        'pdftk',
-    )
+    check_bin(*dependencies)
 
     first_input_file = FilePath(state.args.input_files[0], absolute=True)
     if first_input_file.extension == 'pdf':
