@@ -189,31 +189,16 @@ def do_magick(input_file, state):
 
 
 def do_multiprocessing_magick(input_files, state):
-    mp_data = []
-    if not hasattr(state, 'pool'):
-        state.pool = multiprocessing.Pool()
-
+    pool = multiprocessing.Pool()
+    data = []
     for input_file in input_files:
-        mp_data.append((input_file, state))
-    state.pool.map(per_file, mp_data)
+        data.append((input_file, state))
+    pool.map(do_magick, data)
 
 
 def join_to_pdf():
     pass
     # pdftk *.pdf cat output out.pdf
-
-
-def per_file(arguments):
-    input_file = arguments[0]
-    state = arguments[1]
-    input_file = FilePath(input_file, absolute=True)
-    print(str(input_file))
-    if input_file.extension == 'pdf':
-        pdf_to_images(input_file, state)
-        input_files = collect_images(state)
-        do_multiprocessing_magick(input_files, state)
-    else:
-        do_magick(input_file, state)
 
 
 class State(object):
@@ -239,7 +224,15 @@ def main():
         'pdftk',
     )
 
-    do_multiprocessing_magick(state.args.input_files, state)
+    first_input_file = FilePath(state.args.input_files, absolute=True)
+    if first_input_file.extension == 'pdf':
+        if len(state.args.input_files) > 1:
+            raise ValueError('Specify only one PDF file.')
+        pdf_to_images(first_input_file, state)
+        collected_input_files = collect_images(state)
+        do_multiprocessing_magick(collected_input_files, state)
+    else:
+        do_multiprocessing_magick(state.args.input_files, state)
 
 
 if __name__ == '__main__':

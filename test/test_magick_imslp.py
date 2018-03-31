@@ -5,6 +5,7 @@ from jfscripts.magick_imslp import FilePath, State
 import os
 from unittest import mock
 from unittest.mock import patch, Mock
+import subprocess
 
 
 def get_state(complete=False):
@@ -147,6 +148,13 @@ class TestIntegration(TestCase):
 
     def test_command_line_interface(self):
         self.assertIsExecutable('magick_imslp')
+
+    def test_input_file_pdf_exception(self):
+        run = subprocess.run(['magick-imslp.py', 'test1.pdf', 'test2.pdf'],
+                             encoding='utf-8',
+                             stdout=subprocess.PIPE)
+        self.assertEqual(run.returncode, 1)
+        # self.assertTrue('lol' in run.stdout)
 
 
 if __name__ == '__main__':
