@@ -198,11 +198,19 @@ def do_multiprocessing_magick(input_files, state):
     data = []
     for input_file in input_files:
         data.append((FilePath(input_file, absolute=True), state))
-    pool.map(do_magick, data)
+    return pool.map(do_magick, data)
 
 
-def join_to_pdf():
-    pass
+def join_to_pdf(images, are_pdf=False):
+
+    images = map(lambda image: str(image), images)
+
+    if not are_pdf:
+        cmd = ['convert']
+        cmd += images
+        cmd.append('out.pdf')
+
+    subprocess.run(cmd)
     # pdftk *.pdf cat output out.pdf
 
 
@@ -230,9 +238,11 @@ def main():
             raise ValueError('Specify only one PDF file.')
         pdf_to_images(first_input_file, state)
         collected_input_files = collect_images(state)
-        do_multiprocessing_magick(collected_input_files, state)
+        images = do_multiprocessing_magick(collected_input_files, state)
     else:
-        do_multiprocessing_magick(state.args.input_files, state)
+        images = do_multiprocessing_magick(state.args.input_files, state)
+
+    join_to_pdf(images)
 
 
 if __name__ == '__main__':

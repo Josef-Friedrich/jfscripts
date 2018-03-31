@@ -159,8 +159,11 @@ class TestIntegration(TestCase):
         self.assertTrue(os.path.exists(local_pdf))
         subprocess.run(['magick-imslp.py', local_pdf])
         self.assertTrue(os.path.exists(local_pdf + '-000.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-000.png'))
         self.assertTrue(os.path.exists(local_pdf + '-001.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-001.png'))
         self.assertTrue(os.path.exists(local_pdf + '-002.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-002.png'))
 
 
 if __name__ == '__main__':
