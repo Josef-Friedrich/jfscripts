@@ -157,6 +157,22 @@ class TestIntegration(TestCase):
         self.assertTrue(os.path.exists(local_pdf + '-002.tif'))
         self.assertTrue(os.path.exists(local_pdf + '-002.png'))
 
+    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
+    def test_with_real_pdf_join(self):
+        tmp_dir = tempfile.mkdtemp()
+        local_pdf = os.path.join(tmp_dir, 'scans.pdf')
+        urlretrieve('https://github.com/Josef-Friedrich/test-files/raw/'
+                    'master/pdf/scans.pdf', local_pdf)
+        self.assertTrue(os.path.exists(local_pdf))
+        subprocess.run(['magick-imslp.py', '--pdf', '--join', local_pdf])
+        self.assertTrue(os.path.exists(local_pdf + '-000.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-000.pdf'))
+        self.assertTrue(os.path.exists(local_pdf + '-001.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-001.pdf'))
+        self.assertTrue(os.path.exists(local_pdf + '-002.tif'))
+        self.assertTrue(os.path.exists(local_pdf + '-002.pdf'))
+        self.assertTrue(os.path.exists(local_pdf + '_joined.pdf'))
+
 
 if __name__ == '__main__':
     unittest.main()

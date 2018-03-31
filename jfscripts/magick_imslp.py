@@ -175,17 +175,16 @@ def do_multiprocessing_magick(input_files, state):
     return pool.map(do_magick, data)
 
 
-def join_to_pdf(images, are_pdf=False):
+def join_to_pdf(images, state):
+    cmd = ['pdftk']
 
     images = map(lambda image: str(image), images)
+    cmd += images
 
-    if not are_pdf:
-        cmd = ['convert']
-        cmd += images
-        cmd.append('out.pdf')
+    joined = os.path.join(state.pdf_dir, state.job_identifier + '_joined.pdf')
+    cmd += ['cat', 'output', joined]
 
     subprocess.run(cmd)
-    # pdftk *.pdf cat output out.pdf
 
 
 class State(object):
@@ -216,8 +215,8 @@ def main():
     else:
         images = do_multiprocessing_magick(state.args.input_files, state)
 
-    if state.args.pdf:
-        join_to_pdf(images)
+    if state.args.join:
+        join_to_pdf(images, state)
 
 
 if __name__ == '__main__':
