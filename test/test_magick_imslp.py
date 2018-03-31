@@ -58,6 +58,12 @@ class TestUnit(TestCase):
              'test_threshold-99.png']
         )
 
+    @patch('jfscripts.magick_imslp.threshold')
+    def test_threshold_series(self, threshold):
+        state = get_state(complete=True)
+        magick_imslp.threshold_series(FilePath('test.jpg'), state)
+        self.assertEqual(threshold.call_count, 9)
+
     def test_pdf_to_images(self):
         state = get_state(complete=True)
         with mock.patch('subprocess.run') as mock_run:

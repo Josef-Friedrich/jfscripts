@@ -188,8 +188,9 @@ def threshold(input_file, threshold, state):
                     ])
 
 
-def threshold_series():
-    pass
+def threshold_series(input_file, state):
+    for number in range(40, 85, 5):
+        threshold(input_file, number, state)
 
 
 def do_multiprocessing_magick(input_files, state):
