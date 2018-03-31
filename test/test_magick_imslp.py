@@ -152,9 +152,9 @@ class TestIntegration(TestCase):
     def test_input_file_pdf_exception(self):
         run = subprocess.run(['magick-imslp.py', 'test1.pdf', 'test2.pdf'],
                              encoding='utf-8',
-                             stdout=subprocess.PIPE)
+                             stderr=subprocess.PIPE)
         self.assertEqual(run.returncode, 1)
-        # self.assertTrue('lol' in run.stdout)
+        self.assertIn('Specify only one PDF file.', run.stderr)
 
 
 if __name__ == '__main__':

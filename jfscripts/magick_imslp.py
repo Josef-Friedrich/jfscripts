@@ -224,7 +224,7 @@ def main():
         'pdftk',
     )
 
-    first_input_file = FilePath(state.args.input_files, absolute=True)
+    first_input_file = FilePath(state.args.input_files[0], absolute=True)
     if first_input_file.extension == 'pdf':
         if len(state.args.input_files) > 1:
             raise ValueError('Specify only one PDF file.')
