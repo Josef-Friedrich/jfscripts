@@ -127,6 +127,13 @@ def get_args():
     return parser.parse_args()
 
 
+def pdf_page_count(pdf_file):
+    output = subprocess.check_output(['pdfinfo', pdf_file])
+    output = output.decode('utf-8')
+    page_count = re.search(r'Pages:\s*([0-9]*)', output)
+    return int(page_count.group(1))
+
+
 def pdf_to_images(pdf_file, state):
     state.setup_tmp_dir()
     cwd = state.cwd
@@ -228,6 +235,7 @@ def main():
         ('convert', 'imagemagick'),
         ('identify', 'imagemagick'),
         ('pdfimages', 'poppler'),
+        ('pdfinfo', 'poppler'),
         'pdftk',
     )
 

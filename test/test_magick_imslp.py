@@ -18,6 +18,31 @@ def get_state(complete=False):
 
 class TestUnit(TestCase):
 
+    @mock.patch('jfscripts.magick_imslp.subprocess.check_output')
+    def test_get_pdf_info(self, mock):
+
+        return_values = [
+            b'Creator:        c42pdf v. 0.12 args:  -p 658.80x866.52\n',
+            b'Producer:       PDFlib V0.6 (C) Thomas Merz 1997-98\n',
+            b'CreationDate:   Sat Jan  2 21:11:06 2010 CET\n',
+            b'Tagged:         no\n',
+            b'UserProperties: no\nSuspects:       no\n',
+            b'Form:           none\n',
+            b'JavaScript:     no\n',
+            b'Pages:          3\n',
+            b'Encrypted:      no\n',
+            b'Page size:      658.8 x 866.52 pts\n',
+            b'Page rot:       0\n',
+            b'File size:      343027 bytes\n',
+            b'Optimized:      no\n',
+            b'PDF version:    1.1\n',
+        ]
+
+        mock.return_value = b''.join(return_values)
+
+        result = magick_imslp.pdf_page_count('test.pdf')
+        self.assertEqual(result, 3)
+
     def test_pdf_to_images(self):
         state = get_state(complete=True)
         with mock.patch('subprocess.run') as mock_run:
