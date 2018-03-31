@@ -188,10 +188,11 @@ def do_multiprocessing_magick(input_files, state):
 def join_to_pdf(images, state):
     cmd = ['pdftk']
 
-    images = map(lambda image: str(image), images)
-    cmd += images
-
-    joined = os.path.join(state.pdf_dir, state.job_identifier + '_joined.pdf')
+    image_paths = map(lambda image: str(image), images)
+    cmd += image_paths
+    basename = state.job_identifier.replace(state.identifier_string, '') + \
+        '_joined.pdf'
+    joined = os.path.join(state.pdf_dir, basename)
     cmd += ['cat', 'output', joined]
 
     subprocess.run(cmd)
@@ -201,12 +202,21 @@ class State(object):
 
     def __init__(self, args):
         self.args = args
+        self.identifier_string = '_magick'
 
     def pdf_env(self, pdf_file):
         pdf_file = str(pdf_file)
         self.pdf_dir = os.path.dirname(pdf_file)
-        self.job_identifier = os.path.basename(pdf_file)
+        self.job_identifier = os.path.basename(pdf_file) + \
+            self.identifier_string
         self.cwd = os.getcwd()
+
+
+def convert_file_paths(files):
+    out = []
+    for f in files:
+        out.append(FilePath(f, absolute=True))
+    return out
 
 
 def main():
@@ -224,13 +234,14 @@ def main():
     else:
         input_files = state.args.input_files
 
-    input_files = map(lambda i: FilePath(i, True), input_files)
+    input_files = convert_file_paths(input_files)
     output_files = do_multiprocessing_magick(input_files, state)
 
     if state.args.join and state.args.pdf:
         join_to_pdf(output_files, state)
 
     if state.args.cleanup:
+
         for input_file in input_files:
             input_file.remove()
 
