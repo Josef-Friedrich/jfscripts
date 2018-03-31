@@ -129,21 +129,23 @@ def get_args():
 
 def pdf_to_images(pdf_file, state):
     state.setup_tmp_dir()
+    cwd = state.cwd
     subprocess.run([
         'pdfimages',
         '-tiff',
         str(pdf_file),
         state.job_identifier,
-    ], cwd=state.tmp_dir)
+    ], cwd=cwd)
 
 
 def collect_images(state):
     out = []
-    for input_file in os.listdir(state.tmp_dir):
+    cwd = state.cwd
+    # cwd = state.tmp_dir
+    for input_file in os.listdir(cwd):
         if input_file.startswith(state.job_identifier) and \
-           os.path.getsize(input_file) > 0:
-            out.append(os.path.join(state.tmp_dir, input_file))
-
+           os.path.getsize(input_file) > 200:
+            out.append(os.path.join(cwd, input_file))
     out.sort()
     return out
 
@@ -179,6 +181,16 @@ def do_magick(input_file, state):
     return target
 
 
+def do_multiprocessing_magick(input_files, state):
+    mp_data = []
+    if not hasattr(state, 'pool'):
+        state.pool = multiprocessing.Pool()
+
+    for input_file in input_files:
+        mp_data.append((input_file, state))
+    state.pool.map(per_file, mp_data)
+
+
 def join_to_pdf():
     pass
     # pdftk *.pdf cat output out.pdf
@@ -191,6 +203,8 @@ def per_file(arguments):
     print(str(input_file))
     if input_file.extension == 'pdf':
         pdf_to_images(input_file, state)
+        input_files = collect_images(state)
+        do_multiprocessing_magick(input_files, state)
     else:
         do_magick(input_file, state)
 
@@ -217,15 +231,7 @@ def main():
         'pdftk',
     )
 
-    mp_data = []
-    for input_file in state.args.input_files:
-        mp_data.append((input_file, state))
-
-    # for input_file in args.input_files:
-    #     per_file(input_file, args)
-
-    p = multiprocessing.Pool()
-    p.map(per_file, mp_data)
+    do_multiprocessing_magick(state.args.input_files, state)
 
 
 if __name__ == '__main__':
