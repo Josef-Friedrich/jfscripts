@@ -163,12 +163,9 @@ class TestIntegration(TestCase):
         download('pdf/scans.pdf', local_pdf)
         self.assertExists(local_pdf)
         subprocess.run(['magick-imslp.py', local_pdf])
-        self.assertExists(local_pdf + '_magick-000.tif')
-        self.assertExists(local_pdf + '_magick-000.png')
-        self.assertExists(local_pdf + '_magick-001.tif')
-        self.assertExists(local_pdf + '_magick-001.png')
-        self.assertExists(local_pdf + '_magick-002.tif')
-        self.assertExists(local_pdf + '_magick-002.png')
+        result = ('0.tif', '0.png', '1.tif', '1.png', '2.tif', '2.png')
+        for test_file in result:
+            self.assertExists(local_pdf + '_magick-00' + test_file)
 
     @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf_join(self):
@@ -177,12 +174,9 @@ class TestIntegration(TestCase):
         download('pdf/scans.pdf', local_pdf)
         self.assertExists(local_pdf)
         subprocess.run(['magick-imslp.py', '--pdf', '--join', local_pdf])
-        self.assertExists(local_pdf + '_magick-000.tif')
-        self.assertExists(local_pdf + '_magick-000.pdf')
-        self.assertExists(local_pdf + '_magick-001.tif')
-        self.assertExists(local_pdf + '_magick-001.pdf')
-        self.assertExists(local_pdf + '_magick-002.tif')
-        self.assertExists(local_pdf + '_magick-002.pdf')
+        result = ('0.tif', '0.pdf', '1.tif', '1.pdf', '2.tif', '2.pdf')
+        for test_file in result:
+            self.assertExists(local_pdf + '_magick-00' + test_file)
         self.assertExists(local_pdf + '_joined.pdf')
 
     @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
@@ -193,13 +187,10 @@ class TestIntegration(TestCase):
         self.assertTrue(os.path.exists(local_pdf))
         subprocess.run(['magick-imslp.py', '--pdf', '--join', '--cleanup',
                         local_pdf])
-        self.assertFalse(os.path.exists(local_pdf + '_magick-000.tif'))
-        self.assertFalse(os.path.exists(local_pdf + '_magick-000.pdf'))
-        self.assertFalse(os.path.exists(local_pdf + '_magick-001.tif'))
-        self.assertFalse(os.path.exists(local_pdf + '_magick-001.pdf'))
-        self.assertFalse(os.path.exists(local_pdf + '_magick-002.tif'))
-        self.assertFalse(os.path.exists(local_pdf + '_magick-002.pdf'))
-        self.assertTrue(os.path.exists(local_pdf + '_joined.pdf'))
+        result = ('0.tif', '0.pdf', '1.tif', '1.pdf', '2.tif', '2.pdf')
+        for test_file in result:
+            self.assertExistsNot(local_pdf + '_magick-00' + test_file)
+        self.assertExists(local_pdf + '_joined.pdf')
 
     @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_real_threshold_series(self):
