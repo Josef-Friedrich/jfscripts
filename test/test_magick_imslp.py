@@ -7,9 +7,7 @@ from unittest import mock
 from unittest.mock import patch, Mock
 import subprocess
 import tempfile
-
-
-dependencies = check_bin(*magick_imslp.dependencies)
+import shutil
 
 
 def get_state(complete=False):
@@ -19,6 +17,21 @@ def get_state(complete=False):
     if complete:
         state.pdf_env('test.pdf')
     return state
+
+
+def copy(path):
+    basename = os.path.basename(path)
+    tmp = os.path.join(tempfile.mkdtemp(), basename)
+    return shutil.copy(path, tmp)
+
+
+dependencies = check_bin(*magick_imslp.dependencies)
+
+if dependencies:
+    tmp_pdf = os.path.join(tempfile.mkdtemp(), 'test.pdf')
+    download('pdf/scans.pdf', tmp_pdf)
+    tmp_png1 = os.path.join(tempfile.mkdtemp(), 'test.png')
+    download('png/bach-busoni_300.png', tmp_png1)
 
 
 class TestUnit(TestCase):
@@ -158,46 +171,43 @@ class TestIntegration(TestCase):
 
     @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf(self):
-        tmp_dir = tempfile.mkdtemp()
-        local_pdf = os.path.join(tmp_dir, 'scans.pdf')
-        download('pdf/scans.pdf', local_pdf)
-        self.assertExists(local_pdf)
-        subprocess.run(['magick-imslp.py', local_pdf])
+        tmp = copy(tmp_pdf)
+        self.assertExists(tmp)
+        subprocess.run(['magick-imslp.py', tmp])
         result = ('0.tif', '0.png', '1.tif', '1.png', '2.tif', '2.png')
         for test_file in result:
-            self.assertExists(local_pdf + '_magick-00' + test_file)
+            self.assertExists(tmp + '_magick-00' + test_file, test_file)
 
     @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf_join(self):
-        tmp_dir = tempfile.mkdtemp()
-        local_pdf = os.path.join(tmp_dir, 'scans.pdf')
-        download('pdf/scans.pdf', local_pdf)
-        self.assertExists(local_pdf)
-        subprocess.run(['magick-imslp.py', '--pdf', '--join', local_pdf])
+        tmp = copy(tmp_pdf)
+        self.assertExists(tmp)
+        subprocess.run(['magick-imslp.py', '--pdf', '--join', tmp])
         result = ('0.tif', '0.pdf', '1.tif', '1.pdf', '2.tif', '2.pdf')
         for test_file in result:
-            self.assertExists(local_pdf + '_magick-00' + test_file)
-        self.assertExists(local_pdf + '_joined.pdf')
+            self.assertExists(tmp + '_magick-00' + test_file, test_file)
+        self.assertExists(tmp + '_joined.pdf')
 
     @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf_cleanup(self):
-        tmp_dir = tempfile.mkdtemp()
-        local_pdf = os.path.join(tmp_dir, 'scans.pdf')
-        download('pdf/scans.pdf', local_pdf)
-        self.assertTrue(os.path.exists(local_pdf))
+        tmp = copy(tmp_pdf)
+        self.assertExists(tmp)
         subprocess.run(['magick-imslp.py', '--pdf', '--join', '--cleanup',
-                        local_pdf])
+                        tmp])
         result = ('0.tif', '0.pdf', '1.tif', '1.pdf', '2.tif', '2.pdf')
         for test_file in result:
-            self.assertExistsNot(local_pdf + '_magick-00' + test_file)
-        self.assertExists(local_pdf + '_joined.pdf')
+            self.assertExistsNot(tmp + '_magick-00' + test_file, test_file)
+        self.assertExists(tmp + '_joined.pdf')
 
     @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_real_threshold_series(self):
-        tmp_dir = tempfile.mkdtemp()
-        test_file = os.path.join(tmp_dir, 'test.png')
-        download('png/bach-busoni.png', test_file)
-        subprocess.run(['magick-imslp.py', '--threshold-series', test_file])
+        tmp = copy(tmp_png1)
+        subprocess.run(['magick-imslp.py', '--threshold-series', tmp])
+        result = (40, 45, 50, 55, 60, 65, 70, 75, 80)
+        for threshold in result:
+            suffix = '_threshold-{}.png'.format(threshold)
+            path = tmp.replace('.png', suffix)
+            self.assertExists(path, path)
 
 
 if __name__ == '__main__':

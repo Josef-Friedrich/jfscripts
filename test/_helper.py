@@ -46,8 +46,8 @@ class TestCase(unittest.TestCase):
         self.assertEqual(run.returncode, 0)
         self.assertTrue(usage in run.stdout)
 
-    def assertExists(self, path):
-        self.assertTrue(os.path.exists(path))
+    def assertExists(self, path, message=None):
+        self.assertTrue(os.path.exists(path), message)
 
-    def assertExistsNot(self, path):
-        self.assertFalse(os.path.exists(path))
+    def assertExistsNot(self, path, message=None):
+        self.assertFalse(os.path.exists(path), message)
