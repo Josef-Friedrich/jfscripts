@@ -242,6 +242,10 @@ def main():
     check_bin(*dependencies)
 
     first_input_file = FilePath(state.args.input_files[0], absolute=True)
+
+    if state.args.threshold_series:
+        threshold_series(first_input_file, state)
+
     if first_input_file.extension == 'pdf':
         if len(state.args.input_files) > 1:
             raise ValueError('Specify only one PDF file.')

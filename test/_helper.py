@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 import shutil
+from urllib.request import urlretrieve
 
 
 def check_bin(*executables):
@@ -14,6 +15,12 @@ def check_bin(*executables):
                 return False
 
     return True
+
+
+def download(url_path, local_path):
+    url = 'https://github.com/Josef-Friedrich/test-files/raw/master/{}' \
+        .format(url_path)
+    urlretrieve(url, local_path)
 
 
 class TestCase(unittest.TestCase):

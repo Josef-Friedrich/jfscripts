@@ -1,12 +1,11 @@
 import unittest
-from _helper import TestCase, check_bin
+from _helper import TestCase, check_bin, download
 from jfscripts import magick_imslp
 from jfscripts.magick_imslp import FilePath, State
 import os
 from unittest import mock
 from unittest.mock import patch, Mock
 import subprocess
-from urllib.request import urlretrieve
 import tempfile
 
 
@@ -161,8 +160,7 @@ class TestIntegration(TestCase):
     def test_with_real_pdf(self):
         tmp_dir = tempfile.mkdtemp()
         local_pdf = os.path.join(tmp_dir, 'scans.pdf')
-        urlretrieve('https://github.com/Josef-Friedrich/test-files/raw/'
-                    'master/pdf/scans.pdf', local_pdf)
+        download('pdf/scans.pdf', local_pdf)
         self.assertTrue(os.path.exists(local_pdf))
         subprocess.run(['magick-imslp.py', local_pdf])
         self.assertTrue(os.path.exists(local_pdf + '_magick-000.tif'))
@@ -176,8 +174,7 @@ class TestIntegration(TestCase):
     def test_with_real_pdf_join(self):
         tmp_dir = tempfile.mkdtemp()
         local_pdf = os.path.join(tmp_dir, 'scans.pdf')
-        urlretrieve('https://github.com/Josef-Friedrich/test-files/raw/'
-                    'master/pdf/scans.pdf', local_pdf)
+        download('pdf/scans.pdf', local_pdf)
         self.assertTrue(os.path.exists(local_pdf))
         subprocess.run(['magick-imslp.py', '--pdf', '--join', local_pdf])
         self.assertTrue(os.path.exists(local_pdf + '_magick-000.tif'))
@@ -192,8 +189,7 @@ class TestIntegration(TestCase):
     def test_with_real_pdf_cleanup(self):
         tmp_dir = tempfile.mkdtemp()
         local_pdf = os.path.join(tmp_dir, 'scans.pdf')
-        urlretrieve('https://github.com/Josef-Friedrich/test-files/raw/'
-                    'master/pdf/scans.pdf', local_pdf)
+        download('pdf/scans.pdf', local_pdf)
         self.assertTrue(os.path.exists(local_pdf))
         subprocess.run(['magick-imslp.py', '--pdf', '--join', '--cleanup',
                         local_pdf])
@@ -204,6 +200,15 @@ class TestIntegration(TestCase):
         self.assertFalse(os.path.exists(local_pdf + '_magick-002.tif'))
         self.assertFalse(os.path.exists(local_pdf + '_magick-002.pdf'))
         self.assertTrue(os.path.exists(local_pdf + '_joined.pdf'))
+
+    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
+    def test_real_threshold_series(self):
+        tmp_dir = tempfile.mkdtemp()
+        local_pdf = os.path.join(tmp_dir, 'scans.pdf')
+        download('pdf/scans.pdf', local_pdf)
+        self.assertTrue(os.path.exists(local_pdf))
+        subprocess.run(['magick-imslp.py', '--pdf', '--join', '--cleanup',
+                        local_pdf])
 
 
 if __name__ == '__main__':
