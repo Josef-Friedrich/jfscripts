@@ -2,6 +2,7 @@ import unittest
 import subprocess
 import shutil
 from urllib.request import urlretrieve
+import os
 
 
 def check_bin(*executables):
@@ -44,3 +45,9 @@ class TestCase(unittest.TestCase):
                              stdout=subprocess.PIPE)
         self.assertEqual(run.returncode, 0)
         self.assertTrue(usage in run.stdout)
+
+    def assertExists(self, path):
+        self.assertTrue(os.path.exists(path))
+
+    def assertExistsNot(self, path):
+        self.assertFalse(os.path.exists(path))
