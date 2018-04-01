@@ -121,13 +121,14 @@ class TestUnit(TestCase):
              '+repage', 'test.tif', 'test.png']
         )
 
-    @unittest.skip('works not with multiprocessing')
-    @patch('jfscripts.magick_imslp.per_file')
+    @patch('jfscripts.magick_imslp.do_multiprocessing_magick')
     @patch('jfscripts.magick_imslp.check_bin')
-    def test_multiple_input_files(self, check_bin, per_file):
+    def test_multiple_input_files(self, cb, mp):
         with patch('sys.argv',  ['cmd', 'one.tif', 'two.tif']):
             magick_imslp.main()
-            self.assertEqual(per_file.call_count, 2)
+            args = mp.call_args[0][0]
+            self.assertIn('one.tif', str(args[0]))
+            self.assertIn('two.tif', str(args[1]))
 
 
 class TestClassFilePath(TestCase):
