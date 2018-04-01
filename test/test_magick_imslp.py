@@ -161,7 +161,10 @@ class TestIntegration(TestCase):
     def test_command_line_interface(self):
         self.assertIsExecutable('magick_imslp')
 
-    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
+
+@unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
+class TestIntegrationWithDependencies(TestCase):
+
     def test_input_file_pdf_exception(self):
         run = subprocess.run(['magick-imslp.py', 'test1.pdf', 'test2.pdf'],
                              encoding='utf-8',
@@ -169,7 +172,6 @@ class TestIntegration(TestCase):
         self.assertEqual(run.returncode, 1)
         self.assertIn('Specify only one PDF file.', run.stderr)
 
-    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
@@ -178,7 +180,6 @@ class TestIntegration(TestCase):
         for test_file in result:
             self.assertExists(tmp + '_magick-00' + test_file, test_file)
 
-    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf_join(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
@@ -188,7 +189,6 @@ class TestIntegration(TestCase):
             self.assertExists(tmp + '_magick-00' + test_file, test_file)
         self.assertExists(tmp + '_joined.pdf')
 
-    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_with_real_pdf_cleanup(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
@@ -199,7 +199,6 @@ class TestIntegration(TestCase):
             self.assertExistsNot(tmp + '_magick-00' + test_file, test_file)
         self.assertExists(tmp + '_joined.pdf')
 
-    @unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
     def test_real_threshold_series(self):
         tmp = copy(tmp_png1)
         subprocess.run(['magick-imslp.py', '--threshold-series', tmp])
