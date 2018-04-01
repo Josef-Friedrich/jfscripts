@@ -8,6 +8,7 @@ from unittest.mock import patch, Mock
 import subprocess
 import tempfile
 import shutil
+import argparse
 
 
 def get_state(complete=False):
@@ -75,6 +76,21 @@ class TestUnit(TestCase):
         state = get_state(complete=True)
         magick_imslp.threshold_series(FilePath('test.jpg'), state)
         self.assertEqual(threshold.call_count, 9)
+
+    def test_check_threshold(self):
+        check = magick_imslp.check_threshold
+        self.assertEqual(check(1), '1%')
+        self.assertEqual(check('2'), '2%')
+        self.assertEqual(check('3%'), '3%')
+
+        with self.assertRaises(ValueError):
+            check(4.5)
+        with self.assertRaises(ValueError):
+            check('lol')
+        with self.assertRaises(argparse.ArgumentTypeError):
+            check(-1)
+        with self.assertRaises(argparse.ArgumentTypeError):
+            check(101)
 
     def test_pdf_to_images(self):
         state = get_state(complete=True)
@@ -208,6 +224,15 @@ class TestIntegrationWithDependencies(TestCase):
             suffix = '_threshold-{}.png'.format(threshold)
             path = tmp.replace('.png', suffix)
             self.assertExists(path, path)
+
+    def test_real_invalid_threshold(self):
+        run = subprocess.run(['magick-imslp.py', '--threshold', '1000',
+                              'test.pdf'], encoding='utf-8',
+                             stderr=subprocess.PIPE)
+
+        self.assertEqual(run.returncode, 2)
+        self.assertIn('1000 is an invalid int value. Should be 0-100',
+                      run.stderr)
 
 
 if __name__ == '__main__':

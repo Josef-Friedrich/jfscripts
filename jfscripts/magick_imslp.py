@@ -48,11 +48,12 @@ class FilePath(object):
 
 
 def check_threshold(value):
+    value = re.sub(r'%$', '', str(value))
     value = int(value)
     if value < 0 or value > 100:
         message = '{} is an invalid int value. Should be 0-100'.format(value)
         raise argparse.ArgumentTypeError(message)
-    return value
+    return '{}%'.format(value)
 
 
 def get_args():
@@ -117,6 +118,7 @@ def get_args():
         '-t',
         '--threshold',
         default='50%',
+        type=check_threshold,
         help='threshold, default 50 percent.',
     )
 
