@@ -47,6 +47,14 @@ class FilePath(object):
         os.remove(self.path)
 
 
+def check_threshold(value):
+    value = int(value)
+    if value < 0 or value > 100:
+        message = '{} is an invalid int value. Should be 0-100'.format(value)
+        raise argparse.ArgumentTypeError(message)
+    return value
+
+
 def get_args():
     parser = argparse.ArgumentParser(
         description='A wrapper script for imagemagick to process image \
