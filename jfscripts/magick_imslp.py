@@ -32,19 +32,18 @@ class FilePath(object):
     def __str__(self):
         return self.path
 
+    def _export(self, path):
+        return FilePath(path, self.absolute)
+
     def ext(self, extension):
-        return FilePath(re.sub(
-            '\.{}$'.format(self.extension),
-            '.{}'.format(extension),
-            self.path
-        ), self.absolute)
+        path = re.sub('\.{}$'.format(self.extension), '.{}'.format(extension),
+                      self.path)
+        return self._export(path)
 
     def append(self, string):
-        return FilePath(re.sub(
-            '\.{}$'.format(self.extension),
-            '{}.{}'.format(string, self.extension),
-            self.path
-        ), self.absolute)
+        path = re.sub('\.{}$'.format(self.extension),
+                      '{}.{}'.format(string, self.extension), self.path)
+        return self._export(path)
 
     def remove(self):
         os.remove(self.path)
