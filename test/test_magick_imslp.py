@@ -168,9 +168,16 @@ class TestClassFilePath(TestCase):
 
 class TestClassState(TestCase):
 
-    def test_class_without_tmp_dir(self):
-        state = get_state()
-        self.assertTrue(state.args)
+    def setUp(self):
+        args = Mock()
+        self.state = State(args)
+
+    def test_args(self):
+        self.assertTrue(self.state.args)
+
+    def test_uuid(self):
+        self.assertTrue(self.state.uuid)
+        self.assertEqual(len(self.state.uuid), 36)
 
 
 class TestIntegration(TestCase):

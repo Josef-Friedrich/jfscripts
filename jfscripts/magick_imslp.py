@@ -6,6 +6,8 @@ import os
 import re
 import subprocess
 from jfscripts._utils import check_bin
+import uuid
+
 
 dependencies = (
     ('convert', 'imagemagick'),
@@ -24,6 +26,7 @@ class FilePath(object):
             self.path = os.path.abspath(path)
         else:
             self.path = os.path.relpath(path)
+        self.basename = os.path.basename(path)
         self.extension = os.path.splitext(self.path)[1][1:]
 
     def __str__(self):
@@ -229,6 +232,7 @@ class State(object):
     def __init__(self, args):
         self.args = args
         self.identifier_string = '_magick'
+        self.uuid = str(uuid.uuid1())
 
     def pdf_env(self, pdf_file):
         pdf_file = str(pdf_file)
