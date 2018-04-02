@@ -205,6 +205,12 @@ def threshold_series(input_file, state):
         threshold(input_file, number, state)
 
 
+def get_channels(input_file):
+    output = subprocess.check_output(['identify', str(input_file)])
+    result = re.search(r' (\d+)c ', output.decode('utf-8'))
+    return int(result.group(1))
+
+
 def do_multiprocessing_magick(input_files, state):
     pool = multiprocessing.Pool()
     data = []

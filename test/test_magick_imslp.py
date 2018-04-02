@@ -62,6 +62,14 @@ class TestUnit(TestCase):
         result = magick_imslp.pdf_page_count('test.pdf')
         self.assertEqual(result, 3)
 
+    @mock.patch('jfscripts.magick_imslp.subprocess.check_output')
+    def test_get_channels(self, mock):
+        output = 'test.png PNG 2552x3656 2552x3656+0+0 8-bit sRGB 256c ' + \
+                 '5.409MB 0.000u 0:00.000'
+        mock.return_value = bytes(output.encode('utf-8'))
+        result = magick_imslp.get_channels(FilePath('test.pdf'))
+        self.assertEqual(result, 256)
+
     @patch('jfscripts.magick_imslp.subprocess.run')
     def test_threshold(self, run):
         state = get_state(complete=True)
