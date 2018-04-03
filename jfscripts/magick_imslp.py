@@ -7,6 +7,7 @@ import re
 import subprocess
 from jfscripts._utils import check_bin
 import uuid
+import shutil
 
 
 dependencies = (
@@ -164,7 +165,7 @@ def collect_images(state):
 
 
 def do_magick(arguments):
-    input_file = arguments[0]
+    source = arguments[0]
     state = arguments[1]
     cmd_args = ['convert']
 
@@ -178,15 +179,19 @@ def do_magick(arguments):
     if state.args.pdf:
         cmd_args += ['-compress', 'Group4', '-monochrome']
 
-    cmd_args.append(str(input_file))
+    cmd_args.append(str(source))
 
     if state.args.pdf:
         extension = 'pdf'
     else:
         extension = 'png'
 
-    target = input_file.ext(extension)
+    target = source.ext(extension)
     cmd_args.append(str(target))
+
+    if source == target:
+        backup = source.append('_backup')
+        shutil.copy2(str(source), str(backup))
 
     subprocess.run(cmd_args)
     return target

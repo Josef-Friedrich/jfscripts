@@ -254,10 +254,15 @@ class TestIntegrationWithDependencies(TestCase):
         run = subprocess.run(['magick-imslp.py', '--threshold', '1000',
                               'test.pdf'], encoding='utf-8',
                              stderr=subprocess.PIPE)
-
         self.assertEqual(run.returncode, 2)
         self.assertIn('1000 is an invalid int value. Should be 0-100',
                       run.stderr)
+
+    def test_real_backup(self):
+        tmp = copy(tmp_png1)
+        subprocess.run(['magick-imslp.py', tmp])
+        backup = FilePath(tmp).append('_backup')
+        self.assertExists(str(backup))
 
 
 if __name__ == '__main__':
