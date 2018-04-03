@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 from jfscripts import replace_pdfpage as replace
-from _helper import TestCase
+from _helper import TestCase, Capturing
 
 
 class TestUnits(unittest.TestCase):
@@ -62,9 +62,10 @@ class TestUnits(unittest.TestCase):
 
     @mock.patch('jfscripts.replace_pdfpage.check_bin')
     def test_main(self, check_executable):
-        with unittest.mock.patch('sys.argv',  ['cmd']):
-            with self.assertRaises(SystemExit):
-                replace.main()
+        with Capturing(channel='err'):
+            with unittest.mock.patch('sys.argv',  ['cmd']):
+                with self.assertRaises(SystemExit):
+                    replace.main()
 
 
 class TestIntegration(TestCase):

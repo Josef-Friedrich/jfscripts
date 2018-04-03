@@ -2,12 +2,36 @@ import unittest
 import subprocess
 from urllib.request import urlretrieve
 import os
+from io import StringIO
+import sys
 
 
 def download(url_path, local_path):
     url = 'https://github.com/Josef-Friedrich/test-files/raw/master/{}' \
         .format(url_path)
     urlretrieve(url, local_path)
+
+
+class Capturing(list):
+
+    def __init__(self, channel='out'):
+        self.channel = channel
+
+    def __enter__(self):
+        if self.channel == 'out':
+            self._pipe = sys.stdout
+            sys.stdout = self._stringio = StringIO()
+        elif self.channel == 'err':
+            self._pipe = sys.stderr
+            sys.stderr = self._stringio = StringIO()
+        return self
+
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        if self.channel == 'out':
+            sys.stdout = self._pipe
+        elif self.channel == 'err':
+            sys.stderr = self._pipe
 
 
 class TestCase(unittest.TestCase):
