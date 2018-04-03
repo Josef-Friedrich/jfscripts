@@ -32,6 +32,9 @@ class FilePath(object):
     def __str__(self):
         return self.path
 
+    def __eq__(self, other):
+        return self.path == other.path
+
     def _export(self, path):
         return FilePath(path, self.absolute)
 

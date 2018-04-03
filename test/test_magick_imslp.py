@@ -173,6 +173,16 @@ class TestClassFilePath(TestCase):
         file_path = FilePath('test.jpg')
         self.assertEqual(str(file_path.append('_lol')), 'test_lol.jpg')
 
+    def test_class_magic_method_eq_not_equal(self):
+        a = FilePath('test1.jpg')
+        b = FilePath('test2.jpg')
+        self.assertFalse(a == b)
+
+    def test_class_magic_method_eq_equal(self):
+        a = FilePath('test.jpg')
+        b = FilePath('test.jpg')
+        self.assertTrue(a == b)
+
 
 class TestClassState(TestCase):
 
