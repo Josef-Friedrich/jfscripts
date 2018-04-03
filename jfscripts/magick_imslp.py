@@ -27,8 +27,12 @@ class FilePath(object):
             self.path = os.path.abspath(path)
         else:
             self.path = os.path.relpath(path)
-        self.basename = os.path.basename(path)
+        # file.ext
+        self.filename = os.path.basename(path)
+        # ext
         self.extension = os.path.splitext(self.path)[1][1:]
+        # file
+        self.basename = self.filename[:-len(self.extension) - 1]
 
     def __str__(self):
         return self.path

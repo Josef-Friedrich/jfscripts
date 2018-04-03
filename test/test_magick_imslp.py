@@ -158,6 +158,20 @@ class TestUnit(TestCase):
 
 class TestClassFilePath(TestCase):
 
+    def test_attribute_filename(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.filename, 'test.jpg')
+
+    def test_attribute_extension(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.extension, 'jpg')
+
+    def test_attribute_basename(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.basename, 'test')
+        file_path = FilePath('test.jpeg')
+        self.assertEqual(file_path.basename, 'test')
+
     def test_class_argument(self):
         file_path = FilePath('test.jpg', absolute=True)
         self.assertEqual(str(file_path), os.path.abspath('test.jpg'))
