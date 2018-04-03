@@ -1,21 +1,7 @@
 import unittest
 import subprocess
-import shutil
 from urllib.request import urlretrieve
 import os
-
-
-def check_bin(*executables):
-    for executable in executables:
-        if isinstance(executable, tuple):
-            if not shutil.which(executable[0]):
-                return False
-
-        else:
-            if not shutil.which(executable):
-                return False
-
-    return True
 
 
 def download(url_path, local_path):

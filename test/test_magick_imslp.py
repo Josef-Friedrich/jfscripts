@@ -1,5 +1,6 @@
 import unittest
-from _helper import TestCase, check_bin, download
+from _helper import TestCase, download
+from jfscripts._utils import check_bin
 from jfscripts import magick_imslp
 from jfscripts.magick_imslp import FilePath, State
 import os
@@ -26,7 +27,7 @@ def copy(path):
     return shutil.copy(path, tmp)
 
 
-dependencies = check_bin(*magick_imslp.dependencies)
+dependencies = check_bin(*magick_imslp.dependencies, raise_error=False)
 
 if dependencies:
     tmp_pdf = os.path.join(tempfile.mkdtemp(), 'test.pdf')

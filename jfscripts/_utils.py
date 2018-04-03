@@ -1,7 +1,7 @@
 import shutil
 
 
-def check_bin(*executables):
+def check_bin(*executables, raise_error=True):
     errors = []
     for executable in executables:
         if isinstance(executable, tuple):
@@ -12,5 +12,10 @@ def check_bin(*executables):
                 errors.append(executable)
 
     if errors:
-        raise SystemError('Some commands are not installed: ' +
-                          ', '.join(errors))
+        if raise_error:
+            raise SystemError('Some commands are not installed: ' +
+                              ', '.join(errors))
+        else:
+            return False
+    else:
+        return True
