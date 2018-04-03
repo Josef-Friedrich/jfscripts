@@ -52,7 +52,8 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-c] [-e] [-j] [-p] [-r] [-S] [-t THRESHOLD]
+    usage: magick-imslp.py [-h] [-b] [-c] [-e] [-f] [-j] [-p] [-r] [-S]
+                           [-t THRESHOLD]
                            input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -68,6 +69,8 @@ magick-imslp.py
       -c, --cleanup         Delete temporary generated files.
       -e, --enlighten-border
                             Enlighten the border.
+      -f, --force           Overwrite the target file even if it exists and it
+                            seems to be already converted.
       -j, --join            Join single paged PDF files to one PDF file. This
                             option takes only effect with the option --pdf.
       -p, --pdf             Generate a PDF file using CCITT Group 4 compression.

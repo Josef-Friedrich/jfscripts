@@ -270,6 +270,13 @@ class TestIntegrationWithDependencies(TestCase):
         backup = FilePath(tmp).append('_backup')
         self.assertExists(str(backup))
 
+    def test_already_converted(self):
+        tmp = copy(tmp_png1)
+        subprocess.run(['magick-imslp.py', tmp])
+        out = subprocess.check_output(['magick-imslp.py', tmp])
+        self.assertIn('The target file seems to be already converted.',
+                      out.decode('utf-8'))
+
 
 if __name__ == '__main__':
     unittest.main()

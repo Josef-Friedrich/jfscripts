@@ -91,6 +91,14 @@ def get_args():
     )
 
     parser.add_argument(
+        '-f',
+        '--force',
+        action='store_true',
+        help='Overwrite the target file even if it exists and it seems to be '
+        'already converted.',
+    )
+
+    parser.add_argument(
         '-j',
         '--join',
         action='store_true',
@@ -189,9 +197,14 @@ def do_magick(arguments):
     target = source.ext(extension)
     cmd_args.append(str(target))
 
-    if source == target and state.args.backup:
-        backup = source.append('_backup')
-        shutil.copy2(str(source), str(backup))
+    if source == target:
+        if get_channels(target) == 2 and not state.args.force:
+            print('The target file seems to be already converted.')
+            return target
+
+        if state.args.backup:
+            backup = source.append('_backup')
+            shutil.copy2(str(source), str(backup))
 
     subprocess.run(cmd_args)
     return target
