@@ -73,7 +73,7 @@ def get_args():
         '-b',
         '--backup',
         action='store_true',
-        help='Backup original images (add .bak to filename).',
+        help='Backup original images (add _backup.ext to filename).',
     )
 
     parser.add_argument(
@@ -189,7 +189,7 @@ def do_magick(arguments):
     target = source.ext(extension)
     cmd_args.append(str(target))
 
-    if source == target:
+    if source == target and state.args.backup:
         backup = source.append('_backup')
         shutil.copy2(str(source), str(backup))
 

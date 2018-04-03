@@ -72,7 +72,7 @@ magick-imslp.py
     
     optional arguments:
       -h, --help            show this help message and exit
-      -b, --backup          Backup original images (add .bak to filename).
+      -b, --backup          Backup original images (add _backup.ext to filename).
       -c, --cleanup         Delete temporary generated files.
       -e, --enlighten-border
                             Enlighten the border.

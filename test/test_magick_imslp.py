@@ -258,9 +258,15 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertIn('1000 is an invalid int value. Should be 0-100',
                       run.stderr)
 
-    def test_real_backup(self):
+    def test_real_backup_no_backup(self):
         tmp = copy(tmp_png1)
         subprocess.run(['magick-imslp.py', tmp])
+        backup = FilePath(tmp).append('_backup')
+        self.assertExistsNot(str(backup))
+
+    def test_real_backup_do_backup(self):
+        tmp = copy(tmp_png1)
+        subprocess.run(['magick-imslp.py', '--backup', tmp])
         backup = FilePath(tmp).append('_backup')
         self.assertExists(str(backup))
 
