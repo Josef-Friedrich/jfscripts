@@ -135,7 +135,7 @@ class TestUnit(TestCase):
         magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
-             '50%', '-trim', '+repage', '-border', '100x100', '-bordercolor',
+             '50%', '-trim', '+repage', '-border', '5%', '-bordercolor',
              '#FFFFFF', '-compress', 'Group4', '-monochrome', 'test.tif',
              'test.pdf']
         )
@@ -286,6 +286,19 @@ class TestIntegrationWithDependencies(TestCase):
         out = subprocess.check_output(['magick-imslp.py', tmp])
         self.assertIn('The target file seems to be already converted.',
                       out.decode('utf-8'))
+
+    def test_option_border(self):
+        png = copy(tmp_png1)
+
+        info_before = magick_imslp.get_image_info(FilePath(png))
+        subprocess.run(['magick-imslp.py', '--border', png])
+        info_after = magick_imslp.get_image_info(FilePath(png))
+
+        self.assertEqual(info_before['width'], 300)
+        self.assertEqual(info_after['width'], 311)
+
+        self.assertEqual(info_after['height'], 442)
+        self.assertEqual(info_before['height'], 430)
 
 
 if __name__ == '__main__':

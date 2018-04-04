@@ -195,7 +195,7 @@ def do_magick(arguments):
     cmd_args += ['-trim', '+repage']
 
     if state.args.border:
-        cmd_args += ['-border', '100x100', '-bordercolor', '#FFFFFF']
+        cmd_args += ['-border', '5%', '-bordercolor', '#FFFFFF']
 
     if state.args.pdf:
         cmd_args += ['-compress', 'Group4', '-monochrome']
