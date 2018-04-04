@@ -45,11 +45,6 @@ class FilePath(object):
     def _export(self, path):
         return FilePath(path, self.absolute)
 
-    def ext(self, extension):
-        path = re.sub('\.{}$'.format(self.extension), '.{}'.format(extension),
-                      self.path)
-        return self._export(path)
-
     def new(self, extension=None, append='', del_substring=''):
         if not extension:
             extension = self.extension
@@ -57,11 +52,6 @@ class FilePath(object):
         if del_substring:
             new = new.replace(del_substring, '')
         return self._export(new)
-
-    def append(self, string):
-        path = re.sub('\.{}$'.format(self.extension),
-                      '{}.{}'.format(string, self.extension), self.path)
-        return self._export(path)
 
     def remove(self):
         os.remove(self.path)
@@ -221,7 +211,7 @@ def do_magick(arguments):
             return target
 
         if state.args.backup:
-            backup = source.append('_backup')
+            backup = source.new(append='_backup')
             shutil.copy2(str(source), str(backup))
 
     subprocess.run(cmd_args)
@@ -230,7 +220,7 @@ def do_magick(arguments):
 
 def threshold(input_file, threshold, state):
     appendix = '_threshold-{}'.format(threshold)
-    out = input_file.append(appendix).ext('png')
+    out = input_file.new(extension='png', append=appendix)
     subprocess.run(['convert',
                     '-threshold',
                     '{}%'.format(threshold),

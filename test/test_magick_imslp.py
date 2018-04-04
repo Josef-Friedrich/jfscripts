@@ -185,19 +185,12 @@ class TestClassFilePath(TestCase):
         file_path = FilePath('test.jpg')
         self.assertEqual(str(file_path), 'test.jpg')
 
-    def test_method_ext(self):
-        file_path = FilePath('test.jpg')
-        self.assertEqual(str(file_path.ext('png')), 'test.png')
-
-    def test_method_append(self):
-        file_path = FilePath('test.jpg')
-        self.assertEqual(str(file_path.append('_lol')), 'test_lol.jpg')
-
     def test_method_new(self):
         path = FilePath('test.jpg')
         self.assertEqual(str(path.new()), 'test.jpg')
         self.assertEqual(str(path.new(extension='png')), 'test.png')
         self.assertEqual(str(path.new(append='123')), 'test123.jpg')
+        self.assertEqual(str(path.new(del_substring='est')), 't.jpg')
 
     def test_class_magic_method_eq_not_equal(self):
         a = FilePath('test1.jpg')
@@ -276,13 +269,13 @@ class TestIntegrationWithDependencies(TestCase):
     def test_real_backup_no_backup(self):
         tmp = copy(tmp_png1)
         subprocess.run(['magick-imslp.py', tmp])
-        backup = FilePath(tmp).append('_backup')
+        backup = FilePath(tmp).new(append='_backup')
         self.assertExistsNot(str(backup))
 
     def test_real_backup_do_backup(self):
         tmp = copy(tmp_png1)
         subprocess.run(['magick-imslp.py', '--backup', tmp])
-        backup = FilePath(tmp).append('_backup')
+        backup = FilePath(tmp).new(append='_backup')
         self.assertExists(str(backup))
 
     def test_already_converted(self):
