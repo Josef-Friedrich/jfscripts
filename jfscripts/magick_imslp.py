@@ -50,10 +50,13 @@ class FilePath(object):
                       self.path)
         return self._export(path)
 
-    def new(self, extension=None, append=''):
+    def new(self, extension=None, append='', del_substring=''):
         if not extension:
             extension = self.extension
-        return self._export('{}{}.{}'.format(self.base, append, extension))
+        new = '{}{}.{}'.format(self.base, append, extension)
+        if del_substring:
+            new = new.replace(del_substring, '')
+        return self._export(new)
 
     def append(self, string):
         path = re.sub('\.{}$'.format(self.extension),
@@ -85,13 +88,6 @@ def get_args():
         '--backup',
         action='store_true',
         help='Backup original images (add _backup.ext to filename).',
-    )
-
-    parser.add_argument(
-        '-c',
-        '--cleanup',
-        action='store_true',
-        help='Delete temporary generated files.',
     )
 
     parser.add_argument(
@@ -169,18 +165,24 @@ def pdf_to_images(pdf_file, state):
         'pdfimages',
         '-tiff',
         str(pdf_file),
-        state.job_identifier,
+        state.tmp_identifier,
     ], cwd=state.pdf_dir)
 
 
 def collect_images(state):
     out = []
     for input_file in os.listdir(state.pdf_dir):
-        if input_file.startswith(state.job_identifier) and \
+        if input_file.startswith(state.tmp_identifier) and \
            os.path.getsize(os.path.join(state.pdf_dir, input_file)) > 200:
             out.append(os.path.join(state.pdf_dir, input_file))
     out.sort()
     return out
+
+
+def cleanup(state):
+    for work_file in os.listdir(state.pdf_dir):
+        if work_file.startswith(state.tmp_identifier):
+            os.remove(os.path.join(state.pdf_dir, work_file))
 
 
 def do_magick(arguments):
@@ -205,7 +207,12 @@ def do_magick(arguments):
     else:
         extension = 'png'
 
-    target = source.ext(extension)
+    if hasattr(state, 'tmp_identifier') and not state.args.join:
+        target = source.new(extension=extension,
+                            del_substring='_' + state.uuid)
+    else:
+        target = source.new(extension=extension)
+
     cmd_args.append(str(target))
 
     if source == target:
@@ -256,9 +263,7 @@ def join_to_pdf(images, state):
 
     image_paths = map(lambda image: str(image), images)
     cmd += image_paths
-    basename = state.job_identifier.replace(state.identifier_string, '') + \
-        '_joined.pdf'
-    joined = os.path.join(state.pdf_dir, basename)
+    joined = os.path.join(state.pdf_dir, state.pdf_basename + '_joined.pdf')
     cmd += ['cat', 'output', joined]
 
     subprocess.run(cmd)
@@ -270,12 +275,12 @@ class State(object):
         self.args = args
         self.identifier_string = '_magick'
         self.uuid = str(uuid.uuid1())
+        self.input_is_pdf = False
 
-    def pdf_env(self, pdf_file):
-        pdf_file = str(pdf_file)
-        self.pdf_dir = os.path.dirname(pdf_file)
-        self.job_identifier = os.path.basename(pdf_file) + \
-            self.identifier_string
+    def pdf_env(self, pdf):
+        self.pdf_dir = os.path.dirname(str(pdf))
+        self.pdf_basename = pdf.basename
+        self.tmp_identifier = '{}_{}'.format(pdf.basename, self.uuid)
         self.cwd = os.getcwd()
 
 
@@ -298,6 +303,7 @@ def main():
         threshold_series(first_input_file, state)
 
     if first_input_file.extension == 'pdf':
+        state.input_is_pdf = True
         if len(state.args.input_files) > 1:
             raise ValueError('Specify only one PDF file.')
         pdf_to_images(first_input_file, state)
@@ -311,14 +317,8 @@ def main():
     if state.args.join and state.args.pdf:
         join_to_pdf(output_files, state)
 
-    if state.args.cleanup:
-
-        for input_file in input_files:
-            input_file.remove()
-
-        if state.args.join:
-            for output_file in output_files:
-                output_file.remove()
+    if hasattr(state, 'pdf_dir'):
+        cleanup(state)
 
 
 if __name__ == '__main__':

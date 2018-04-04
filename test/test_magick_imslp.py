@@ -17,7 +17,7 @@ def get_state(complete=False):
     args.threshold = '50%'
     state = State(args)
     if complete:
-        state.pdf_env('test.pdf')
+        state.pdf_env(FilePath('test.pdf'))
     return state
 
 
@@ -110,7 +110,8 @@ class TestUnit(TestCase):
             self.assertEqual(args[1], '-tiff')
             self.assertEqual(args[2], 'test.pdf')
             self.assertIn('test.pdf', args[2])
-            self.assertEqual(args[3], 'test.pdf_magick')
+            self.assertEqual(len(args[3]), 41)
+            self.assertTrue(args[3].startswith('test_'))
 
     @unittest.skip('skipped')
     def test_collect_images(self):
@@ -172,7 +173,7 @@ class TestClassFilePath(TestCase):
         file_path = FilePath('test.jpeg')
         self.assertEqual(file_path.basename, 'test')
 
-    def test_attribute_basename(self):
+    def test_attribute_base(self):
         file_path = FilePath('test.jpg', absolute=True)
         self.assertTrue(file_path.base.endswith('/test'))
 
@@ -242,29 +243,18 @@ class TestIntegrationWithDependencies(TestCase):
     def test_with_real_pdf(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
+        path = FilePath(tmp)
         subprocess.run(['magick-imslp.py', tmp])
-        result = ('0.tif', '0.png', '1.tif', '1.png', '2.tif', '2.png')
+        result = ('0.png', '1.png', '2.png')
         for test_file in result:
-            self.assertExists(tmp + '_magick-00' + test_file, test_file)
+            self.assertExists(path.base + '-00' + test_file, test_file)
 
     def test_with_real_pdf_join(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
+        path = FilePath(tmp)
         subprocess.run(['magick-imslp.py', '--pdf', '--join', tmp])
-        result = ('0.tif', '0.pdf', '1.tif', '1.pdf', '2.tif', '2.pdf')
-        for test_file in result:
-            self.assertExists(tmp + '_magick-00' + test_file, test_file)
-        self.assertExists(tmp + '_joined.pdf')
-
-    def test_with_real_pdf_cleanup(self):
-        tmp = copy(tmp_pdf)
-        self.assertExists(tmp)
-        subprocess.run(['magick-imslp.py', '--pdf', '--join', '--cleanup',
-                        tmp])
-        result = ('0.tif', '0.pdf', '1.tif', '1.pdf', '2.tif', '2.pdf')
-        for test_file in result:
-            self.assertExistsNot(tmp + '_magick-00' + test_file, test_file)
-        self.assertExists(tmp + '_joined.pdf')
+        self.assertExists(path.base + '_joined.pdf')
 
     def test_real_threshold_series(self):
         tmp = copy(tmp_png1)
