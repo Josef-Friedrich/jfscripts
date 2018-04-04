@@ -172,6 +172,10 @@ class TestClassFilePath(TestCase):
         file_path = FilePath('test.jpeg')
         self.assertEqual(file_path.basename, 'test')
 
+    def test_attribute_basename(self):
+        file_path = FilePath('test.jpg', absolute=True)
+        self.assertTrue(file_path.base.endswith('/test'))
+
     def test_class_argument(self):
         file_path = FilePath('test.jpg', absolute=True)
         self.assertEqual(str(file_path), os.path.abspath('test.jpg'))
@@ -187,6 +191,12 @@ class TestClassFilePath(TestCase):
     def test_method_append(self):
         file_path = FilePath('test.jpg')
         self.assertEqual(str(file_path.append('_lol')), 'test_lol.jpg')
+
+    def test_method_new(self):
+        path = FilePath('test.jpg')
+        self.assertEqual(str(path.new()), 'test.jpg')
+        self.assertEqual(str(path.new(extension='png')), 'test.png')
+        self.assertEqual(str(path.new(append='123')), 'test123.jpg')
 
     def test_class_magic_method_eq_not_equal(self):
         a = FilePath('test1.jpg')

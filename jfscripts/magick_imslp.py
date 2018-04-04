@@ -33,6 +33,8 @@ class FilePath(object):
         self.extension = os.path.splitext(self.path)[1][1:]
         # file
         self.basename = self.filename[:-len(self.extension) - 1]
+        # /home/file
+        self.base = self.path[:-len(self.extension) - 1]
 
     def __str__(self):
         return self.path
@@ -47,6 +49,11 @@ class FilePath(object):
         path = re.sub('\.{}$'.format(self.extension), '.{}'.format(extension),
                       self.path)
         return self._export(path)
+
+    def new(self, extension=None, append=''):
+        if not extension:
+            extension = self.extension
+        return self._export('{}{}.{}'.format(self.base, append, extension))
 
     def append(self, string):
         path = re.sub('\.{}$'.format(self.extension),
