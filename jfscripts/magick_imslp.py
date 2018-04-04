@@ -216,7 +216,8 @@ def do_magick(arguments):
     cmd_args.append(str(target))
 
     if source == target:
-        if get_channels(target) == 2 and not state.args.force:
+        info_target = get_image_info(target)
+        if info_target['channels'] == 2 and not state.args.force:
             print('The target file seems to be already converted.')
             return target
 
@@ -242,12 +243,6 @@ def threshold(input_file, threshold, state):
 def threshold_series(input_file, state):
     for number in range(40, 85, 5):
         threshold(input_file, number, state)
-
-
-def get_channels(input_file):
-    output = subprocess.check_output(['identify', str(input_file)])
-    result = re.search(r' (\d+)c ', output.decode('utf-8'))
-    return int(result.group(1))
 
 
 def get_image_info(input_file):

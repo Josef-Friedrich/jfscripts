@@ -64,17 +64,9 @@ class TestUnit(TestCase):
         self.assertEqual(result, 3)
 
     @mock.patch('jfscripts.magick_imslp.subprocess.check_output')
-    def test_get_channels(self, mock):
-        output = 'test.png PNG 2552x3656 2552x3656+0+0 8-bit sRGB 256c ' + \
-                 '5.409MB 0.000u 0:00.000'
-        mock.return_value = bytes(output.encode('utf-8'))
-        result = magick_imslp.get_channels(FilePath('test.pdf'))
-        self.assertEqual(result, 256)
-
-    @mock.patch('jfscripts.magick_imslp.subprocess.check_output')
     def test_get_image_info(self, mock):
         output = 'test.png PNG 2552x3656 2552x3656+0+0 8-bit sRGB 256c ' + \
-                 '5.409MB 0.000u 0:00.000'
+                 '5.409MB 0.000u 0:00.Z000'
         mock.return_value = bytes(output.encode('utf-8'))
         result = magick_imslp.get_image_info(FilePath('test.pdf'))
         self.assertEqual(result, {'width': 2552, 'height': 3656,
