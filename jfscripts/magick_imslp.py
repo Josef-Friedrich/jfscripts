@@ -182,6 +182,25 @@ def cleanup(state):
             os.remove(os.path.join(state.pdf_dir, work_file))
 
 
+def enlighten_border(width, height):
+    border = int(round(((width + height) / 2) * 0.05))
+
+    # top
+    # right
+    # bottom
+    # left
+    r = ('{}x{}'.format(width - border, border),
+         '{}x{}+{}'.format(border, height - border, width - border),
+         '{}x{}+{}+{}'.format(width - border, border, border, height - border),
+         '{}x{}+{}+{}'.format(border, height - border, 0, border))
+
+    out = []
+    for region in r:
+        out += ['-region', region, '-level', '0%,30%']
+
+    return out
+
+
 def do_magick(arguments):
     source = arguments[0]
     state = arguments[1]

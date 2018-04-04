@@ -72,6 +72,14 @@ class TestUnit(TestCase):
         self.assertEqual(result, {'width': 2552, 'height': 3656,
                                   'channels': 256})
 
+    def test_enlighten_border(self):
+        result = magick_imslp.enlighten_border(1000, 1000)
+        self.assertEqual(result, [
+            '-region', '950x50', '-level', '0%,30%',
+            '-region', '50x950+950', '-level', '0%,30%',
+            '-region', '950x50+50+950', '-level', '0%,30%',
+            '-region', '50x950+0+50', '-level', '0%,30%'])
+
     @patch('jfscripts.magick_imslp.subprocess.run')
     def test_threshold(self, run):
         state = get_state(complete=True)
