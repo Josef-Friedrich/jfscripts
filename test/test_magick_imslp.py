@@ -140,6 +140,7 @@ class TestUnit(TestCase):
     @patch('jfscripts.magick_imslp.subprocess.run')
     def test_do_magick(self, subprocess_run):
         state = get_state()
+        state.args.enlighten_border = False
         magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
@@ -307,6 +308,10 @@ class TestIntegrationWithDependencies(TestCase):
 
         self.assertEqual(info_after['height'], 442)
         self.assertEqual(info_before['height'], 430)
+
+    def test_option_enlighten_border(self):
+        png = copy(tmp_png1)
+        subprocess.run(['magick-imslp.py', '--enlighten-border', png])
 
 
 if __name__ == '__main__':

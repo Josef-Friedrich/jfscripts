@@ -206,6 +206,11 @@ def do_magick(arguments):
     state = arguments[1]
     cmd_args = ['convert']
 
+    if state.args.enlighten_border:
+        info_source = get_image_info(source)
+        cmd_args += enlighten_border(info_source['width'],
+                                     info_source['height'])
+
     if state.args.resize:
         cmd_args += ['-resize', '200%']
 
