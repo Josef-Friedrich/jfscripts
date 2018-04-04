@@ -52,7 +52,8 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-e] [-f] [-j] [-p] [-r] [-S] [-t THRESHOLD]
+    usage: magick-imslp.py [-h] [-b] [-B] [-e] [-f] [-j] [-p] [-r] [-S]
+                           [-t THRESHOLD]
                            input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -65,6 +66,7 @@ magick-imslp.py
     optional arguments:
       -h, --help            show this help message and exit
       -b, --backup          Backup original images (add _backup.ext to filename).
+      -B, --border          Frame the images with a white border.
       -e, --enlighten-border
                             Enlighten the border.
       -f, --force           Overwrite the target file even if it exists and it

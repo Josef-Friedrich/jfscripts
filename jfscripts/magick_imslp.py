@@ -81,6 +81,13 @@ def get_args():
     )
 
     parser.add_argument(
+        '-B',
+        '--border',
+        action='store_true',
+        help='Frame the images with a white border.',
+    )
+
+    parser.add_argument(
         '-e',
         '--enlighten-border',
         action='store_true',
@@ -186,6 +193,9 @@ def do_magick(arguments):
     cmd_args += ['-deskew', '40%']
     cmd_args += ['-threshold', state.args.threshold]
     cmd_args += ['-trim', '+repage']
+
+    if state.args.border:
+        cmd_args += ['-border', '100x100', '-bordercolor', '#FFFFFF']
 
     if state.args.pdf:
         cmd_args += ['-compress', 'Group4', '-monochrome']

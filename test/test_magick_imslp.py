@@ -134,13 +134,14 @@ class TestUnit(TestCase):
         magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
-             '50%', '-trim', '+repage', '-compress', 'Group4', '-monochrome',
-             'test.tif',
+             '50%', '-trim', '+repage', '-border', '100x100', '-bordercolor',
+             '#FFFFFF', '-compress', 'Group4', '-monochrome', 'test.tif',
              'test.pdf']
         )
 
         state.args.pdf = False
         state.args.resize = False
+        state.args.border = False
         magick_imslp.do_magick([FilePath('test.tif'), state])
         subprocess_run.assert_called_with(
             ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
