@@ -250,6 +250,16 @@ def get_channels(input_file):
     return int(result.group(1))
 
 
+def get_image_info(input_file):
+    output = subprocess.check_output(['identify', str(input_file)])
+    result = re.search(r' (\d+)x(\d+) .* (\d+)c ', output.decode('utf-8'))
+    return {
+        'width': int(result.group(1)),
+        'height': int(result.group(2)),
+        'channels': int(result.group(3)),
+    }
+
+
 def do_multiprocessing_magick(input_files, state):
     pool = multiprocessing.Pool()
     data = []
