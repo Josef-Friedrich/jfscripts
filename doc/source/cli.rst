@@ -52,7 +52,7 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-B] [-c] [-e] [-f] [-j] [-p] [-r] [-S]
+    usage: magick-imslp.py [-h] [-b] [-B] [-c] [-e] [-f] [-j] [-n] [-p] [-r] [-S]
                            [-t THRESHOLD] [-v]
                            input_files [input_files ...]
     
@@ -74,6 +74,8 @@ magick-imslp.py
                             seems to be already converted.
       -j, --join            Join single paged PDF files to one PDF file. This
                             option takes only effect with the option --pdf.
+      -n, --no-multiprocessing
+                            Disable multiprocessing.
       -p, --pdf             Generate a PDF file using CCITT Group 4 compression.
       -r, --resize          Resize 200 percent.
       -S, --threshold-series

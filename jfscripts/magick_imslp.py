@@ -118,6 +118,13 @@ def get_args():
     )
 
     parser.add_argument(
+        '-n',
+        '--no-multiprocessing',
+        action='store_true',
+        help='Disable multiprocessing.',
+    )
+
+    parser.add_argument(
         '-p',
         '--pdf',
         action='store_true',
@@ -351,7 +358,14 @@ def main():
         input_files = state.args.input_files
 
     input_files = convert_file_paths(input_files)
-    output_files = do_multiprocessing_magick(input_files, state)
+
+    if state.args.no_multiprocessing:
+        output_files = []
+        for input_file in input_files:
+            pack = (input_file, state)
+            output_files.append(do_magick(pack))
+    else:
+        output_files = do_multiprocessing_magick(input_files, state)
 
     if state.args.join and state.args.pdf:
         join_to_pdf(output_files, state)
