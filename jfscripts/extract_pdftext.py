@@ -11,6 +11,10 @@ import textwrap
 
 tmp_dir = tempfile.mkdtemp()
 output_file = open('export.txt', 'w')
+dependencies = (
+    ('pdftotext', 'poppler'),
+    ('pdfinfo', 'poppler'),
+)
 
 
 def output(line):
@@ -59,7 +63,7 @@ def main():
     parser.add_argument("file", help="A PDF file containing text")
     args = parser.parse_args()
 
-    check_bin('pdftotext', 'pdfinfo')
+    check_bin(*dependencies)
 
     pdf_file = os.path.abspath(args.file)
 
