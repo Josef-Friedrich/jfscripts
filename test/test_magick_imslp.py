@@ -2,6 +2,7 @@ from _helper import TestCase, download, check_internet_connectifity
 from jfscripts import magick_imslp
 from jfscripts._utils import check_bin
 from jfscripts.magick_imslp import FilePath, State, Timer
+from subprocess import check_output as run
 from unittest import mock
 from unittest.mock import patch, Mock
 import argparse
@@ -252,17 +253,16 @@ class TestIntegration(TestCase):
 class TestIntegrationWithDependencies(TestCase):
 
     def test_input_file_pdf_exception(self):
-        run = subprocess.run(['magick-imslp.py', 'test1.pdf', 'test2.pdf'],
-                             encoding='utf-8',
-                             stderr=subprocess.PIPE)
-        self.assertEqual(run.returncode, 1)
-        self.assertIn('Specify only one PDF file.', run.stderr)
+        out = subprocess.run(['magick-imslp.py', 'test1.pdf', 'test2.pdf'],
+                             encoding='utf-8', stderr=subprocess.PIPE)
+        self.assertEqual(out.returncode, 1)
+        self.assertIn('Specify only one PDF file.', out.stderr)
 
     def test_with_real_pdf(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
         path = FilePath(tmp)
-        subprocess.run(['magick-imslp.py', tmp])
+        run(['magick-imslp.py', tmp])
         result = ('0.png', '1.png', '2.png')
         for test_file in result:
             self.assertExists(path.base + '-00' + test_file, test_file)
@@ -271,7 +271,7 @@ class TestIntegrationWithDependencies(TestCase):
         pdf = copy(tmp_pdf)
         self.assertExists(pdf)
         path = FilePath(pdf)
-        subprocess.run(['magick-imslp.py', '--no-multiprocessing', pdf])
+        run(['magick-imslp.py', '--no-multiprocessing', pdf])
         result = ('0.png', '1.png', '2.png')
         for test_file in result:
             self.assertExists(path.base + '-00' + test_file, test_file)
@@ -280,19 +280,19 @@ class TestIntegrationWithDependencies(TestCase):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
         path = FilePath(tmp)
-        subprocess.run(['magick-imslp.py', '--pdf', '--join', tmp])
+        run(['magick-imslp.py', '--pdf', '--join', tmp])
         self.assertExists(path.base + '_joined.pdf')
 
     def test_option_join_without_pdf(self):
         pdf = copy(tmp_pdf)
         self.assertExists(pdf)
         path = FilePath(pdf)
-        subprocess.run(['magick-imslp.py', '--join', pdf])
+        run(['magick-imslp.py', '--join', pdf])
         self.assertExists(path.base + '_joined.pdf')
 
     def test_real_threshold_series(self):
         tmp = copy(tmp_png1)
-        subprocess.run(['magick-imslp.py', '--threshold-series', tmp])
+        run(['magick-imslp.py', '--threshold-series', tmp])
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80)
         for threshold in result:
             suffix = '_threshold-{}.png'.format(threshold)
@@ -300,29 +300,29 @@ class TestIntegrationWithDependencies(TestCase):
             self.assertExists(path, path)
 
     def test_real_invalid_threshold(self):
-        run = subprocess.run(['magick-imslp.py', '--threshold', '1000',
+        out = subprocess.run(['magick-imslp.py', '--threshold', '1000',
                               'test.pdf'], encoding='utf-8',
                              stderr=subprocess.PIPE)
-        self.assertEqual(run.returncode, 2)
+        self.assertEqual(out.returncode, 2)
         self.assertIn('1000 is an invalid int value. Should be 0-100',
-                      run.stderr)
+                      out.stderr)
 
     def test_real_backup_no_backup(self):
         tmp = copy(tmp_png1)
-        subprocess.run(['magick-imslp.py', tmp])
+        run(['magick-imslp.py', tmp])
         backup = FilePath(tmp).new(append='_backup')
         self.assertExistsNot(str(backup))
 
     def test_real_backup_do_backup(self):
         tmp = copy(tmp_png1)
-        subprocess.run(['magick-imslp.py', '--backup', tmp])
+        run(['magick-imslp.py', '--backup', tmp])
         backup = FilePath(tmp).new(append='_backup')
         self.assertExists(str(backup))
 
     def test_already_converted(self):
         tmp = copy(tmp_png1)
-        subprocess.run(['magick-imslp.py', tmp])
-        out = subprocess.check_output(['magick-imslp.py', tmp])
+        run(['magick-imslp.py', tmp])
+        out = run(['magick-imslp.py', tmp])
         self.assertIn('The target file seems to be already converted.',
                       out.decode('utf-8'))
 
@@ -330,7 +330,7 @@ class TestIntegrationWithDependencies(TestCase):
         png = copy(tmp_png1)
 
         info_before = magick_imslp.get_image_info(FilePath(png))
-        subprocess.run(['magick-imslp.py', '--border', png])
+        run(['magick-imslp.py', '--border', png])
         info_after = magick_imslp.get_image_info(FilePath(png))
 
         self.assertEqual(info_before['width'], 300)
@@ -341,12 +341,11 @@ class TestIntegrationWithDependencies(TestCase):
 
     def test_option_enlighten_border(self):
         png = copy(tmp_png1)
-        subprocess.run(['magick-imslp.py', '--enlighten-border', png])
+        run(['magick-imslp.py', '--enlighten-border', png])
 
     def test_option_verbose(self):
         png = copy(tmp_png1)
-        out = subprocess.check_output(['magick-imslp.py', '--verbose', png])
-        out = out.decode('utf-8')
+        out = run(['magick-imslp.py', '--verbose', png]).decode('utf-8')
         self.assertIn('convert', out)
         self.assertIn('.png', out)
         self.assertIn('-deskew', out)
