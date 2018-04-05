@@ -7,6 +7,7 @@ import re
 from jfscripts._utils import check_bin, Run
 import uuid
 import shutil
+import time
 
 run = Run()
 
@@ -314,6 +315,16 @@ def join_to_pdf(images, state):
     run.run(cmd)
 
 
+class Timer(object):
+
+    def __init__(self):
+        self.begin = self.end = time.time()
+
+    def stop(self):
+        self.end = time.time()
+        return '{:.1f}s'.format(self.end - self.begin)
+
+
 class State(object):
 
     def __init__(self, args):
@@ -337,6 +348,7 @@ def convert_file_paths(files):
 
 
 def main():
+    timer = Timer()
     args = get_args()
     run.setup(verbose=args.verbose, colorize=args.colorize)
     state = State(args)
@@ -372,6 +384,8 @@ def main():
 
     if hasattr(state, 'pdf_dir'):
         cleanup(state)
+
+    print('Execution time: {}'.format(timer.stop()))
 
 
 if __name__ == '__main__':

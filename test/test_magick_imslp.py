@@ -2,7 +2,7 @@ import unittest
 from _helper import TestCase, download
 from jfscripts._utils import check_bin
 from jfscripts import magick_imslp
-from jfscripts.magick_imslp import FilePath, State
+from jfscripts.magick_imslp import FilePath, State, Timer
 import os
 from unittest import mock
 from unittest.mock import patch, Mock
@@ -212,6 +212,18 @@ class TestClassFilePath(TestCase):
         a = FilePath('test.jpg')
         b = FilePath('test.jpg')
         self.assertTrue(a == b)
+
+
+class TestClassTimer(TestCase):
+
+    def test_start(self):
+        timer = Timer()
+        self.assertTrue(timer.begin > 0)
+
+    def test_stop(self):
+        timer = Timer()
+        result = timer.stop()
+        self.assertIn('s', result)
 
 
 class TestClassState(TestCase):
