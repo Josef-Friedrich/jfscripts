@@ -350,6 +350,8 @@ def convert_file_paths(files):
 def main():
     timer = Timer()
     args = get_args()
+    if args.join and not args.pdf:
+        args.pdf = True
     run.setup(verbose=args.verbose, colorize=args.colorize)
     state = State(args)
 
@@ -379,7 +381,7 @@ def main():
     else:
         output_files = do_multiprocessing_magick(input_files, state)
 
-    if state.args.join and state.args.pdf:
+    if state.args.join:
         join_to_pdf(output_files, state)
 
     if hasattr(state, 'pdf_dir'):

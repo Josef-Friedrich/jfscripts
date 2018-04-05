@@ -281,6 +281,13 @@ class TestIntegrationWithDependencies(TestCase):
         subprocess.run(['magick-imslp.py', '--pdf', '--join', tmp])
         self.assertExists(path.base + '_joined.pdf')
 
+    def test_option_join_without_pdf(self):
+        pdf = copy(tmp_pdf)
+        self.assertExists(pdf)
+        path = FilePath(pdf)
+        subprocess.run(['magick-imslp.py', '--join', pdf])
+        self.assertExists(path.base + '_joined.pdf')
+
     def test_real_threshold_series(self):
         tmp = copy(tmp_png1)
         subprocess.run(['magick-imslp.py', '--threshold-series', tmp])
