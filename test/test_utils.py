@@ -6,19 +6,24 @@ from _helper import Capturing
 
 class TestClassRun(unittest.TestCase):
 
-    def test_simple(self):
-        run = _utils.Run()
-        ls = run.run(['ls', '-l'], stdout=run.PIPE)
-        self.assertEqual(ls.args, ['ls', '-l'])
-        self.assertEqual(ls.returncode, 0)
-        self.assertIn('jfscripts', ls.stdout.decode('utf-8'))
-
-    def test_verbose(self):
+    def test_argument_verbose(self):
         run = _utils.Run(verbose=True)
         self.assertEqual(run.verbose, True)
         with Capturing() as output:
             run.run(['ls', '-l'], stdout=run.PIPE)
         self.assertEqual(output, ['ls -l'])
+
+    def test_method_check_output(self):
+        run = _utils.Run()
+        out = run.check_output(['ls', '-l'])
+        self.assertIn('jfscripts', out.decode('utf-8'))
+
+    def test_method_run(self):
+        run = _utils.Run()
+        ls = run.run(['ls', '-l'], stdout=run.PIPE)
+        self.assertEqual(ls.args, ['ls', '-l'])
+        self.assertEqual(ls.returncode, 0)
+        self.assertIn('jfscripts', ls.stdout.decode('utf-8'))
 
 
 class TestCheckBin(unittest.TestCase):
