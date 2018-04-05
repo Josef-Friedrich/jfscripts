@@ -38,7 +38,7 @@ if dependencies:
 
 class TestUnit(TestCase):
 
-    @mock.patch('jfscripts.magick_imslp.subprocess.check_output')
+    @mock.patch('jfscripts.magick_imslp.run.check_output')
     def test_get_pdf_info(self, mock):
 
         return_values = [
@@ -63,7 +63,7 @@ class TestUnit(TestCase):
         result = magick_imslp.pdf_page_count('test.pdf')
         self.assertEqual(result, 3)
 
-    @mock.patch('jfscripts.magick_imslp.subprocess.check_output')
+    @mock.patch('jfscripts.magick_imslp.run.check_output')
     def test_get_image_info(self, mock):
         output = 'test.png PNG 2552x3656 2552x3656+0+0 8-bit sRGB 256c ' + \
                  '5.409MB 0.000u 0:00.Z000'

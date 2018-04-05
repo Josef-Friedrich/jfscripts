@@ -20,6 +20,11 @@ class Run(object):
             self._print_cmd(args[0])
         return subprocess.run(*args, **kwargs)
 
+    def check_output(self, *args, **kwargs):
+        if self.verbose:
+            self._print_cmd(args[0])
+        return subprocess.check_output(*args, **kwargs)
+
 
 def check_bin(*executables, raise_error=True):
     errors = []

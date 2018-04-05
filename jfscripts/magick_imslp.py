@@ -4,7 +4,6 @@ import multiprocessing
 import argparse
 import os
 import re
-import subprocess
 from jfscripts._utils import check_bin, Run
 import uuid
 import shutil
@@ -158,7 +157,7 @@ def get_args():
 
 
 def pdf_page_count(pdf_file):
-    output = subprocess.check_output(['pdfinfo', pdf_file])
+    output = run.check_output(['pdfinfo', pdf_file])
     output = output.decode('utf-8')
     page_count = re.search(r'Pages:\s*([0-9]*)', output)
     return int(page_count.group(1))
@@ -273,7 +272,7 @@ def threshold_series(input_file, state):
 
 
 def get_image_info(input_file):
-    output = subprocess.check_output(['identify', str(input_file)])
+    output = run.check_output(['identify', str(input_file)])
     result = re.search(r' (\d+)x(\d+) .* (\d+)c ', output.decode('utf-8'))
     return {
         'width': int(result.group(1)),
