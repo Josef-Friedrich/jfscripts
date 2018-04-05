@@ -17,6 +17,8 @@ class TestIntegration(TestCase):
     def test_command_line_interface(self):
         self.assertIsExecutable('extract_pdftext')
 
+    @unittest.skipIf(not dependencies or not internet,
+                     'Some dependencies are not installed')
     def test_extraction(self):
         subprocess.check_output(['extract-pdftext.py', tmp_pdf])
 

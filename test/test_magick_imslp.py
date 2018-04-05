@@ -249,7 +249,7 @@ class TestIntegration(TestCase):
 
 
 @unittest.skipIf(not dependencies or not internet,
-                 'Some Dependencies are not installed')
+                 'Some dependencies are not installed')
 class TestIntegrationWithDependencies(TestCase):
 
     def test_input_file_pdf_exception(self):
