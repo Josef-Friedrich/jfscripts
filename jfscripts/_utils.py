@@ -1,4 +1,19 @@
 import shutil
+import subprocess
+
+
+class Run(object):
+
+    def setup(self, verbose=False):
+        self.verbose = verbose
+
+    def _print_cmd(self, cmd):
+        print(' '.join(cmd))
+
+    def run(self, *args):
+        if self.verbose:
+            self._print_cmd(args[0])
+        return subprocess.run(*args)
 
 
 def check_bin(*executables, raise_error=True):

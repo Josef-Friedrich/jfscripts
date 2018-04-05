@@ -137,12 +137,12 @@ class TestUnit(TestCase):
             out = magick_imslp.collect_images(state)
             self.assertEqual(out, return_files)
 
-    @patch('jfscripts.magick_imslp.subprocess.run')
-    def test_do_magick(self, subprocess_run):
+    @patch('jfscripts.magick_imslp.run.run')
+    def test_do_magick(self, run):
         state = get_state()
         state.args.enlighten_border = False
         magick_imslp.do_magick([FilePath('test.tif'), state])
-        subprocess_run.assert_called_with(
+        run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
              '50%', '-trim', '+repage', '-border', '5%', '-bordercolor',
              '#FFFFFF', '-compress', 'Group4', '-monochrome', 'test.tif',
@@ -153,7 +153,7 @@ class TestUnit(TestCase):
         state.args.resize = False
         state.args.border = False
         magick_imslp.do_magick([FilePath('test.tif'), state])
-        subprocess_run.assert_called_with(
+        run.assert_called_with(
             ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
              '+repage', 'test.tif', 'test.png']
         )

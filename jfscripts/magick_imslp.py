@@ -5,10 +5,11 @@ import argparse
 import os
 import re
 import subprocess
-from jfscripts._utils import check_bin
+from jfscripts._utils import check_bin, Run
 import uuid
 import shutil
 
+run = Run()
 
 dependencies = (
     ('convert', 'imagemagick'),
@@ -141,6 +142,13 @@ def get_args():
     )
 
     parser.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='Make the command line output more verbose.',
+    )
+
+    parser.add_argument(
         'input_files',
         help='files to process.',
         nargs='+',
@@ -249,7 +257,7 @@ def do_magick(arguments):
             backup = source.new(append='_backup')
             shutil.copy2(str(source), str(backup))
 
-    subprocess.run(cmd_args)
+    run.run(cmd_args)
     return target
 
 
@@ -322,6 +330,7 @@ def convert_file_paths(files):
 
 def main():
     args = get_args()
+    run.setup(verbose=args.verbose)
     state = State(args)
 
     check_bin(*dependencies)

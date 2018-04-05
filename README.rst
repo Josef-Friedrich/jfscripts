@@ -61,7 +61,7 @@ magick-imslp.py
 .. code-block:: text
 
     usage: magick-imslp.py [-h] [-b] [-B] [-e] [-f] [-j] [-p] [-r] [-S]
-                           [-t THRESHOLD]
+                           [-t THRESHOLD] [-v]
                            input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -88,6 +88,7 @@ magick-imslp.py
                             values to find the best threshold value.
       -t THRESHOLD, --threshold THRESHOLD
                             threshold, default 50 percent.
+      -v, --verbose         Make the command line output more verbose.
 
 mac-to-eui64.py
 ---------------
