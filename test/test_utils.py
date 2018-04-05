@@ -3,7 +3,17 @@ from jfscripts import _utils
 from unittest import mock
 
 
-class TestUnit(unittest.TestCase):
+class TestClassRun(unittest.TestCase):
+
+    def test_simple(self):
+        run = _utils.Run()
+        ls = run.run(['ls', '-l'], stdout=run.PIPE)
+        self.assertEqual(ls.args, ['ls', '-l'])
+        self.assertEqual(ls.returncode, 0)
+        self.assertIn('jfscripts', ls.stdout.decode('utf-8'))
+
+
+class TestCheckBin(unittest.TestCase):
 
     def test_check_bin(self):
         with mock.patch('shutil.which') as mock_which:
