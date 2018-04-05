@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
-import socket
-import ipaddress
 import argparse
+import ipaddress
+import socket
 
 
 def get_ipv6(dns_name):

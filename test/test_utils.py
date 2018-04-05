@@ -1,7 +1,7 @@
-import unittest
+from _helper import Capturing
 from jfscripts import _utils
 from unittest import mock
-from _helper import Capturing
+import unittest
 
 
 class TestClassRun(unittest.TestCase):

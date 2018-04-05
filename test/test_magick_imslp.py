@@ -1,15 +1,15 @@
-import unittest
 from _helper import TestCase, download, check_internet_connectifity
-from jfscripts._utils import check_bin
 from jfscripts import magick_imslp
+from jfscripts._utils import check_bin
 from jfscripts.magick_imslp import FilePath, State, Timer
-import os
 from unittest import mock
 from unittest.mock import patch, Mock
+import argparse
+import os
+import shutil
 import subprocess
 import tempfile
-import shutil
-import argparse
+import unittest
 
 
 def get_state(complete=False):

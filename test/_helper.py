@@ -1,10 +1,10 @@
-import unittest
-import subprocess
+from io import StringIO
 from urllib.request import urlretrieve
 import os
-from io import StringIO
-import sys
 import socket
+import subprocess
+import sys
+import unittest
 
 
 def check_internet_connectifity(host="8.8.8.8", port=53, timeout=3):

@@ -1,12 +1,12 @@
 #! /usr/bin/env python3
 
-import argparse
+from jfscripts._utils import check_bin
 from subprocess import check_output
+import argparse
 import os
 import re
 import tempfile
 import textwrap
-from jfscripts._utils import check_bin
 
 
 tmp_dir = tempfile.mkdtemp()

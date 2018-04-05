@@ -1,11 +1,11 @@
 #! /usr/bin/env python3
 
-import argparse
-import subprocess
-import re
-import tempfile
 from jfscripts._utils import check_bin
+import argparse
 import os
+import re
+import subprocess
+import tempfile
 
 
 def get_pdf_info(pdf_file):

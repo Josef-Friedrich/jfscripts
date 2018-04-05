@@ -1,7 +1,7 @@
-import unittest
-from unittest import mock
-from jfscripts import replace_pdfpage as replace
 from _helper import TestCase, Capturing
+from jfscripts import replace_pdfpage as replace
+from unittest import mock
+import unittest
 
 
 class TestUnits(unittest.TestCase):

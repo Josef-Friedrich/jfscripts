@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
+import argparse
 import ipaddress
 import re
-import argparse
 
 
 def mac_to_eui64(mac, prefix=None):

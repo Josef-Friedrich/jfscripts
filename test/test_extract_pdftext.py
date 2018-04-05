@@ -1,5 +1,5 @@
-import unittest
 from _helper import TestCase
+import unittest
 
 
 class TestIntegration(TestCase):

@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
-import os
 import argparse
+import os
 
 
 def check_for_duplicates(path):
