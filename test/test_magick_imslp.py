@@ -313,6 +313,14 @@ class TestIntegrationWithDependencies(TestCase):
         png = copy(tmp_png1)
         subprocess.run(['magick-imslp.py', '--enlighten-border', png])
 
+    def test_option_verbose(self):
+        png = copy(tmp_png1)
+        out = subprocess.check_output(['magick-imslp.py', '--verbose', png])
+        out = out.decode('utf-8')
+        self.assertIn('convert', out)
+        self.assertIn('.png', out)
+        self.assertIn('-deskew', out)
+
 
 if __name__ == '__main__':
     unittest.main()
