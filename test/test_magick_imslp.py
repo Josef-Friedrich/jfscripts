@@ -1,5 +1,5 @@
 import unittest
-from _helper import TestCase, download
+from _helper import TestCase, download, check_internet_connectifity
 from jfscripts._utils import check_bin
 from jfscripts import magick_imslp
 from jfscripts.magick_imslp import FilePath, State, Timer
@@ -28,8 +28,9 @@ def copy(path):
 
 
 dependencies = check_bin(*magick_imslp.dependencies, raise_error=False)
+internet = check_internet_connectifity()
 
-if dependencies:
+if dependencies and internet:
     tmp_pdf = os.path.join(tempfile.mkdtemp(), 'test.pdf')
     download('pdf/scans.pdf', tmp_pdf)
     tmp_png1 = os.path.join(tempfile.mkdtemp(), 'test.png')
@@ -246,7 +247,8 @@ class TestIntegration(TestCase):
         self.assertIsExecutable('magick_imslp')
 
 
-@unittest.skipIf(not dependencies, 'Some Dependencies are not installed')
+@unittest.skipIf(not dependencies or not internet,
+                 'Some Dependencies are not installed')
 class TestIntegrationWithDependencies(TestCase):
 
     def test_input_file_pdf_exception(self):
