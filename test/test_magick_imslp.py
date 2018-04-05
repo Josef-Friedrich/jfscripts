@@ -80,7 +80,7 @@ class TestUnit(TestCase):
             '-region', '950x50+50+950', '-level', '0%,30%',
             '-region', '50x950+0+50', '-level', '0%,30%'])
 
-    @patch('jfscripts.magick_imslp.subprocess.run')
+    @patch('jfscripts.magick_imslp.run.run')
     def test_threshold(self, run):
         state = get_state(complete=True)
         magick_imslp.threshold(FilePath('test.jpg'), 99, state)

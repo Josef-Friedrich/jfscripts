@@ -166,12 +166,8 @@ def pdf_page_count(pdf_file):
 
 def pdf_to_images(pdf_file, state):
     state.pdf_env(pdf_file)
-    subprocess.run([
-        'pdfimages',
-        '-tiff',
-        str(pdf_file),
-        state.tmp_identifier,
-    ], cwd=state.pdf_dir)
+    run.run(['pdfimages', '-tiff', str(pdf_file), state.tmp_identifier],
+            cwd=state.pdf_dir)
 
 
 def collect_images(state):
@@ -264,12 +260,11 @@ def do_magick(arguments):
 def threshold(input_file, threshold, state):
     appendix = '_threshold-{}'.format(threshold)
     out = input_file.new(extension='png', append=appendix)
-    subprocess.run(['convert',
-                    '-threshold',
-                    '{}%'.format(threshold),
-                    str(input_file),
-                    str(out)
-                    ])
+    run.run(['convert',
+             '-threshold',
+             '{}%'.format(threshold),
+             str(input_file),
+             str(out)])
 
 
 def threshold_series(input_file, state):
@@ -303,7 +298,7 @@ def join_to_pdf(images, state):
     joined = os.path.join(state.pdf_dir, state.pdf_basename + '_joined.pdf')
     cmd += ['cat', 'output', joined]
 
-    subprocess.run(cmd)
+    run.run(cmd)
 
 
 class State(object):
