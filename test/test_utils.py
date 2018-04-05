@@ -1,6 +1,7 @@
 import unittest
 from jfscripts import _utils
 from unittest import mock
+from _helper import Capturing
 
 
 class TestClassRun(unittest.TestCase):
@@ -11,6 +12,13 @@ class TestClassRun(unittest.TestCase):
         self.assertEqual(ls.args, ['ls', '-l'])
         self.assertEqual(ls.returncode, 0)
         self.assertIn('jfscripts', ls.stdout.decode('utf-8'))
+
+    def test_verbose(self):
+        run = _utils.Run(verbose=True)
+        self.assertEqual(run.verbose, True)
+        with Capturing() as output:
+            run.run(['ls', '-l'], stdout=run.PIPE)
+        self.assertEqual(output, ['ls -l'])
 
 
 class TestCheckBin(unittest.TestCase):

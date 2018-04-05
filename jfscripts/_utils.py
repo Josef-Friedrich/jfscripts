@@ -6,8 +6,8 @@ class Run(object):
 
     PIPE = subprocess.PIPE
 
-    def __init__(self, *args):
-        self.setup(*args)
+    def __init__(self, *args, **kwargs):
+        self.setup(*args, **kwargs)
 
     def setup(self, verbose=False):
         self.verbose = verbose
