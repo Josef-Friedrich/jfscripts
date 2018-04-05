@@ -5,6 +5,7 @@ import socket
 import subprocess
 import sys
 import unittest
+import tempfile
 
 
 def check_internet_connectifity(host="8.8.8.8", port=53, timeout=3):
@@ -22,10 +23,23 @@ def check_internet_connectifity(host="8.8.8.8", port=53, timeout=3):
         return False
 
 
-def download(url_path, local_path):
-    url = 'https://github.com/Josef-Friedrich/test-files/raw/master/{}' \
-        .format(url_path)
-    urlretrieve(url, local_path)
+def download(url_path, local_path=None, filename=None):
+    if not local_path and not filename:
+        filename = os.path.basename(url_path)
+    if not local_path:
+        local_path = os.path.join(tempfile.mkdtemp(), filename)
+
+    if os.path.exists(local_path):
+        return local_path
+    else:
+        try:
+            os.makedirs(os.path.dirname(local_path))
+        except OSError:
+            pass
+        url = 'https://github.com/Josef-Friedrich/test-files/raw/master/{}' \
+            .format(url_path)
+        urlretrieve(url, local_path)
+        return local_path
 
 
 class Capturing(list):

@@ -31,10 +31,10 @@ dependencies = check_bin(*magick_imslp.dependencies, raise_error=False)
 internet = check_internet_connectifity()
 
 if dependencies and internet:
-    tmp_pdf = os.path.join(tempfile.mkdtemp(), 'test.pdf')
-    download('pdf/scans.pdf', tmp_pdf)
-    tmp_png1 = os.path.join(tempfile.mkdtemp(), 'test.png')
-    download('png/bach-busoni_300.png', tmp_png1)
+    tmp_pdf = download('pdf/scans.pdf',
+                       local_path='/tmp/jfs-magick_imslp/test.pdf')
+    tmp_png1 = download('png/bach-busoni_300.png',
+                        local_path='/tmp/jfscripts/magick_imslp/test.png')
 
 
 class TestUnit(TestCase):
