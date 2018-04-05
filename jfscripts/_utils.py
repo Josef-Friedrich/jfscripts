@@ -1,5 +1,6 @@
 import shutil
 import subprocess
+from termcolor import colored
 
 
 class Run(object):
@@ -9,11 +10,23 @@ class Run(object):
     def __init__(self, *args, **kwargs):
         self.setup(*args, **kwargs)
 
-    def setup(self, verbose=False):
+    def setup(self, verbose=False, colorize=False):
         self.verbose = verbose
+        self.colorize = colorize
 
     def _print_cmd(self, cmd):
-        print(' '.join(cmd))
+        if self.colorize:
+            output = []
+            for arg in cmd:
+                if arg.startswith('--'):
+                    output.append(colored(arg, color='yellow'))
+                elif arg.startswith('-'):
+                    output.append(colored(arg, color='blue'))
+                else:
+                    output.append(arg)
+            print(' '.join(output))
+        else:
+            print(' '.join(cmd))
 
     def run(self, *args, **kwargs):
         if self.verbose:

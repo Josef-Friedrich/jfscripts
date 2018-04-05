@@ -16,6 +16,7 @@ setup(
     license='MIT',
     packages=['jfscripts'],
     url='https://github.com/Josef-Friedrich/python-scripts',
+    install_requires=['termcolor'],
     entry_points = {
         'console_scripts': [
             'dns-ipv6-prefix.py = jfscripts.dns_ipv6_prefix:main',

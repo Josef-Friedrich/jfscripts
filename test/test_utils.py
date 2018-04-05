@@ -13,6 +13,13 @@ class TestClassRun(unittest.TestCase):
             run.run(['ls', '-l'], stdout=run.PIPE)
         self.assertEqual(output, ['ls -l'])
 
+    def test_argument_colorize(self):
+        run = _utils.Run(verbose=True, colorize=True)
+        self.assertEqual(run.colorize, True)
+        with Capturing() as output:
+            run.run(['ls', '-l'], stdout=run.PIPE)
+        self.assertEqual(output[0], 'ls \x1b[34m-l\x1b[0m')
+
     def test_method_check_output(self):
         run = _utils.Run()
         out = run.check_output(['ls', '-l'])

@@ -60,7 +60,7 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-B] [-e] [-f] [-j] [-p] [-r] [-S]
+    usage: magick-imslp.py [-h] [-b] [-B] [-c] [-e] [-f] [-j] [-p] [-r] [-S]
                            [-t THRESHOLD] [-v]
                            input_files [input_files ...]
     
@@ -75,6 +75,7 @@ magick-imslp.py
       -h, --help            show this help message and exit
       -b, --backup          Backup original images (add _backup.ext to filename).
       -B, --border          Frame the images with a white border.
+      -c, --colorize        Colorize the terminal output.
       -e, --enlighten-border
                             Enlighten the border.
       -f, --force           Overwrite the target file even if it exists and it

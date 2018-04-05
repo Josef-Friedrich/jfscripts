@@ -88,6 +88,13 @@ def get_args():
     )
 
     parser.add_argument(
+        '-c',
+        '--colorize',
+        action='store_true',
+        help='Colorize the terminal output.',
+    )
+
+    parser.add_argument(
         '-e',
         '--enlighten-border',
         action='store_true',
@@ -324,7 +331,7 @@ def convert_file_paths(files):
 
 def main():
     args = get_args()
-    run.setup(verbose=args.verbose)
+    run.setup(verbose=args.verbose, colorize=args.colorize)
     state = State(args)
 
     check_bin(*dependencies)
