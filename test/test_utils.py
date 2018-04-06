@@ -32,7 +32,6 @@ class TestClassRun(TestCase):
         self.assertIn('\x1b[46m\x1b[37m', output[0])
         self.assertIn('\x1b[0m', output[0])
 
-
     def test_method_check_output(self):
         run = _utils.Run()
         out = run.check_output(['ls', '-l'])

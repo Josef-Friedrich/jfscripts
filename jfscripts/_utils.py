@@ -24,7 +24,8 @@ class Run(object):
                 elif arg.startswith('-'):
                     output.append(colored(arg, color='blue'))
                 elif os.path.exists(arg):
-                    output.append(colored(arg, color='white', on_color='on_cyan'))
+                    output.append(colored(arg, color='white',
+                                  on_color='on_cyan'))
                 else:
                     output.append(arg)
             print(' '.join(output))
