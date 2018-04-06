@@ -1,2 +1,4 @@
+include LICENSE
 include versioneer.py
 include jfscripts/_version.py
+prune test
