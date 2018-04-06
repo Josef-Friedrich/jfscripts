@@ -5,6 +5,7 @@ from jfscripts._utils import FilePath
 from unittest import mock
 import os
 import unittest
+import tempfile
 
 
 class TestClassRun(TestCase):
@@ -22,6 +23,15 @@ class TestClassRun(TestCase):
         with Capturing() as output:
             run.run(['ls', '-l'], stdout=run.PIPE)
         self.assertEqual(output[0], 'ls \x1b[34m-l\x1b[0m')
+
+    def test_argument_colorize_path(self):
+        run = _utils.Run(verbose=True, colorize=True)
+        tmp = tempfile.mkstemp()[1]
+        with Capturing() as output:
+            run.run(['ls', tmp], stdout=run.PIPE)
+        self.assertIn('\x1b[46m\x1b[37m', output[0])
+        self.assertIn('\x1b[0m', output[0])
+
 
     def test_method_check_output(self):
         run = _utils.Run()
