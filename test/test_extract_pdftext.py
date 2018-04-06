@@ -1,8 +1,10 @@
 from _helper import TestCase, download, check_internet_connectifity
 import unittest
 from jfscripts import extract_pdftext
-from jfscripts._utils import check_bin
+from jfscripts._utils import check_bin, FilePath
 import subprocess
+import os
+
 
 dependencies = check_bin(*extract_pdftext.dependencies, raise_error=False)
 internet = check_internet_connectifity()
@@ -20,7 +22,14 @@ class TestIntegration(TestCase):
     @unittest.skipIf(not dependencies or not internet,
                      'Some dependencies are not installed')
     def test_extraction(self):
-        subprocess.check_output(['extract-pdftext.py', tmp_pdf])
+        pdf = FilePath(tmp_pdf)
+        subprocess.check_output(['extract-pdftext.py', str(pdf)])
+        txt = pdf.new(extension='txt')
+        self.assertTrue(os.path.exists(str(txt)))
+        self.assertTrue('## Seite' in open(str(txt)).read())
+        self.assertTrue('Andrew Lloyd Webber' in open(str(txt)).read())
+        self.assertTrue('-' * extract_pdftext.line_length in
+                        open(str(txt)).read())
 
 
 if __name__ == '__main__':

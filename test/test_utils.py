@@ -1,10 +1,13 @@
 from _helper import Capturing
+from _helper import TestCase
 from jfscripts import _utils
+from jfscripts._utils import FilePath
 from unittest import mock
+import os
 import unittest
 
 
-class TestClassRun(unittest.TestCase):
+class TestClassRun(TestCase):
 
     def test_argument_verbose(self):
         run = _utils.Run(verbose=True)
@@ -33,7 +36,7 @@ class TestClassRun(unittest.TestCase):
         self.assertIn('jfscripts', ls.stdout.decode('utf-8'))
 
 
-class TestCheckBin(unittest.TestCase):
+class TestCheckBin(TestCase):
 
     def test_check_bin(self):
         with mock.patch('shutil.which') as mock_which:
@@ -70,6 +73,52 @@ class TestCheckBin(unittest.TestCase):
             self.assertEqual(str(error.exception),
                              'Some commands are not installed: lol (apt '
                              'install lol), troll')
+
+
+class TestClassFilePath(TestCase):
+
+    def test_attribute_filename(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.filename, 'test.jpg')
+
+    def test_attribute_extension(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.extension, 'jpg')
+
+    def test_attribute_basename(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(file_path.basename, 'test')
+        file_path = FilePath('test.jpeg')
+        self.assertEqual(file_path.basename, 'test')
+
+    def test_attribute_base(self):
+        file_path = FilePath('test.jpg', absolute=True)
+        self.assertTrue(file_path.base.endswith('/test'))
+
+    def test_class_argument(self):
+        file_path = FilePath('test.jpg', absolute=True)
+        self.assertEqual(str(file_path), os.path.abspath('test.jpg'))
+
+    def test_class_magic_method(self):
+        file_path = FilePath('test.jpg')
+        self.assertEqual(str(file_path), 'test.jpg')
+
+    def test_method_new(self):
+        path = FilePath('test.jpg')
+        self.assertEqual(str(path.new()), 'test.jpg')
+        self.assertEqual(str(path.new(extension='png')), 'test.png')
+        self.assertEqual(str(path.new(append='123')), 'test123.jpg')
+        self.assertEqual(str(path.new(del_substring='est')), 't.jpg')
+
+    def test_class_magic_method_eq_not_equal(self):
+        a = FilePath('test1.jpg')
+        b = FilePath('test2.jpg')
+        self.assertFalse(a == b)
+
+    def test_class_magic_method_eq_equal(self):
+        a = FilePath('test.jpg')
+        b = FilePath('test.jpg')
+        self.assertTrue(a == b)
 
 
 if __name__ == '__main__':

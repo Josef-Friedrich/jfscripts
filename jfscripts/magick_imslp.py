@@ -4,7 +4,7 @@ import multiprocessing
 import argparse
 import os
 import re
-from jfscripts._utils import check_bin, Run
+from jfscripts._utils import check_bin, Run, FilePath
 import uuid
 import shutil
 import time
@@ -18,44 +18,6 @@ dependencies = (
     ('pdfinfo', 'poppler'),
     'pdftk',
 )
-
-
-class FilePath(object):
-
-    def __init__(self, path, absolute=False):
-        self.absolute = absolute
-        if self.absolute:
-            self.path = os.path.abspath(path)
-        else:
-            self.path = os.path.relpath(path)
-        # file.ext
-        self.filename = os.path.basename(path)
-        # ext
-        self.extension = os.path.splitext(self.path)[1][1:]
-        # file
-        self.basename = self.filename[:-len(self.extension) - 1]
-        # /home/file
-        self.base = self.path[:-len(self.extension) - 1]
-
-    def __str__(self):
-        return self.path
-
-    def __eq__(self, other):
-        return self.path == other.path
-
-    def _export(self, path):
-        return FilePath(path, self.absolute)
-
-    def new(self, extension=None, append='', del_substring=''):
-        if not extension:
-            extension = self.extension
-        new = '{}{}.{}'.format(self.base, append, extension)
-        if del_substring:
-            new = new.replace(del_substring, '')
-        return self._export(new)
-
-    def remove(self):
-        os.remove(self.path)
 
 
 def check_threshold(value):
