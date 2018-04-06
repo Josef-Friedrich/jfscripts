@@ -6,7 +6,7 @@ import unittest
 
 class TestUnits(unittest.TestCase):
 
-    @mock.patch('jfscripts.replace_pdfpage.subprocess.check_output')
+    @mock.patch('jfscripts.replace_pdfpage.run.check_output')
     def test_get_pdf_info(self, mock):
 
         return_values = [
@@ -32,7 +32,7 @@ class TestUnits(unittest.TestCase):
         self.assertEqual(result, {'width': '658.8', 'height': '866.52',
                          'page_count': 3})
 
-    @mock.patch('jfscripts.replace_pdfpage.subprocess.run')
+    @mock.patch('jfscripts.replace_pdfpage.run.run')
     def test_convert_image_to_pdf_page(self, mock):
 
         result = replace.convert_image_to_pdf_page('test.png', '111.1',
@@ -45,7 +45,7 @@ class TestUnits(unittest.TestCase):
         self.assertEqual(args[3], '111.1x222.2')
         self.assertTrue('tmp.pdf' in args[4])
 
-    @mock.patch('jfscripts.replace_pdfpage.subprocess.run')
+    @mock.patch('jfscripts.replace_pdfpage.run.run')
     def test_assemble_pdf(self, mock):
 
         replace.assemble_pdf('m.pdf', 'i.pdf', 5, 1)

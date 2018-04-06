@@ -1,15 +1,16 @@
 #! /usr/bin/env python3
 
-from jfscripts._utils import check_bin
+from jfscripts._utils import check_bin, Run
 import argparse
 import os
 import re
-import subprocess
 import tempfile
+
+run = Run()
 
 
 def get_pdf_info(pdf_file):
-    output = subprocess.check_output(['pdfinfo', pdf_file])
+    output = run.check_output(['pdfinfo', pdf_file])
     output = output.decode('utf-8')
     # Page size:      522.249 x 644.573 pts
     dimension = re.search(r'Page size:\s*([0-9.]*) x ([0-9.]*)\s*pts', output)
@@ -32,7 +33,7 @@ def convert_image_to_pdf_page(image_file, page_width, page_height):
                '{}x{}'.format(page_width, page_height),
                tmp_pdf]
     print(' '.join(command))
-    subprocess.run(command)
+    run.run(command)
     return tmp_pdf
 
 
@@ -57,19 +58,34 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number):
 
     command += ['output', 'out.pdf']
     print(' '.join(command))
-    subprocess.run(command)
+    run.run(command)
+
+
+def get_args():
+    parser = argparse.ArgumentParser(
+        description='Replace one page in a PDF file with an image file.',
+    )
+
+    parser.add_argument(
+        'pdf',
+        help='The PDF file',
+    )
+    parser.add_argument(
+        'number',
+        type=int,
+        help='The page number of the PDF page to replace',
+    )
+    parser.add_argument(
+        'image',
+        help='The image file to replace the PDF page with',
+    )
+    return parser.parse_args()
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Replace one page in a PDF '
-                                     'file with an image file.')
-    parser.add_argument('pdf',
-                        help='The PDF file')
-    parser.add_argument('number', type=int,
-                        help='The page number of the PDF page to replace')
-    parser.add_argument('image',
-                        help='The image file to replace the PDF page with')
-    args = parser.parse_args()
+    args = get_args()
+
+    run.setup(verbose=args.verbose, colorize=args.colorize)
 
     check_bin('pdfinfo', 'pdftk', 'convert')
 

@@ -1,12 +1,13 @@
 #! /usr/bin/env python3
 
-from jfscripts._utils import check_bin, FilePath
-from subprocess import check_output
+from jfscripts._utils import check_bin, FilePath, Run
 import argparse
 import os
 import re
 import tempfile
 import textwrap
+
+run = Run()
 
 line_length = 72
 
@@ -30,7 +31,7 @@ class Txt(object):
 
 
 def get_page_count(pdf):
-    pdfinfo_stdout = check_output(['pdfinfo', str(pdf)])
+    pdfinfo_stdout = run.check_output(['pdfinfo', str(pdf)])
     match = re.search('Pages:\s*(.*)\n', pdfinfo_stdout.decode('utf-8'))
     if match:
         return int(match.group(1))
@@ -39,7 +40,7 @@ def get_page_count(pdf):
 def get_text_per_page(pdf, page, txt_file):
     page = str(page)
     tmp_txt_path = os.path.join(tmp_dir, page + '.txt')
-    check_output([
+    run.check_output([
         'pdftotext',
         '-f', page,
         '-l', page,
@@ -64,11 +65,35 @@ def get_text_per_page(pdf, page, txt_file):
         txt_file.add_line(line)
 
 
-def main():
-
+def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('file', help='A PDF file containing text')
-    args = parser.parse_args()
+
+    parser.add_argument(
+        'file',
+        help='A PDF file containing text',
+    )
+
+    parser.add_argument(
+        '-c',
+        '--colorize',
+        action='store_true',
+        help='Colorize the terminal output.',
+    )
+
+    parser.add_argument(
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='Make the command line output more verbose.',
+    )
+
+    return parser.parse_args()
+
+
+def main():
+    args = get_args()
+
+    run.setup(verbose=args.verbose, colorize=args.colorize)
 
     check_bin(*dependencies)
 

@@ -24,13 +24,15 @@ extract-pdftext.py
 
 .. code-block:: text
 
-    usage: extract-pdftext.py [-h] file
+    usage: extract-pdftext.py [-h] [-c] [-v] file
     
     positional arguments:
-      file        A PDF file containing text
+      file            A PDF file containing text
     
     optional arguments:
-      -h, --help  show this help message and exit
+      -h, --help      show this help message and exit
+      -c, --colorize  Colorize the terminal output.
+      -v, --verbose   Make the command line output more verbose.
 
 find-dupes-by-size.py
 ---------------------
