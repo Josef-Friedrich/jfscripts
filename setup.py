@@ -1,16 +1,17 @@
-import versioneer
 from setuptools import setup
-import six
+import os
+import versioneer
 
-if six.PY2:
-    raise SystemError('jfscripts are not compatible to python2. Use python3!')
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
 setup(
     name='jfscripts',
     author='Josef Friedrich',
     author_email='josef@friedrich.rocks',
-    description=('A collection of my scripts.'),
+    description=('A collection of my Python scripts. Maybe they are helpful for someone else.'),
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     license='MIT',
@@ -34,4 +35,5 @@ setup(
         ],
     },
     python_requires='>=3.6',
+    long_description=read('README.rst'),
 )
