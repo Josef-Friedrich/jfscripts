@@ -29,6 +29,14 @@ jfscripts.find_dupes_by_size module
     :undoc-members:
     :show-inheritance:
 
+jfscripts.list_files module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: jfscripts.list_files
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 jfscripts.mac_to_eui64 module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
