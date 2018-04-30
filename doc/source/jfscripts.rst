@@ -20,7 +20,6 @@ jfscripts.extract_pdftext module
     :undoc-members:
     :show-inheritance:
 
-
 jfscripts.find_dupes_by_size module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
