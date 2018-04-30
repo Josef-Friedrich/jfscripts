@@ -14,6 +14,11 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     license='MIT',
+    project_urls={
+        'Documentation': 'http://jfscripts.readthedocs.io/en/latest/',
+        'Source': 'https://github.com/Josef-Friedrich/python-scripts',
+        'Tracker': 'https://github.com/Josef-Friedrich/python-scripts/issues',
+    },
     packages=['jfscripts'],
     url='https://github.com/Josef-Friedrich/python-scripts',
     install_requires=['termcolor'],
@@ -28,4 +33,5 @@ setup(
             'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
         ],
     },
+    python_requires='>=3.6',
 )
