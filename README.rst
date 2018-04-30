@@ -57,6 +57,42 @@ find-dupes-by-size.py
     optional arguments:
       -h, --help  show this help message and exit
 
+list-files.py
+-------------
+
+.. code-block:: text
+
+    usage: list-files.py [-h] input_files [input_files ...]
+    
+    This is a script to demonstrate the list_files() function in this file.
+    
+    list-files.py a.txt
+    list-files.py dir/
+    list-files.py *.txt
+    list-files.py "dir/*.txt"
+    
+    positional arguments:
+      input_files  files to process.
+    
+    optional arguments:
+      -h, --help   show this help message and exit
+
+mac-to-eui64.py
+---------------
+
+.. code-block:: text
+
+    usage: mac-to-eui64.py [-h] mac prefix
+    
+    Convert mac addresses to EUI64 ipv6 addresses.
+    
+    positional arguments:
+      mac         The mac address.
+      prefix      The ipv6 /64 prefix.
+    
+    optional arguments:
+      -h, --help  show this help message and exit
+
 magick-imslp.py
 ---------------
 
@@ -94,22 +130,6 @@ magick-imslp.py
       -t THRESHOLD, --threshold THRESHOLD
                             threshold, default 50 percent.
       -v, --verbose         Make the command line output more verbose.
-
-mac-to-eui64.py
----------------
-
-.. code-block:: text
-
-    usage: mac-to-eui64.py [-h] mac prefix
-    
-    Convert mac addresses to EUI64 ipv6 addresses.
-    
-    positional arguments:
-      mac         The mac address.
-      prefix      The ipv6 /64 prefix.
-    
-    optional arguments:
-      -h, --help  show this help message and exit
 
 replace-pdfpage.py
 ------------------
