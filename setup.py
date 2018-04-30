@@ -11,7 +11,7 @@ setup(
     name='jfscripts',
     author='Josef Friedrich',
     author_email='josef@friedrich.rocks',
-    description=('A collection of my Python scripts. Maybe they are helpful for someone else.'),
+    description=('A collection of my Python scripts. Maybe they are useful for someone else.'),
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     license='MIT',
@@ -36,4 +36,9 @@ setup(
     },
     python_requires='>=3.6',
     long_description=read('README.rst'),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.6',
+    ],
 )
