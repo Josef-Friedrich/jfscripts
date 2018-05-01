@@ -68,8 +68,10 @@ list-files.py
     This is a script to demonstrate the list_files() function in this file.
     
     list-files.py a.txt
-    list-files.py dir/
+    list-files.py a.txt b.txt c.txt
     list-files.py *.txt
+    list-files.py "*.txt"
+    list-files.py dir/
     list-files.py "dir/*.txt"
     
     positional arguments:

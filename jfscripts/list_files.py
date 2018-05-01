@@ -4,7 +4,6 @@ import argparse
 import fnmatch
 import os
 import re
-import textwrap
 
 
 def is_glob(string):
@@ -80,18 +79,28 @@ def list_files(files):
     raise ValueError('Something went wrong.')
 
 
+def argparse_examples(command_name, extension, indent_spaces=0):
+    examples = (
+        'a.{}'.format(extension),
+        'a.{0} b.{0} c.{0}'.format(extension),
+        '*.{}'.format(extension),
+        '"*.{}"'.format(extension),
+        'dir/',
+        '"dir/*.{}"'.format(extension),
+    )
+    out = []
+    for example in examples:
+        out.append('{}{} {}'.format(' ' * indent_spaces,
+                                    command_name, example))
+    return '\n'.join(out)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent('''\
-        This is a script to demonstrate the list_files() function in this file.
-
-        list-files.py a.txt
-        list-files.py dir/
-        list-files.py *.txt
-        list-files.py "dir/*.txt"
-
-        ''')
+        description='This is a script to demonstrate the list_files() '
+        'function in this file.\n\n' + argparse_examples('list-files.py',
+                                                         'txt')
     )
 
     parser.add_argument(

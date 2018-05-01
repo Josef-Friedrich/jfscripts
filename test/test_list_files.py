@@ -3,7 +3,8 @@ from jfscripts.list_files import is_glob, \
                                  list_files, \
                                  _split_glob, \
                                  _list_files_all, \
-                                 _list_files_filter
+                                 _list_files_filter, \
+                                 argparse_examples
 import unittest
 from unittest import mock
 
@@ -120,7 +121,7 @@ class TestFunctionListFilesFilter(TestCase):
         self.assertEqual(result, ['a/a.mscx', 'a/b.mscz'])
 
 
-class TestFunctionListFiles(unittest.TestCase):
+class TestFunctionListFiles(TestCase):
 
     def test_multiple_files(self):
         files = ['a.txt', 'b.txt']
@@ -144,6 +145,33 @@ class TestFunctionListFiles(unittest.TestCase):
             ('/data', (), ('a.txt', 'b.txt')),
         )
         self.assertEqual(list_files(['/data/*.py']), [])
+
+
+class TestFunctionArgparseExamples(TestCase):
+
+    def test_without_indent_spaces(self):
+        result = 'test.py a.txt\n' \
+                 'test.py a.txt b.txt c.txt\n' \
+                 'test.py *.txt\n' \
+                 'test.py "*.txt"\n' \
+                 'test.py dir/\n' \
+                 'test.py "dir/*.txt"'
+        self.assertEqual(argparse_examples('test.py', 'txt'), result)
+
+    def test_with_indent_spaces(self):
+        result = '    test.py a.txt\n' \
+                 '    test.py a.txt b.txt c.txt\n' \
+                 '    test.py *.txt\n' \
+                 '    test.py "*.txt"\n' \
+                 '    test.py dir/\n' \
+                 '    test.py "dir/*.txt"'
+        self.assertEqual(argparse_examples('test.py', 'txt', 4), result)
+
+
+class TestIntegration(TestCase):
+
+    def test_command_line_interface(self):
+        self.assertIsExecutable('list_files')
 
 
 if __name__ == '__main__':
