@@ -119,7 +119,7 @@ def parse_args():
 
     parser.add_argument(
         'input_files',
-        help='files to process.',
+        help='Examples for this arguments are: ' + doc_examples(inline=True),
         nargs='+',
     )
 
