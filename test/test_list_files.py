@@ -149,6 +149,15 @@ class TestFunctionListFiles(TestCase):
 
 class TestFunctionArgparseExamples(TestCase):
 
+    def test_without_arguments(self):
+        result = 'a.txt\n' \
+                 'a.txt b.txt c.txt\n' \
+                 '*.txt\n' \
+                 '"*.txt"\n' \
+                 'dir/\n' \
+                 '"dir/*.txt"'
+        self.assertEqual(argparse_examples(), result)
+
     def test_without_indent_spaces(self):
         result = 'test.py a.txt\n' \
                  'test.py a.txt b.txt c.txt\n' \
