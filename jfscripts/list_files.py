@@ -79,7 +79,7 @@ def list_files(files):
     raise ValueError('Something went wrong.')
 
 
-def argparse_examples(command_name='', extension='txt', indent_spaces=0,
+def doc_examples(command_name='', extension='txt', indent_spaces=0,
                       inline=False):
     examples = (
         'a.{}'.format(extension),
@@ -114,8 +114,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description='This is a script to demonstrate the list_files() '
-        'function in this file.\n\n' + argparse_examples('list-files.py',
-                                                         'txt')
+        'function in this file.\n\n' + doc_examples('list-files.py', 'txt')
     )
 
     parser.add_argument(

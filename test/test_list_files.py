@@ -4,7 +4,7 @@ from jfscripts.list_files import is_glob, \
                                  _split_glob, \
                                  _list_files_all, \
                                  _list_files_filter, \
-                                 argparse_examples
+                                 doc_examples
 import unittest
 from unittest import mock
 
@@ -156,7 +156,7 @@ class TestFunctionArgparseExamples(TestCase):
                  '"*.txt"\n' \
                  'dir/\n' \
                  '"dir/*.txt"'
-        self.assertEqual(argparse_examples(), result)
+        self.assertEqual(doc_examples(), result)
 
     def test_without_indent_spaces(self):
         result = 'test.py a.txt\n' \
@@ -165,7 +165,7 @@ class TestFunctionArgparseExamples(TestCase):
                  'test.py "*.txt"\n' \
                  'test.py dir/\n' \
                  'test.py "dir/*.txt"'
-        self.assertEqual(argparse_examples('test.py', 'txt'), result)
+        self.assertEqual(doc_examples('test.py', 'txt'), result)
 
     def test_with_indent_spaces(self):
         result = '    test.py a.txt\n' \
@@ -174,7 +174,7 @@ class TestFunctionArgparseExamples(TestCase):
                  '    test.py "*.txt"\n' \
                  '    test.py dir/\n' \
                  '    test.py "dir/*.txt"'
-        self.assertEqual(argparse_examples('test.py', 'txt', 4), result)
+        self.assertEqual(doc_examples('test.py', 'txt', 4), result)
 
     def test_inline(self):
         result = '“test.py a.txt”, ' \
@@ -183,7 +183,7 @@ class TestFunctionArgparseExamples(TestCase):
                  '“test.py "*.txt"”, ' \
                  '“test.py dir/”, ' \
                  '“test.py "dir/*.txt"”'
-        self.assertEqual(argparse_examples('test.py', 'txt', inline=True),
+        self.assertEqual(doc_examples('test.py', 'txt', inline=True),
                          result)
 
 
