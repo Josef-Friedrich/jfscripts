@@ -75,7 +75,8 @@ list-files.py
     list-files.py "dir/*.txt"
     
     positional arguments:
-      input_files  files to process.
+      input_files  Examples for this arguments are: “a.txt”, “a.txt b.txt c.txt”,
+                   “*.txt”, “"*.txt"”, “dir/”, “"dir/*.txt"”
     
     optional arguments:
       -h, --help   show this help message and exit

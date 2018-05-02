@@ -80,7 +80,7 @@ def list_files(files):
 
 
 def doc_examples(command_name='', extension='txt', indent_spaces=0,
-                      inline=False):
+                 inline=False):
     examples = (
         'a.{}'.format(extension),
         'a.{0} b.{0} c.{0}'.format(extension),
