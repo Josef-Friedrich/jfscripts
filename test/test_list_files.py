@@ -146,6 +146,16 @@ class TestFunctionListFiles(TestCase):
         )
         self.assertEqual(list_files(['/data/*.py']), [])
 
+    @mock.patch('os.path.isdir')
+    @mock.patch('os.walk')
+    def test_default_glob(self, os_walk, os_path_isdir):
+        os_walk.return_value = (
+            ('/data', (), ('a.txt', 'b.txt')),
+        )
+        os_path_isdir.return_value = True
+        self.assertEqual(list_files(['/data'], default_glob='*.txt'),
+                         ['/data/a.txt', '/data/b.txt'])
+
 
 class TestFunctionArgparseExamples(TestCase):
 

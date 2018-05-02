@@ -56,10 +56,14 @@ def _list_files_filter(dir_path, glob_pattern):
     return out
 
 
-def list_files(files):
+def list_files(files, default_glob=None):
     """
     :param list files: A list of file paths or a single element list containing
       a glob string.
+
+    :param string default_glob: A default glob pattern like “*.txt”. This
+      argument is only taken into account, if “element” is a list with only
+      one entry and this entry is a path to a directory.
     """
     if len(files) > 1:
         return files
@@ -68,8 +72,11 @@ def list_files(files):
 
     if not is_glob(file_path):
         if os.path.isdir(file_path):
-            return _list_files_all(file_path)
-        else:
+            if default_glob:
+                return _list_files_filter(file_path, default_glob)
+            else:
+                return _list_files_all(file_path)
+        else:  # not a directory
             return [file_path]
 
     else:  # is glob
