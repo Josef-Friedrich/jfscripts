@@ -79,7 +79,7 @@ def list_files(files):
     raise ValueError('Something went wrong.')
 
 
-def argparse_examples(command_name, extension, indent_spaces=0):
+def argparse_examples(command_name, extension, indent_spaces=0, inline=False):
     examples = (
         'a.{}'.format(extension),
         'a.{0} b.{0} c.{0}'.format(extension),
@@ -90,9 +90,16 @@ def argparse_examples(command_name, extension, indent_spaces=0):
     )
     out = []
     for example in examples:
-        out.append('{}{} {}'.format(' ' * indent_spaces,
-                                    command_name, example))
-    return '\n'.join(out)
+        command = '{}{} {}'.format(' ' * indent_spaces, command_name, example)
+        if inline:
+            command = '“{}”'.format(command)
+        out.append(command)
+
+    if inline:
+        join_phrase = ', '
+    else:
+        join_phrase = '\n'
+    return join_phrase.join(out)
 
 
 def parse_args():

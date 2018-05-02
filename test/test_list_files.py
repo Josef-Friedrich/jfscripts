@@ -167,6 +167,16 @@ class TestFunctionArgparseExamples(TestCase):
                  '    test.py "dir/*.txt"'
         self.assertEqual(argparse_examples('test.py', 'txt', 4), result)
 
+    def test_inline(self):
+        result = '“test.py a.txt”, ' \
+                 '“test.py a.txt b.txt c.txt”, ' \
+                 '“test.py *.txt”, ' \
+                 '“test.py "*.txt"”, ' \
+                 '“test.py dir/”, ' \
+                 '“test.py "dir/*.txt"”'
+        self.assertEqual(argparse_examples('test.py', 'txt', inline=True),
+                         result)
+
 
 class TestIntegration(TestCase):
 
