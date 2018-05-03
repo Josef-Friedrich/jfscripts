@@ -61,7 +61,7 @@ def list_files(files, default_glob=None):
     :param list files: A list of file paths or a single element list containing
       a glob string.
 
-    :param string default_glob: A default glob pattern like “*.txt”. This
+    :param string default_glob: A default glob pattern like “\*.txt”. This
       argument is only taken into account, if “element” is a list with only
       one entry and this entry is a path to a directory.
     """
