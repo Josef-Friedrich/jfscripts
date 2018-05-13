@@ -22,7 +22,7 @@ setup(
     },
     packages=['jfscripts'],
     url='https://github.com/Josef-Friedrich/python-scripts',
-    install_requires=['termcolor', 'sphinxarg'],
+    install_requires=['termcolor', 'sphinx-argparse'],
     entry_points = {
         'console_scripts': [
             'dns-ipv6-prefix.py = jfscripts.dns_ipv6_prefix:main',
