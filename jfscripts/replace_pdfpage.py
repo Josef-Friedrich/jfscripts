@@ -79,7 +79,7 @@ def get_parser():
         'image',
         help='The image file to replace the PDF page with',
     )
-    return parser.parse_args()
+    return parser
 
 
 def main():
