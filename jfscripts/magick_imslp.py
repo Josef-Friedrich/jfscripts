@@ -130,7 +130,7 @@ def get_args():
         nargs='+',
     )
 
-    return parser.parse_args()
+    return parser
 
 
 def pdf_page_count(pdf_file):
