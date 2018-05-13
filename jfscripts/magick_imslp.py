@@ -29,7 +29,7 @@ def check_threshold(value):
     return '{}%'.format(value)
 
 
-def get_args():
+def get_parser():
     parser = argparse.ArgumentParser(
         description='A wrapper script for imagemagick to process image \
         files suitable for imslp.org (International Music Score Library \
@@ -311,7 +311,7 @@ def convert_file_paths(files):
 
 def main():
     timer = Timer()
-    args = get_args()
+    args = get_parser().parse_args()
     if args.join and not args.pdf:
         args.pdf = True
     run.setup(verbose=args.verbose, colorize=args.colorize)

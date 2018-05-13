@@ -117,7 +117,7 @@ def doc_examples(command_name='', extension='txt', indent_spaces=0,
     return join_phrase.join(out)
 
 
-def parse_args():
+def get_parser():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description='This is a script to demonstrate the list_files() '
@@ -130,11 +130,11 @@ def parse_args():
         nargs='+',
     )
 
-    return parser.parse_args()
+    return parser
 
 
 def main():
-    args = parse_args()
+    args = get_parser().parse_args()
     for f in list_files(args.input_files):
         print(f)
 

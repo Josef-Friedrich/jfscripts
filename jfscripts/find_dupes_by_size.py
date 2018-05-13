@@ -32,15 +32,21 @@ def check_for_duplicates(path):
     print('Duplicates found: ' + str(count))
 
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser(
         description='Find duplicate files by size.',
     )
+
     parser.add_argument(
         'path',
         help='A directory to recursively search for duplicate files.',
     )
-    args = parser.parse_args()
+
+    return parser
+
+
+def main():
+    args = get_parser().parse_args()
 
     check_for_duplicates(args.path)
 

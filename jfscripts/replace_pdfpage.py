@@ -61,7 +61,7 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number):
     run.run(command)
 
 
-def get_args():
+def get_parser():
     parser = argparse.ArgumentParser(
         description='Replace one page in a PDF file with an image file.',
     )
@@ -83,7 +83,7 @@ def get_args():
 
 
 def main():
-    args = get_args()
+    args = get_parser().parse_args()
 
     run.setup(verbose=args.verbose, colorize=args.colorize)
 

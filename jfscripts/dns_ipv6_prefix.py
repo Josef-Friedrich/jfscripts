@@ -25,7 +25,7 @@ def get_ipv6(dns_name):
             return entry[4][0]
 
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser(
         description='Get the ipv6 prefix from a DNS name.'
     )
@@ -34,7 +34,12 @@ def main():
         help='The DNS name, e. g. josef-friedrich.de',
     )
 
-    args = parser.parse_args()
+    return parser
+
+
+def main():
+    args = get_parser().parse_args()
+
     ipv6 = get_ipv6(args.dnsname)
 
     prefix = ipaddress.ip_network(ipv6 + '/64', strict=False)

@@ -29,14 +29,26 @@ def mac_to_eui64(mac, prefix=None):
             return
 
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser(
         description='Convert mac addresses to EUI64 ipv6 addresses.',
     )
-    parser.add_argument('mac', help='The mac address.')
-    parser.add_argument('prefix', help='The ipv6 /64 prefix.')
 
-    args = parser.parse_args()
+    parser.add_argument(
+        'mac',
+        help='The mac address.',
+    )
+
+    parser.add_argument(
+        'prefix',
+        help='The ipv6 /64 prefix.',
+    )
+
+    return parser
+
+
+def main():
+    args = get_parser().parse_args()
 
     print(mac_to_eui64(args.mac, args.prefix))
 

@@ -65,7 +65,7 @@ def get_text_per_page(pdf, page, txt_file):
         txt_file.add_line(line)
 
 
-def get_args():
+def get_parser():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -87,11 +87,11 @@ def get_args():
         help='Make the command line output more verbose.',
     )
 
-    return parser.parse_args()
+    return parser
 
 
 def main():
-    args = get_args()
+    args = get_parser().parse_args()
 
     run.setup(verbose=args.verbose, colorize=args.colorize)
 
