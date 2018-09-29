@@ -1,13 +1,14 @@
 #! /usr/bin/env python3
 
-import multiprocessing
+from jfscripts import __version__
+from jfscripts._utils import check_bin, Run, FilePath
 import argparse
+import multiprocessing
 import os
 import re
-from jfscripts._utils import check_bin, Run, FilePath
-import uuid
 import shutil
 import time
+import uuid
 
 run = Run()
 
@@ -122,6 +123,13 @@ def get_parser():
         '--verbose',
         action='store_true',
         help='Make the command line output more verbose.',
+    )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='%(prog)s {version}'.format(version=__version__),
     )
 
     parser.add_argument(
@@ -269,9 +277,11 @@ def do_multiprocessing_magick(input_files, state):
 def join_to_pdf(images, state):
     cmd = ['pdftk']
 
+    first_input_file = FilePath(state.args.input_files[0], absolute=True)
+    dir = os.path.dirname(str(first_input_file))
     image_paths = map(lambda image: str(image), images)
     cmd += image_paths
-    joined = os.path.join(state.pdf_dir, state.pdf_basename + '_joined.pdf')
+    joined = os.path.join(dir, first_input_file.basename + '_joined.pdf')
     cmd += ['cat', 'output', joined]
 
     run.run(cmd)

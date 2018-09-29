@@ -103,7 +103,7 @@ magick-imslp.py
 .. code-block:: text
 
     usage: magick-imslp.py [-h] [-b] [-B] [-c] [-e] [-f] [-j] [-n] [-p] [-r] [-S]
-                           [-t THRESHOLD] [-v]
+                           [-t THRESHOLD] [-v] [-V]
                            input_files [input_files ...]
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -134,6 +134,7 @@ magick-imslp.py
       -t THRESHOLD, --threshold THRESHOLD
                             threshold, default 50 percent.
       -v, --verbose         Make the command line output more verbose.
+      -V, --version         show program's version number and exit
 
 replace-pdfpage.py
 ------------------
