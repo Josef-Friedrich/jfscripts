@@ -14,9 +14,9 @@ def is_glob(string):
 
 
 def _split_glob(glob_path):
-    """Split a file path (e. g.: /data/*.txt) containing glob wildcard
+    """Split a file path (e. g.: /data/\*.txt) containing glob wildcard
     characters in a glob free path prefix (e. g.: /data) and a glob
-    pattern (e. g. *.txt).
+    pattern (e. g. \*.txt).
 
     :param str glob_path: A file path containing glob wildcard characters.
     """

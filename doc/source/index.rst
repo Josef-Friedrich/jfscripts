@@ -7,7 +7,6 @@ Contents:
 .. toctree::
     :maxdepth: 2
 
-    command-line-interface
     cli
     modules
 
