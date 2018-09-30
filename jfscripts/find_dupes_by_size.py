@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+from jfscripts import __version__
 import argparse
 import os
 
@@ -40,6 +41,13 @@ def get_parser():
     parser.add_argument(
         'path',
         help='A directory to recursively search for duplicate files.',
+    )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='%(prog)s {version}'.format(version=__version__),
     )
 
     return parser

@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+from jfscripts import __version__
 import argparse
 import ipaddress
 import re
@@ -42,6 +43,13 @@ def get_parser():
     parser.add_argument(
         'prefix',
         help='The ipv6 /64 prefix.',
+    )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='%(prog)s {version}'.format(version=__version__),
     )
 
     return parser

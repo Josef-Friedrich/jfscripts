@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+from jfscripts import __version__
 from jfscripts._utils import check_bin, FilePath, Run
 import argparse
 import os
@@ -85,6 +86,13 @@ def get_parser():
         '--verbose',
         action='store_true',
         help='Make the command line output more verbose.',
+    )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='%(prog)s {version}'.format(version=__version__),
     )
 
     return parser

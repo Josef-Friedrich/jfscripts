@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+from jfscripts import __version__
 import argparse
 import ipaddress
 import socket
@@ -29,9 +30,17 @@ def get_parser():
     parser = argparse.ArgumentParser(
         description='Get the ipv6 prefix from a DNS name.'
     )
+
     parser.add_argument(
         'dnsname',
         help='The DNS name, e. g. josef-friedrich.de',
+    )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='%(prog)s {version}'.format(version=__version__),
     )
 
     return parser

@@ -1,10 +1,12 @@
 #! /usr/bin/env python3
 
+from jfscripts import __version__
 from jfscripts._utils import check_bin, Run
 import argparse
 import os
 import re
 import tempfile
+
 
 run = Run()
 
@@ -70,15 +72,25 @@ def get_parser():
         'pdf',
         help='The PDF file',
     )
+
     parser.add_argument(
         'number',
         type=int,
         help='The page number of the PDF page to replace',
     )
+
     parser.add_argument(
         'image',
         help='The image file to replace the PDF page with',
     )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='%(prog)s {version}'.format(version=__version__),
+    )
+
     return parser
 
 

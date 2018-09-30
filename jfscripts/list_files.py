@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+from jfscripts import __version__
 import argparse
 import fnmatch
 import os
@@ -14,9 +15,9 @@ def is_glob(string):
 
 
 def _split_glob(glob_path):
-    """Split a file path (e. g.: /data/\*.txt) containing glob wildcard
+    """Split a file path (e. g.: /data/(asterisk).txt) containing glob wildcard
     characters in a glob free path prefix (e. g.: /data) and a glob
-    pattern (e. g. \*.txt).
+    pattern (e. g. (asterisk).txt).
 
     :param str glob_path: A file path containing glob wildcard characters.
     """
@@ -61,9 +62,9 @@ def list_files(files, default_glob=None):
     :param list files: A list of file paths or a single element list containing
       a glob string.
 
-    :param string default_glob: A default glob pattern like “\*.txt”. This
-      argument is only taken into account, if “element” is a list with only
-      one entry and this entry is a path to a directory.
+    :param string default_glob: A default glob pattern like “(asterisk).txt”.
+      This argument is only taken into account, if “element” is a list with
+      only one entry and this entry is a path to a directory.
     """
     if len(files) > 1:
         return files
@@ -128,6 +129,13 @@ def get_parser():
         'input_files',
         help='Examples for this arguments are: ' + doc_examples(inline=True),
         nargs='+',
+    )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version='%(prog)s {version}'.format(version=__version__),
     )
 
     return parser
