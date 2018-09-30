@@ -149,6 +149,7 @@ def pdf_page_count(pdf_file):
 
 
 def pdf_to_images(pdf_file, state):
+    """Convert a PDF file to images in the TIFF format."""
     state.pdf_env(pdf_file)
     run.run(['pdfimages', '-tiff', str(pdf_file), state.tmp_identifier],
             cwd=state.pdf_dir)
@@ -242,6 +243,13 @@ def do_magick(arguments):
 
 
 def threshold(input_file, threshold, state):
+    """
+    :param input_file: The input file.
+    :type input_file: jfscripts._utils.FilePath
+    :param int threshold: A integer number between 0 - 100.
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+    """
     appendix = '_threshold-{}'.format(threshold)
     out = input_file.new(extension='png', append=appendix)
     run.run(['convert',
@@ -252,11 +260,21 @@ def threshold(input_file, threshold, state):
 
 
 def threshold_series(input_file, state):
+    """
+    :param input_file: The input file.
+    :type input_file: jfscripts._utils.FilePath
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+    """
     for number in range(40, 85, 5):
         threshold(input_file, number, state)
 
 
 def get_image_info(input_file):
+    """
+    :param input_file: The input file.
+    :type input_file: jfscripts._utils.FilePath
+    """
     output = run.check_output(['identify', str(input_file)])
     result = re.search(r' (\d+)x(\d+) .* (\d+)c ', output.decode('utf-8'))
     return {
@@ -267,6 +285,10 @@ def get_image_info(input_file):
 
 
 def do_multiprocessing_magick(input_files, state):
+    """
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+    """
     pool = multiprocessing.Pool()
     data = []
     for input_file in input_files:
@@ -275,6 +297,10 @@ def do_multiprocessing_magick(input_files, state):
 
 
 def join_to_pdf(images, state):
+    """
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+    """
     cmd = ['pdftk']
 
     first_input_file = FilePath(state.args.input_files[0], absolute=True)
@@ -298,6 +324,7 @@ class Timer(object):
 
 
 class State(object):
+    """This object holds runtime data for the multiprocessing environment."""
 
     def __init__(self, args):
         self.args = args
