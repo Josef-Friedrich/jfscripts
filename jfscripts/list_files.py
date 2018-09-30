@@ -92,10 +92,10 @@ def doc_examples(command_name='', extension='txt', indent_spaces=0,
     examples = (
         'a.{}'.format(extension),
         'a.{0} b.{0} c.{0}'.format(extension),
-        '*.{}'.format(extension),
-        '"*.{}"'.format(extension),
+        '(asterisk).{}'.format(extension),
+        '"(asterisk).{}"'.format(extension),
         'dir/',
-        '"dir/*.{}"'.format(extension),
+        '"dir/(asterisk).{}"'.format(extension),
     )
 
     if command_name or indent_spaces:

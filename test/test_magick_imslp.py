@@ -207,6 +207,11 @@ class TestIntegration(TestCase):
     def test_command_line_interface(self):
         self.assertIsExecutable('magick_imslp')
 
+    def test_option_version(self):
+        output = subprocess.check_output(['magick-imslp.py', '--version'])
+        self.assertTrue(output)
+        self.assertIn('magick-imslp.py', str(output))
+
 
 @unittest.skipIf(not dependencies or not internet,
                  'Some dependencies are not installed')

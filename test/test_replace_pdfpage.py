@@ -2,6 +2,7 @@ from _helper import TestCase, Capturing
 from jfscripts import replace_pdfpage as replace
 from unittest import mock
 import unittest
+import subprocess
 
 
 class TestUnits(unittest.TestCase):
@@ -72,6 +73,11 @@ class TestIntegration(TestCase):
 
     def test_command_line_interface(self):
         self.assertIsExecutable('replace_pdfpage')
+
+    def test_option_version(self):
+        output = subprocess.check_output(['replace-pdfpage.py', '--version'])
+        self.assertTrue(output)
+        self.assertIn('replace-pdfpage.py', str(output))
 
 
 if __name__ == '__main__':

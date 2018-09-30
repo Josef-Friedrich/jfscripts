@@ -31,6 +31,11 @@ class TestIntegration(TestCase):
         self.assertTrue('-' * extract_pdftext.line_length in
                         open(str(txt)).read())
 
+    def test_option_version(self):
+        output = subprocess.check_output(['extract-pdftext.py', '--version'])
+        self.assertTrue(output)
+        self.assertIn('extract-pdftext.py', str(output))
+
 
 if __name__ == '__main__':
     unittest.main()

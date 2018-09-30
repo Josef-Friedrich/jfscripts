@@ -72,14 +72,15 @@ list-files.py
     
     list-files.py a.txt
     list-files.py a.txt b.txt c.txt
-    list-files.py *.txt
-    list-files.py "*.txt"
+    list-files.py (asterisk).txt
+    list-files.py "(asterisk).txt"
     list-files.py dir/
-    list-files.py "dir/*.txt"
+    list-files.py "dir/(asterisk).txt"
     
     positional arguments:
       input_files    Examples for this arguments are: “a.txt”, “a.txt b.txt
-                     c.txt”, “*.txt”, “"*.txt"”, “dir/”, “"dir/*.txt"”
+                     c.txt”, “(asterisk).txt”, “"(asterisk).txt"”, “dir/”,
+                     “"dir/(asterisk).txt"”
     
     optional arguments:
       -h, --help     show this help message and exit

@@ -5,8 +5,9 @@ from jfscripts.list_files import is_glob, \
                                  _list_files_all, \
                                  _list_files_filter, \
                                  doc_examples
-import unittest
 from unittest import mock
+import unittest
+import subprocess
 
 
 class TestFunctionIsGlob(TestCase):
@@ -162,37 +163,37 @@ class TestFunctionArgparseExamples(TestCase):
     def test_without_arguments(self):
         result = 'a.txt\n' \
                  'a.txt b.txt c.txt\n' \
-                 '*.txt\n' \
-                 '"*.txt"\n' \
+                 '(asterisk).txt\n' \
+                 '"(asterisk).txt"\n' \
                  'dir/\n' \
-                 '"dir/*.txt"'
+                 '"dir/(asterisk).txt"'
         self.assertEqual(doc_examples(), result)
 
     def test_without_indent_spaces(self):
         result = 'test.py a.txt\n' \
                  'test.py a.txt b.txt c.txt\n' \
-                 'test.py *.txt\n' \
-                 'test.py "*.txt"\n' \
+                 'test.py (asterisk).txt\n' \
+                 'test.py "(asterisk).txt"\n' \
                  'test.py dir/\n' \
-                 'test.py "dir/*.txt"'
+                 'test.py "dir/(asterisk).txt"'
         self.assertEqual(doc_examples('test.py', 'txt'), result)
 
     def test_with_indent_spaces(self):
         result = '    test.py a.txt\n' \
                  '    test.py a.txt b.txt c.txt\n' \
-                 '    test.py *.txt\n' \
-                 '    test.py "*.txt"\n' \
+                 '    test.py (asterisk).txt\n' \
+                 '    test.py "(asterisk).txt"\n' \
                  '    test.py dir/\n' \
-                 '    test.py "dir/*.txt"'
+                 '    test.py "dir/(asterisk).txt"'
         self.assertEqual(doc_examples('test.py', 'txt', 4), result)
 
     def test_inline(self):
         result = '“test.py a.txt”, ' \
                  '“test.py a.txt b.txt c.txt”, ' \
-                 '“test.py *.txt”, ' \
-                 '“test.py "*.txt"”, ' \
+                 '“test.py (asterisk).txt”, ' \
+                 '“test.py "(asterisk).txt"”, ' \
                  '“test.py dir/”, ' \
-                 '“test.py "dir/*.txt"”'
+                 '“test.py "dir/(asterisk).txt"”'
         self.assertEqual(doc_examples('test.py', 'txt', inline=True),
                          result)
 
@@ -201,6 +202,11 @@ class TestIntegration(TestCase):
 
     def test_command_line_interface(self):
         self.assertIsExecutable('list_files')
+
+    def test_option_version(self):
+        output = subprocess.check_output(['list-files.py', '--version'])
+        self.assertTrue(output)
+        self.assertIn('list-files.py', str(output))
 
 
 if __name__ == '__main__':
