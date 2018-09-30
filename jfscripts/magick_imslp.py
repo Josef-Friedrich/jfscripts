@@ -2,6 +2,7 @@
 
 from jfscripts import __version__
 from jfscripts._utils import check_bin, Run, FilePath
+from jfscripts import list_files
 import argparse
 import multiprocessing
 import os
@@ -134,7 +135,7 @@ def get_parser():
 
     parser.add_argument(
         'input_files',
-        help='files to process.',
+        help=list_files.doc_examples('%(prog)s', 'tiff'),
         nargs='+',
     )
 
@@ -355,6 +356,8 @@ def main():
     state = State(args)
 
     check_bin(*dependencies)
+
+    state.args.input_files = list_files.list_files(state.args.input_files)
 
     first_input_file = FilePath(state.args.input_files[0], absolute=True)
 

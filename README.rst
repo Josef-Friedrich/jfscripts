@@ -117,7 +117,10 @@ magick-imslp.py
     http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern
     
     positional arguments:
-      input_files           files to process.
+      input_files           magick-imslp.py a.tiff magick-imslp.py a.tiff b.tiff
+                            c.tiff magick-imslp.py (asterisk).tiff magick-imslp.py
+                            "(asterisk).tiff" magick-imslp.py dir/ magick-imslp.py
+                            "dir/(asterisk).tiff"
     
     optional arguments:
       -h, --help            show this help message and exit
