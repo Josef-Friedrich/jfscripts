@@ -34,8 +34,14 @@ internet = check_internet_connectifity()
 if dependencies and internet:
     tmp_pdf = download('pdf/scans.pdf',
                        local_path='/tmp/jfs-magick_imslp/test.pdf')
-    tmp_png1 = download('png/bach-busoni_300.png',
-                        local_path='/tmp/jfscripts/magick_imslp/test.png')
+    tmp_png1 = download(
+        'png/bach-busoni_300.png',
+        local_path='/tmp/jfscripts/magick_imslp/bach-busoni_300.png'
+    )
+    tmp_png2 = download(
+        'png/liszt-weinen_300.png',
+        local_path='/tmp/jfscripts/magick_imslp/liszt-weinen_300.png'
+    )
 
 
 class TestUnit(TestCase):
@@ -242,6 +248,14 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertExists(pdf)
         path = FilePath(pdf)
         check_output(['magick-imslp.py', '--join', pdf])
+        self.assertExists(path.base + '_joined.pdf')
+
+    def test_option_join_pdf_source_png(self):
+        self.assertExists(tmp_png1)
+        self.assertExists(tmp_png2)
+        path = FilePath(tmp_png1)
+        check_output(['magick-imslp.py', '--pdf', '--join', tmp_png1,
+                      tmp_png2])
         self.assertExists(path.base + '_joined.pdf')
 
     def test_real_threshold_series(self):
