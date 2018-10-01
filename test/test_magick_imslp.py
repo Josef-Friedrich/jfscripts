@@ -16,6 +16,7 @@ import unittest
 def get_state(complete=False):
     args = Mock()
     args.threshold = '50%'
+    args.input_files = ['/tmp/1.txt', '/tmp/2.txt']
     state = State(args)
     if complete:
         state.pdf_env(FilePath('test.pdf'))
@@ -191,8 +192,7 @@ class TestClassTimer(TestCase):
 class TestClassState(TestCase):
 
     def setUp(self):
-        args = Mock()
-        self.state = State(args)
+        self.state = get_state(complete=True)
 
     def test_args(self):
         self.assertTrue(self.state.args)

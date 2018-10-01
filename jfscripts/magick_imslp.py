@@ -304,11 +304,10 @@ def join_to_pdf(images, state):
     """
     cmd = ['pdftk']
 
-    first_input_file = FilePath(state.args.input_files[0], absolute=True)
-    dir = os.path.dirname(str(first_input_file))
+    dir = os.path.dirname(str(state.first_input_file))
     image_paths = map(lambda image: str(image), images)
     cmd += image_paths
-    joined = os.path.join(dir, first_input_file.basename + '_joined.pdf')
+    joined = os.path.join(dir, state.first_input_file.basename + '_joined.pdf')
     cmd += ['cat', 'output', joined]
 
     run.run(cmd)
@@ -332,12 +331,19 @@ class State(object):
         self.identifier_string = '_magick'
         self.uuid = str(uuid.uuid1())
         self.input_is_pdf = False
+        self.cwd = os.getcwd()
+        """The current working directory"""
+
+        self.input_files = list_files.list_files(self.args.input_files)
+        """A list of all input files."""
+
+        self.first_input_file = FilePath(self.input_files[0], absolute=True)
+        """The first input file."""
 
     def pdf_env(self, pdf):
         self.pdf_dir = os.path.dirname(str(pdf))
         self.pdf_basename = pdf.basename
         self.tmp_identifier = '{}_{}'.format(pdf.basename, self.uuid)
-        self.cwd = os.getcwd()
 
 
 def convert_file_paths(files):
@@ -357,21 +363,17 @@ def main():
 
     check_bin(*dependencies)
 
-    state.args.input_files = list_files.list_files(state.args.input_files)
-
-    first_input_file = FilePath(state.args.input_files[0], absolute=True)
-
     if state.args.threshold_series:
-        threshold_series(first_input_file, state)
+        threshold_series(state.first_input_file, state)
 
-    if first_input_file.extension == 'pdf':
+    if state.first_input_file.extension == 'pdf':
         state.input_is_pdf = True
-        if len(state.args.input_files) > 1:
+        if len(state.input_files) > 1:
             raise ValueError('Specify only one PDF file.')
-        pdf_to_images(first_input_file, state)
+        pdf_to_images(state.first_input_file, state)
         input_files = collect_images(state)
     else:
-        input_files = state.args.input_files
+        input_files = state.input_files
 
     input_files = convert_file_paths(input_files)
 
