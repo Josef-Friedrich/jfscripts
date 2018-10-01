@@ -14,6 +14,10 @@ def is_glob(string):
         return False
 
 
+def common_path_prefix(paths):
+    return os.path.commonprefix(paths)
+
+
 def _split_glob(glob_path):
     """Split a file path (e. g.: /data/(asterisk).txt) containing glob wildcard
     characters in a glob free path prefix (e. g.: /data) and a glob
