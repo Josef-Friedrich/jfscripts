@@ -2,6 +2,7 @@ from _helper import TestCase, download, check_internet_connectifity
 from jfscripts import magick_imslp
 from jfscripts._utils import check_bin
 from jfscripts.magick_imslp import FilePath, State, Timer
+from pathlib import Path
 from subprocess import check_output, run
 from unittest import mock
 from unittest.mock import patch, Mock
@@ -242,24 +243,23 @@ class TestIntegrationWithDependencies(TestCase):
     def test_with_real_pdf_join(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
-        path = FilePath(tmp)
         check_output(['magick-imslp.py', '--pdf', '--join', tmp])
-        self.assertExists(path.base + '_joined.pdf')
+        self.assertExists(os.path.join(str(Path(tmp).parent), 'joined.pdf'))
 
     def test_option_join_without_pdf(self):
         pdf = copy(tmp_pdf)
         self.assertExists(pdf)
-        path = FilePath(pdf)
         check_output(['magick-imslp.py', '--join', pdf])
-        self.assertExists(path.base + '_joined.pdf')
+        self.assertExists(os.path.join(str(Path(tmp_pdf).parent),
+                                       'joined.pdf'))
 
     def test_option_join_pdf_source_png(self):
         self.assertExists(tmp_png1)
         self.assertExists(tmp_png2)
-        path = FilePath(tmp_png1)
         check_output(['magick-imslp.py', '--pdf', '--join', tmp_png1,
                       tmp_png2])
-        self.assertExists(path.base + '_joined.pdf')
+        self.assertExists(os.path.join(str(Path(tmp_png1).parent),
+                                       'joined.pdf'))
 
     def test_real_threshold_series(self):
         tmp = copy(tmp_png1)

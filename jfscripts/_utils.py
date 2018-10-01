@@ -67,18 +67,28 @@ class FilePath(object):
 
     def __init__(self, path, absolute=False):
         self.absolute = absolute
+        """Boolean, indicates wheter the path is an absolute path or an
+        relative path."""
+
         if self.absolute:
             self.path = os.path.abspath(path)
+            """The absolute (`/home/document/file.ext`) or the relative path
+            (`document/file.ext`) of the file."""
         else:
             self.path = os.path.relpath(path)
-        # file.ext
+
         self.filename = os.path.basename(path)
-        # ext
+        """The filename is the combination of the basename and the
+        extension, e. g. `file.ext`."""
+
         self.extension = os.path.splitext(self.path)[1][1:]
-        # file
+        """The extension of the file, e. g. `ext`."""
+
         self.basename = self.filename[:-len(self.extension) - 1]
-        # /home/file
+        """The basename of the file, e. g. `file`."""
+
         self.base = self.path[:-len(self.extension) - 1]
+        """The path without an extension, e. g. `/home/document/file`."""
 
     def __str__(self):
         return self.path
@@ -90,6 +100,15 @@ class FilePath(object):
         return FilePath(path, self.absolute)
 
     def new(self, extension=None, append='', del_substring=''):
+        """
+        :param str extension: The extension of the new file path.
+        :param str append: String to append on the basename. This string
+          is located before the extension.
+        :param str del_substring: String to delete from the new file path.
+
+        :return: A new file path object.
+        :rtype: FilePath
+        """
         if not extension:
             extension = self.extension
         new = '{}{}.{}'.format(self.base, append, extension)
@@ -98,4 +117,5 @@ class FilePath(object):
         return self._export(new)
 
     def remove(self):
+        """Remove the file."""
         os.remove(self.path)

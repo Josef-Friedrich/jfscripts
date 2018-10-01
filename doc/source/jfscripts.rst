@@ -4,6 +4,11 @@ jfscripts package
 Submodules
 ----------
 
+jfscripts._utils module
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: jfscripts._utils
+
 jfscripts.dns_ipv6_prefix module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
