@@ -127,7 +127,8 @@ class TestUnit(TestCase):
             self.assertEqual(args[1], '-tiff')
             self.assertEqual(args[2], 'test.pdf')
             self.assertIn('test.pdf', args[2])
-            self.assertEqual(len(args[3]), 41)
+            # test_magick_901ca3ae-c5ad-11e8-9796-5c514fcf0a5d
+            self.assertEqual(len(args[3]), 48)
             self.assertTrue(args[3].startswith('test_'))
 
     @unittest.skip('skipped')

@@ -151,7 +151,8 @@ def pdf_page_count(pdf_file):
 
 def pdf_to_images(pdf_file, state):
     """Convert a PDF file to images in the TIFF format."""
-    run.run(['pdfimages', '-tiff', str(pdf_file), state.tmp_identifier],
+    run.run(['pdfimages', '-tiff', str(pdf_file),
+             '{}_{}'.format(pdf_file.basename, state.tmp_identifier)],
             cwd=state.common_path_prefix)
 
 
@@ -159,7 +160,7 @@ def collect_images(state):
     prefix = state.common_path_prefix
     out = []
     for input_file in os.listdir(prefix):
-        if input_file.startswith(state.tmp_identifier) and \
+        if state.tmp_identifier in input_file and \
            os.path.getsize(os.path.join(prefix, input_file)) > 200:
             out.append(os.path.join(prefix, input_file))
     out.sort()
@@ -168,7 +169,7 @@ def collect_images(state):
 
 def cleanup(state):
     for work_file in os.listdir(state.common_path_prefix):
-        if work_file.startswith(state.tmp_identifier):
+        if state.tmp_identifier in work_file:
             os.remove(os.path.join(state.common_path_prefix, work_file))
 
 
@@ -223,7 +224,7 @@ def do_magick(arguments):
 
     if not state.args.join:
         target = source.new(extension=extension,
-                            del_substring=state.tmp_identifier)
+                            del_substring='_' + state.tmp_identifier)
     else:
         target = source.new(extension=extension)
 
@@ -306,10 +307,12 @@ def join_to_pdf(images, state):
 
     image_paths = map(lambda image: str(image), images)
     cmd += image_paths
-    joined = os.path.join(state.common_path_prefix, 'joined.pdf')
-    cmd += ['cat', 'output', joined]
+    target_path = os.path.join(state.common_path_prefix, 'joined.pdf')
+    cmd += ['cat', 'output', target_path]
 
-    run.run(cmd)
+    result = run.run(cmd)
+    if result.returncode == 0:
+        print('Successfully created: {}'.format(target_path))
 
 
 class Timer(object):
@@ -382,7 +385,6 @@ def main():
         threshold_series(state.first_input_file, state)
 
     if state.first_input_file.extension == 'pdf':
-        state.input_is_pdf = True
         if len(state.input_files) > 1:
             raise ValueError('Specify only one PDF file.')
         pdf_to_images(state.first_input_file, state)
