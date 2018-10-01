@@ -250,7 +250,7 @@ class TestIntegrationWithDependencies(TestCase):
         pdf = copy(tmp_pdf)
         self.assertExists(pdf)
         check_output(['magick-imslp.py', '--join', pdf])
-        self.assertExists(os.path.join(str(Path(tmp_pdf).parent),
+        self.assertExists(os.path.join(str(Path(pdf).parent),
                                        'joined.pdf'))
 
     def test_option_join_pdf_source_png(self):

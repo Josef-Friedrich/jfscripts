@@ -221,9 +221,9 @@ def do_magick(arguments):
     else:
         extension = 'png'
 
-    if hasattr(state, 'tmp_identifier') and not state.args.join:
+    if not state.args.join:
         target = source.new(extension=extension,
-                            del_substring='_' + state.uuid)
+                            del_substring=state.tmp_identifier)
     else:
         target = source.new(extension=extension)
 
@@ -328,9 +328,7 @@ class State(object):
     def __init__(self, args):
         self.args = args
         """argparse arguments"""
-        self.identifier_string = '_magick'
-        self.uuid = str(uuid.uuid1())
-        self.input_is_pdf = False
+
         self.cwd = os.getcwd()
         """The current working directory"""
 
@@ -352,7 +350,15 @@ class State(object):
         if self.first_input_file.extension.lower() == 'pdf':
             self.input_is_pdf = True
 
-        self.tmp_identifier = '_{}'.format(self.uuid)
+        self.identifier = 'magick'
+        """To allow better assignment of the output files."""
+
+        self.uuid = str(uuid.uuid1())
+        """A random string used for the identification of temporarily
+        generated files."""
+
+        self.tmp_identifier = '{}_{}'.format(self.identifier, self.uuid)
+        """Used for the identification of temporary files."""
 
 
 def convert_file_paths(files):
@@ -397,8 +403,7 @@ def main():
     if state.args.join:
         join_to_pdf(output_files, state)
 
-    if hasattr(state, 'pdf_dir'):
-        cleanup(state)
+    cleanup(state)
 
     print('Execution time: {}'.format(timer.stop()))
 
