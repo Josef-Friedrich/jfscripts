@@ -32,8 +32,12 @@ def _split_glob(glob_path):
             no_globs.append(g)
         else:
             break
+    if not no_globs:
+        dir_path = '.'
+    else:
+        dir_path = os.path.sep.join(no_globs)
     return (
-        os.path.sep.join(no_globs),
+        dir_path,
         os.path.sep.join(globs[len(no_globs):]),
     )
 
@@ -147,8 +151,12 @@ def get_parser():
 
 def main():
     args = get_parser().parse_args()
-    for f in list_files(args.input_files):
-        print(f)
+    files = list_files(args.input_files)
+    if files:
+        for f in files:
+            print(f)
+    else:
+        print('Nothing found to list. :-(')
 
 
 if __name__ == '__main__':

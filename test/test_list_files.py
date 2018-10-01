@@ -27,6 +27,9 @@ class TestFunctionCommonPrefix(TestCase):
 
 class TestFunctionIsGlob(TestCase):
 
+    def test_asterisk_extension(self):
+        self.assertTrue(is_glob('*.mscx'))
+
     def test_asterisk(self):
         self.assertTrue(is_glob('l*l'))
 
@@ -52,7 +55,7 @@ class TestFunctionSplitGlob(TestCase):
         )
 
     def test_glob_only(self):
-        self.assertEqual(_split_glob('*.mscx'), ('', '*.mscx'))
+        self.assertEqual(_split_glob('*.mscx'), ('.', '*.mscx'))
 
     def test_prefix_only(self):
         self.assertEqual(_split_glob('test/lol'), ('test/lol', ''))
@@ -66,7 +69,7 @@ class TestFunctionSplitGlob(TestCase):
     def test_glob_ahead_position(self):
         self.assertEqual(
             _split_glob('t*st/a/l*l/lol/*'),
-            ('', 't*st/a/l*l/lol/*'),
+            ('.', 't*st/a/l*l/lol/*'),
         )
 
 
