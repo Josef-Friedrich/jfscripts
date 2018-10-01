@@ -151,25 +151,25 @@ def pdf_page_count(pdf_file):
 
 def pdf_to_images(pdf_file, state):
     """Convert a PDF file to images in the TIFF format."""
-    state.pdf_env(pdf_file)
     run.run(['pdfimages', '-tiff', str(pdf_file), state.tmp_identifier],
-            cwd=state.pdf_dir)
+            cwd=state.common_path_prefix)
 
 
 def collect_images(state):
+    prefix = state.common_path_prefix
     out = []
-    for input_file in os.listdir(state.pdf_dir):
+    for input_file in os.listdir(prefix):
         if input_file.startswith(state.tmp_identifier) and \
-           os.path.getsize(os.path.join(state.pdf_dir, input_file)) > 200:
-            out.append(os.path.join(state.pdf_dir, input_file))
+           os.path.getsize(os.path.join(prefix, input_file)) > 200:
+            out.append(os.path.join(prefix, input_file))
     out.sort()
     return out
 
 
 def cleanup(state):
-    for work_file in os.listdir(state.pdf_dir):
+    for work_file in os.listdir(state.common_path_prefix):
         if work_file.startswith(state.tmp_identifier):
-            os.remove(os.path.join(state.pdf_dir, work_file))
+            os.remove(os.path.join(state.common_path_prefix, work_file))
 
 
 def enlighten_border(width, height):
@@ -304,10 +304,9 @@ def join_to_pdf(images, state):
     """
     cmd = ['pdftk']
 
-    dir = os.path.dirname(str(state.first_input_file))
     image_paths = map(lambda image: str(image), images)
     cmd += image_paths
-    joined = os.path.join(dir, state.first_input_file.basename + '_joined.pdf')
+    joined = os.path.join(state.common_path_prefix, 'joined.pdf')
     cmd += ['cat', 'output', joined]
 
     run.run(cmd)
@@ -328,6 +327,7 @@ class State(object):
 
     def __init__(self, args):
         self.args = args
+        """argparse arguments"""
         self.identifier_string = '_magick'
         self.uuid = str(uuid.uuid1())
         self.input_is_pdf = False
@@ -337,13 +337,22 @@ class State(object):
         self.input_files = list_files.list_files(self.args.input_files)
         """A list of all input files."""
 
+        self.common_path_prefix = \
+            list_files.common_path_prefix(self.input_files)
+        """The common path prefix of all input files."""
+
+        if self.common_path_prefix == '':
+            self.common_path_prefix = self.cwd
         self.first_input_file = FilePath(self.input_files[0], absolute=True)
         """The first input file."""
 
-    def pdf_env(self, pdf):
-        self.pdf_dir = os.path.dirname(str(pdf))
-        self.pdf_basename = pdf.basename
-        self.tmp_identifier = '{}_{}'.format(pdf.basename, self.uuid)
+        self.input_is_pdf = False
+        """Boolean that indicates if the first file is a pdf."""
+
+        if self.first_input_file.extension.lower() == 'pdf':
+            self.input_is_pdf = True
+
+        self.tmp_identifier = '_{}'.format(self.uuid)
 
 
 def convert_file_paths(files):

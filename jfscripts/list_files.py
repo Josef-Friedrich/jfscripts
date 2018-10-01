@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 from jfscripts import __version__
+from pathlib import Path
 import argparse
 import fnmatch
 import os
@@ -15,7 +16,11 @@ def is_glob(string):
 
 
 def common_path_prefix(paths):
-    return os.path.commonprefix(paths)
+    common_path = os.path.commonpath(paths)
+    if os.path.isdir(common_path):
+        return common_path
+    else:
+        return str(Path(common_path).parent.resolve())
 
 
 def _split_glob(glob_path):

@@ -13,13 +13,11 @@ import tempfile
 import unittest
 
 
-def get_state(complete=False):
+def get_state():
     args = Mock()
     args.threshold = '50%'
     args.input_files = ['/tmp/1.txt', '/tmp/2.txt']
     state = State(args)
-    if complete:
-        state.pdf_env(FilePath('test.pdf'))
     return state
 
 
@@ -91,7 +89,7 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.run.run')
     def test_threshold(self, run):
-        state = get_state(complete=True)
+        state = get_state()
         magick_imslp.threshold(FilePath('test.jpg'), 99, state)
         run.assert_called_with(
             ['convert', '-threshold', '99%', 'test.jpg',
@@ -100,7 +98,7 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.threshold')
     def test_threshold_series(self, threshold):
-        state = get_state(complete=True)
+        state = get_state()
         magick_imslp.threshold_series(FilePath('test.jpg'), state)
         self.assertEqual(threshold.call_count, 9)
 
@@ -120,7 +118,7 @@ class TestUnit(TestCase):
             check(101)
 
     def test_pdf_to_images(self):
-        state = get_state(complete=True)
+        state = get_state()
         with mock.patch('subprocess.run') as mock_run:
             magick_imslp.pdf_to_images(FilePath('test.pdf'), state)
             args = mock_run.call_args[0][0]
@@ -133,7 +131,7 @@ class TestUnit(TestCase):
 
     @unittest.skip('skipped')
     def test_collect_images(self):
-        state = get_state(complete=True)
+        state = get_state()
 
         with mock.patch('os.listdir') as os_listdir:
             files = ['2.tif', '1.tif']
@@ -192,7 +190,7 @@ class TestClassTimer(TestCase):
 class TestClassState(TestCase):
 
     def setUp(self):
-        self.state = get_state(complete=True)
+        self.state = get_state()
 
     def test_args(self):
         self.assertTrue(self.state.args)
