@@ -153,11 +153,11 @@ def pdf_to_images(pdf_file, state):
     """Convert a PDF file to images in the TIFF format."""
     run.run(['pdfimages', '-tiff', str(pdf_file),
              '{}_{}'.format(pdf_file.basename, state.tmp_identifier)],
-            cwd=state.common_path_prefix)
+            cwd=state.common_path)
 
 
 def collect_images(state):
-    prefix = state.common_path_prefix
+    prefix = state.common_path
     out = []
     for input_file in os.listdir(prefix):
         if state.tmp_identifier in input_file and \
@@ -168,9 +168,9 @@ def collect_images(state):
 
 
 def cleanup(state):
-    for work_file in os.listdir(state.common_path_prefix):
+    for work_file in os.listdir(state.common_path):
         if state.tmp_identifier in work_file:
-            os.remove(os.path.join(state.common_path_prefix, work_file))
+            os.remove(os.path.join(state.common_path, work_file))
 
 
 def enlighten_border(width, height):
@@ -307,7 +307,7 @@ def join_to_pdf(images, state):
 
     image_paths = map(lambda image: str(image), images)
     cmd += image_paths
-    target_path = os.path.join(state.common_path_prefix, 'joined.pdf')
+    target_path = os.path.join(state.common_path, 'joined.pdf')
     cmd += ['cat', 'output', target_path]
 
     result = run.run(cmd)
@@ -338,12 +338,12 @@ class State(object):
         self.input_files = list_files.list_files(self.args.input_files)
         """A list of all input files."""
 
-        self.common_path_prefix = \
-            list_files.common_path_prefix(self.input_files)
+        self.common_path = \
+            list_files.common_path(self.input_files)
         """The common path prefix of all input files."""
 
-        if self.common_path_prefix == '':
-            self.common_path_prefix = self.cwd
+        if self.common_path == '':
+            self.common_path = self.cwd
         self.first_input_file = FilePath(self.input_files[0], absolute=True)
         """The first input file."""
 

@@ -3,7 +3,7 @@ from jfscripts.list_files import \
                                  _list_files_all, \
                                  _list_files_filter, \
                                  _split_glob, \
-                                 common_path_prefix, \
+                                 common_path, \
                                  doc_examples, \
                                  is_glob, \
                                  list_files
@@ -15,14 +15,14 @@ import subprocess
 class TestFunctionCommonPrefix(TestCase):
 
     def test_single_path(self):
-        self.assertEqual(common_path_prefix(['/tmp/lol.txt']), '/tmp')
+        self.assertEqual(common_path(['/tmp/lol.txt']), '/tmp')
 
     def test_two_paths(self):
-        self.assertEqual(common_path_prefix(['/tmp/a.txt', '/tmp/b.txt']),
+        self.assertEqual(common_path(['/tmp/a.txt', '/tmp/b.txt']),
                          '/tmp')
 
     def test_no_match(self):
-        self.assertEqual(common_path_prefix(['/usr/a.txt', '/tmp/b.txt']), '/')
+        self.assertEqual(common_path(['/usr/a.txt', '/tmp/b.txt']), '/')
 
 
 class TestFunctionIsGlob(TestCase):

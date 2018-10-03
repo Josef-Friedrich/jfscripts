@@ -15,7 +15,7 @@ def is_glob(string):
         return False
 
 
-def common_path_prefix(paths):
+def common_path(paths):
     common_path = os.path.commonpath(paths)
     if os.path.isdir(common_path):
         return common_path
