@@ -64,6 +64,11 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number):
 
 
 def get_parser():
+    """The argument parser for the command line interface.
+
+    :return: A ArgumentParser object.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser(
         description='Replace one page in a PDF file with an image file.',
     )

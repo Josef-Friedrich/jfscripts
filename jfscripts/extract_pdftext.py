@@ -67,6 +67,11 @@ def get_text_per_page(pdf, page, txt_file):
 
 
 def get_parser():
+    """The argument parser for the command line interface.
+
+    :return: A ArgumentParser object.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument(

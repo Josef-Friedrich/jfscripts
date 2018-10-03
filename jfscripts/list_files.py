@@ -132,6 +132,11 @@ def doc_examples(command_name='', extension='txt', indent_spaces=0,
 
 
 def get_parser():
+    """The argument parser for the command line interface.
+
+    :return: A ArgumentParser object.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description='This is a script to demonstrate the list_files() '

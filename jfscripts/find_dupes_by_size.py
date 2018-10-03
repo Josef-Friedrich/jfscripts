@@ -34,6 +34,11 @@ def check_for_duplicates(path):
 
 
 def get_parser():
+    """The argument parser for the command line interface.
+
+    :return: A ArgumentParser object.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser(
         description='Find duplicate files by size.',
     )

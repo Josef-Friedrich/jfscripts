@@ -32,6 +32,11 @@ def check_threshold(value):
 
 
 def get_parser():
+    """The argument parser for the command line interface.
+
+    :return: A ArgumentParser object.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser(
         description='A wrapper script for imagemagick to process image \
         files suitable for imslp.org (International Music Score Library \

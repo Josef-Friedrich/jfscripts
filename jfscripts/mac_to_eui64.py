@@ -31,6 +31,11 @@ def mac_to_eui64(mac, prefix=None):
 
 
 def get_parser():
+    """The argument parser for the command line interface.
+
+    :return: A ArgumentParser object.
+    :rtype: argparse.ArgumentParser
+    """
     parser = argparse.ArgumentParser(
         description='Convert mac addresses to EUI64 ipv6 addresses.',
     )
