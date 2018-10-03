@@ -143,6 +143,13 @@ def get_parser():
 
 
 def pdf_page_count(pdf_file):
+    """Get the amount of pages a PDF files have.
+
+    :param str pdf_file: Path of the PDF file.
+
+    :return: Page count
+    :rtype: int
+    """
     output = run.check_output(['pdfinfo', pdf_file])
     output = output.decode('utf-8')
     page_count = re.search(r'Pages:\s*([0-9]*)', output)
@@ -193,6 +200,16 @@ def enlighten_border(width, height):
 
 
 def do_magick(arguments):
+    """
+    Convert a source image file using the subcommand convert of the
+    imagemagick suite.
+
+    :param tuple arguments: A tuple containing two elements: The first element
+      is the source file object and the second element is the state object.
+
+    :return: The target image file.
+    :rtype: jfscripts._utils.FilePath
+    """
     source = arguments[0]
     state = arguments[1]
     cmd_args = ['convert']
@@ -245,12 +262,15 @@ def do_magick(arguments):
 
 
 def threshold(input_file, threshold, state):
-    """
+    """Convert a image to a given threshold value.
+
     :param input_file: The input file.
     :type input_file: jfscripts._utils.FilePath
     :param int threshold: A integer number between 0 - 100.
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
+
+    :return: None
     """
     appendix = '_threshold-{}'.format(threshold)
     out = input_file.new(extension='png', append=appendix)
@@ -262,20 +282,27 @@ def threshold(input_file, threshold, state):
 
 
 def threshold_series(input_file, state):
-    """
+    """Generate a list of example files with different threshold values.
+
     :param input_file: The input file.
     :type input_file: jfscripts._utils.FilePath
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
+
+    :return: None
     """
     for number in range(40, 85, 5):
         threshold(input_file, number, state)
 
 
 def get_image_info(input_file):
-    """
+    """The different informations of an image.
+
     :param input_file: The input file.
     :type input_file: jfscripts._utils.FilePath
+
+    :return: A directory with the keys `width`, `height` and `channels`.
+    :rtype: dict
     """
     output = run.check_output(['identify', str(input_file)])
     result = re.search(r' (\d+)x(\d+) .* (\d+)c ', output.decode('utf-8'))
@@ -287,7 +314,8 @@ def get_image_info(input_file):
 
 
 def do_multiprocessing_magick(input_files, state):
-    """
+    """Run the function `do_magick` in a multiprocessing environment.
+
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
     """
