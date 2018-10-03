@@ -23,6 +23,15 @@ dependencies = (
 
 
 def check_threshold(value):
+    """
+    Check if `value` is a valid threshold value.
+
+    :param value:
+    :type value: integer or string
+
+    :return: A normalized threshold string (`90%`)
+    :rtype: string
+    """
     value = re.sub(r'%$', '', str(value))
     value = int(value)
     if value < 0 or value > 100:
@@ -162,13 +171,27 @@ def pdf_page_count(pdf_file):
 
 
 def pdf_to_images(pdf_file, state):
-    """Convert a PDF file to images in the TIFF format."""
+    """Convert a PDF file to images in the TIFF format.
+
+    :param pdf_file: The input file.
+    :type pdf_file: jfscripts._utils.FilePath
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+    """
     run.run(['pdfimages', '-tiff', str(pdf_file),
              '{}_{}'.format(pdf_file.basename, state.tmp_identifier)],
             cwd=state.common_path)
 
 
 def collect_images(state):
+    """Collection all images using the temporary identifier in a common path.
+
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+
+    :return: A sorted list of image paths.
+    :rtype: list
+    """
     prefix = state.common_path
     out = []
     for input_file in os.listdir(prefix):
@@ -180,12 +203,30 @@ def collect_images(state):
 
 
 def cleanup(state):
+    """Delete all images  using the temporary identifier in a common path.
+
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+
+    :return: None"""
+
     for work_file in os.listdir(state.common_path):
         if state.tmp_identifier in work_file:
             os.remove(os.path.join(state.common_path, work_file))
 
 
 def enlighten_border(width, height):
+    """
+    Build the command line arguments to enlighten the border in four regions.
+
+    :param int width: The width of the image.
+    :param int height: The height of the image.
+
+    :return: Command line arguments for imagemagicks’ `convert`.
+    :rtype: list
+
+
+    """
     border = int(round(((width + height) / 2) * 0.05))
 
     # top
@@ -349,11 +390,21 @@ def join_to_pdf(images, state):
 
 
 class Timer(object):
+    """Class to calculate the execution time. Mainly to test the speed
+    improvements of the multiprocessing implementation."""
 
     def __init__(self):
+        self.end = None
+        """UNIX timestamp the execution ended."""
         self.begin = self.end = time.time()
+        """UNIX timestamp the execution began."""
 
     def stop(self):
+        """Stop the time calculation and return the formated result.
+
+        :return: The result
+        :rtype: str
+        """
         self.end = time.time()
         return '{:.1f}s'.format(self.end - self.begin)
 
@@ -405,6 +456,10 @@ def convert_file_paths(files):
 
 
 def main():
+    """Main function.
+
+    :return: None
+    """
     timer = Timer()
     args = get_parser().parse_args()
     if args.join and not args.pdf:
