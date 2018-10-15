@@ -344,7 +344,7 @@ def threshold_series(input_file, state):
 
     :return: None
     """
-    for number in range(40, 85, 5):
+    for number in range(40, 100, 5):
         threshold(input_file, number, state)
 
 

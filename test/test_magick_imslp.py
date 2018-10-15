@@ -101,7 +101,7 @@ class TestUnit(TestCase):
     def test_threshold_series(self, threshold):
         state = get_state()
         magick_imslp.threshold_series(FilePath('test.jpg'), state)
-        self.assertEqual(threshold.call_count, 9)
+        self.assertEqual(threshold.call_count, 12)
 
     def test_check_threshold(self):
         check = magick_imslp.check_threshold
@@ -265,7 +265,7 @@ class TestIntegrationWithDependencies(TestCase):
     def test_real_threshold_series(self):
         tmp = copy(tmp_png1)
         check_output(['magick-imslp.py', '--threshold-series', tmp])
-        result = (40, 45, 50, 55, 60, 65, 70, 75, 80)
+        result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
         for threshold in result:
             suffix = '_threshold-{}.png'.format(threshold)
             path = tmp.replace('.png', suffix)
