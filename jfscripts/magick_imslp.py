@@ -349,9 +349,11 @@ def threshold(input_file, threshold, state):
     :return: None
     """
     appendix = '_threshold-{}'.format(threshold)
-    out = input_file.new(extension='png', append=appendix)
+    output_file = input_file.new(extension='png', append=appendix,
+                                 del_substring=state.tmp_identifier)
+    output_file = str(output_file).replace('_-000', '')
     run.run(convert_executable() + ['-threshold', '{}%'.format(threshold),
-            str(input_file), str(out)])
+            str(input_file), output_file])
 
 
 def threshold_series(input_file, state):
@@ -519,6 +521,8 @@ def main():
 
     if state.args.threshold_series:
         threshold_series(state.first_input_file, state)
+        if not state.args.no_cleanup:
+            cleanup(state)
         return
 
     if state.first_input_file.extension == 'pdf':

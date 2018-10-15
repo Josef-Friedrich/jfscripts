@@ -345,6 +345,17 @@ class TestIntegrationWithDependencies(TestCase):
         files = os.listdir(parent_dir)
         self.assertEqual(7, len(files))
 
+    def test_option_threshold_series_on_pdf(self):
+        pdf = copy(tmp_pdf)
+        parent_dir = Path(pdf).parent
+        check_output(['magick-imslp.py', '--threshold-series', pdf])
+        files = os.listdir(parent_dir)
+        self.assertEqual(len(files), 13)
+        result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
+        for threshold in result:
+            filename = 'test_threshold-{}.png'.format(threshold)
+            self.assertIn(filename, files)
+
 
 if __name__ == '__main__':
     unittest.main()
