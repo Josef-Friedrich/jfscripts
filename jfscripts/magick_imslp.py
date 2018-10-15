@@ -389,12 +389,14 @@ def get_image_info(input_file):
     :return: A directory with the keys `width`, `height` and `channels`.
     :rtype: dict
     """
-    output = run.check_output(['identify', str(input_file)])
-    result = re.search(r' (\d+)x(\d+) .* (\d+)c ', output.decode('utf-8'))
+    def _get_by_format(input_file, format):
+        return run.check_output(['identify', '-format', format,
+                                 str(input_file)]).decode('utf-8')
+
     return {
-        'width': int(result.group(1)),
-        'height': int(result.group(2)),
-        'channels': int(result.group(3)),
+        'width': int(_get_by_format(input_file, '%w')),
+        'height': int(_get_by_format(input_file, '%h')),
+        'channels': int(_get_by_format(input_file, '%k')),
     }
 
 
