@@ -380,9 +380,13 @@ def do_multiprocessing_magick(input_files, state):
 
 
 def join_to_pdf(images, state):
-    """
+    """Join a list of images into a PDF file using the tool `pdftk`.
+
+    :param list images: a list of images
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
+
+    :return: None
     """
     cmd = ['pdftk']
 
@@ -456,6 +460,13 @@ class State(object):
 
 
 def convert_file_paths(files):
+    """Convert a list of file paths in a list of
+    :class:`jfscripts._utils.FilePath` objects.
+
+    :param list files: A list of file paths
+
+    :return: a list of  :class:`jfscripts._utils.FilePath` objects.
+    """
     out = []
     for f in files:
         out.append(FilePath(f, absolute=True))
