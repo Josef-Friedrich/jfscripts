@@ -369,7 +369,7 @@ def threshold_series(input_file, state):
     if state.input_is_pdf:
         page_count = pdf_page_count(input_file)
         page_number = random.randint(1, page_count)
-        print('Use page number {} of {} pages to generate a serie of images '
+        print('Used page number {} of {} pages to generate a series of images '
               'with different threshold values.'
               .format(page_number, page_count))
         pdf_to_images(input_file, state, page_number)
