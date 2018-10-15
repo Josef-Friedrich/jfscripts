@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 
 from jfscripts import __version__
-from jfscripts._utils import check_bin, Run, FilePath
 from jfscripts import list_files
+from jfscripts._utils import check_bin, Run, FilePath
 import argparse
 import multiprocessing
 import os
+import random
 import re
 import shutil
 import time
@@ -171,23 +172,32 @@ def pdf_page_count(pdf_file):
     :return: Page count
     :rtype: int
     """
-    output = run.check_output(['pdfinfo', pdf_file])
-    output = output.decode('utf-8')
+    output = run.check_output(['pdfinfo', str(pdf_file)]).decode('utf-8')
     page_count = re.search(r'Pages:\s*([0-9]*)', output)
     return int(page_count.group(1))
 
 
-def pdf_to_images(pdf_file, state):
+def pdf_to_images(pdf_file, state, page_number=None):
     """Convert a PDF file to images in the TIFF format.
 
     :param pdf_file: The input file.
     :type pdf_file: jfscripts._utils.FilePath
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
+    :param int page_number: Extract only the page with a specific page number.
+
+    :return: The return value of `subprocess.run`.
+    :rtype: subprocess.CompletedProcess
     """
-    run.run(['pdfimages', '-tiff', str(pdf_file),
-             '{}_{}'.format(pdf_file.basename, state.tmp_identifier)],
-            cwd=state.common_path)
+    image_root = '{}_{}'.format(pdf_file.basename, state.tmp_identifier)
+
+    command = ['pdfimages', '-tiff', str(pdf_file), image_root]
+
+    if page_number:
+        page_number = str(page_number)
+        page_segments = ['-f', page_number, '-l', page_number]
+        command = command[:2] + page_segments + command[2:]
+    return run.run(command, cwd=state.common_path)
 
 
 def collect_images(state):
@@ -354,6 +364,16 @@ def threshold_series(input_file, state):
 
     :return: None
     """
+    if state.input_is_pdf:
+        page_count = pdf_page_count(input_file)
+        page_number = random.randint(1, page_count)
+        print('Use page number {} of {} pages to generate a serie of images '
+              'with different threshold values.'
+              .format(page_number, page_count))
+        pdf_to_images(input_file, state, page_number)
+        images = collect_images(state)
+        input_file = FilePath(images[0], absolute=True)
+
     for number in range(40, 100, 5):
         threshold(input_file, number, state)
 
@@ -499,6 +519,7 @@ def main():
 
     if state.args.threshold_series:
         threshold_series(state.first_input_file, state)
+        return
 
     if state.first_input_file.extension == 'pdf':
         if len(state.input_files) > 1:
