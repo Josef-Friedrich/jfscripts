@@ -97,6 +97,13 @@ def get_parser():
     )
 
     parser.add_argument(
+        '-N',
+        '--no-cleanup',
+        action='store_true',
+        help='Don’t clean up the temporary files..',
+    )
+
+    parser.add_argument(
         '-n',
         '--no-multiprocessing',
         action='store_true',
@@ -493,7 +500,8 @@ def main():
     if state.args.join:
         join_to_pdf(output_files, state)
 
-    cleanup(state)
+    if not state.args.no_cleanup:
+        cleanup(state)
 
     print('Execution time: {}'.format(timer.stop()))
 

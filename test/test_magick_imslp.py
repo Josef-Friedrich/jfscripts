@@ -322,6 +322,19 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertIn('.png', out)
         self.assertIn('-deskew', out)
 
+    def test_option_no_cleanup(self):
+        pdf = copy(tmp_pdf)
+        parent_dir = Path(pdf).parent
+        check_output(['magick-imslp.py', pdf])
+        files = os.listdir(parent_dir)
+        self.assertEqual(4, len(files))
+
+        pdf = copy(tmp_pdf)
+        parent_dir = Path(pdf).parent
+        check_output(['magick-imslp.py', '--no-cleanup', pdf])
+        files = os.listdir(parent_dir)
+        self.assertEqual(7, len(files))
+
 
 if __name__ == '__main__':
     unittest.main()
