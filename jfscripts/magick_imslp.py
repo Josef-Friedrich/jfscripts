@@ -252,6 +252,18 @@ def enlighten_border(width, height):
     return out
 
 
+def convert_executable():
+    """ImageMagick version 7 introduces a new top level command named
+    `magick`. Use this newer command if present.
+
+    :return: A list of command segments
+    """
+    if shutil.which('magick'):
+        return ['magick', 'convert']
+    else:
+        return ['convert']
+
+
 def do_magick(arguments):
     """
     Convert a source image file using the subcommand convert of the
@@ -265,7 +277,8 @@ def do_magick(arguments):
     """
     source = arguments[0]
     state = arguments[1]
-    cmd_args = ['convert']
+
+    cmd_args = convert_executable()
 
     if state.args.enlighten_border:
         info_source = get_image_info(source)
@@ -327,11 +340,8 @@ def threshold(input_file, threshold, state):
     """
     appendix = '_threshold-{}'.format(threshold)
     out = input_file.new(extension='png', append=appendix)
-    run.run(['convert',
-             '-threshold',
-             '{}%'.format(threshold),
-             str(input_file),
-             str(out)])
+    run.run(convert_executable() + ['-threshold', '{}%'.format(threshold),
+            str(input_file), str(out)])
 
 
 def threshold_series(input_file, state):
