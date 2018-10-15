@@ -335,17 +335,16 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertIn('-deskew', out)
 
     def test_option_no_cleanup(self):
-        pdf = copy(tmp_pdf)
-        parent_dir = Path(pdf).parent
-        check_output(['magick-imslp.py', pdf])
-        files = os.listdir(parent_dir)
-        self.assertEqual(4, len(files))
 
-        pdf = copy(tmp_pdf)
-        parent_dir = Path(pdf).parent
-        check_output(['magick-imslp.py', '--no-cleanup', pdf])
-        files = os.listdir(parent_dir)
-        self.assertEqual(7, len(files))
+        def assert_no_cleanup(args, count):
+            pdf = copy(tmp_pdf)
+            parent_dir = Path(pdf).parent
+            check_output(args + [pdf])
+            files = os.listdir(parent_dir)
+            self.assertEqual(count, len(files))
+
+        assert_no_cleanup(['magick-imslp.py'], 4)
+        assert_no_cleanup(['magick-imslp.py', '--no-cleanup'], 7)
 
     def test_option_threshold_series_on_pdf(self):
         pdf = copy(tmp_pdf)
