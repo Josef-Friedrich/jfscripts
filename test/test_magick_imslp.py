@@ -257,14 +257,15 @@ class TestIntegrationWithDependencies(TestCase):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
         check_output(['magick-imslp.py', '--pdf', '--join', tmp])
-        self.assertExists(os.path.join(str(Path(tmp).parent), 'joined.pdf'))
+        self.assertExists(os.path.join(str(Path(tmp).parent),
+                          'test_magick.pdf'))
 
     def test_option_join_without_pdf(self):
         pdf = copy(tmp_pdf)
         self.assertExists(pdf)
         check_output(['magick-imslp.py', '--join', pdf])
         self.assertExists(os.path.join(str(Path(pdf).parent),
-                                       'joined.pdf'))
+                                       'test_magick.pdf'))
 
     def test_option_join_pdf_source_png(self):
         self.assertExists(tmp_png1)
@@ -272,7 +273,7 @@ class TestIntegrationWithDependencies(TestCase):
         check_output(['magick-imslp.py', '--pdf', '--join', tmp_png1,
                       tmp_png2])
         self.assertExists(os.path.join(str(Path(tmp_png1).parent),
-                                       'joined.pdf'))
+                                       'bach-busoni_300_magick.pdf'))
 
     def test_real_threshold_series(self):
         tmp = copy(tmp_png1)

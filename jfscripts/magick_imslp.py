@@ -413,10 +413,10 @@ def do_multiprocessing_magick(input_files, state):
     return pool.map(do_magick, data)
 
 
-def join_to_pdf(images, state):
-    """Join a list of images into a PDF file using the tool `pdftk`.
+def join_to_pdf(pdf_files, state):
+    """Join a list of PDF files into a single PDF file using the tool `pdftk`.
 
-    :param list images: a list of images
+    :param list pdf_files: a list of PDF files
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
 
@@ -424,9 +424,13 @@ def join_to_pdf(images, state):
     """
     cmd = ['pdftk']
 
-    image_paths = map(lambda image: str(image), images)
-    cmd += image_paths
-    target_path = os.path.join(state.common_path, 'joined.pdf')
+    pdf_file_paths = map(lambda pdf_file: str(pdf_file), pdf_files)
+    cmd += pdf_file_paths
+
+    target_path = os.path.join(
+        state.common_path,
+        '{}_magick.pdf'.format(state.first_input_file.basename)
+    )
     cmd += ['cat', 'output', target_path]
 
     result = run.run(cmd)
