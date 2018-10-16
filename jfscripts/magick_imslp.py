@@ -54,91 +54,10 @@ def get_parser():
     )
 
     parser.add_argument(
-        '-b',
-        '--backup',
-        action='store_true',
-        help='Backup original images (add _backup.ext to filename).',
-    )
-
-    parser.add_argument(
-        '-B',
-        '--border',
-        action='store_true',
-        help='Frame the images with a white border.',
-    )
-
-    parser.add_argument(
         '-c',
         '--colorize',
         action='store_true',
         help='Colorize the terminal output.',
-    )
-
-    parser.add_argument(
-        '-e',
-        '--enlighten-border',
-        action='store_true',
-        help='Enlighten the border.',
-    )
-
-    parser.add_argument(
-        '-f',
-        '--force',
-        action='store_true',
-        help='Overwrite the target file even if it exists and it seems to be '
-        'already converted.',
-    )
-
-    parser.add_argument(
-        '-j',
-        '--join',
-        action='store_true',
-        help='Join single paged PDF files to one PDF file. This option takes '
-        'only effect with the option --pdf.',
-    )
-
-    parser.add_argument(
-        '-N',
-        '--no-cleanup',
-        action='store_true',
-        help='Don’t clean up the temporary files..',
-    )
-
-    parser.add_argument(
-        '-n',
-        '--no-multiprocessing',
-        action='store_true',
-        help='Disable multiprocessing.',
-    )
-
-    parser.add_argument(
-        '-p',
-        '--pdf',
-        action='store_true',
-        help='Generate a PDF file using CCITT Group 4 compression.',
-    )
-
-    parser.add_argument(
-        '-r',
-        '--resize',
-        action='store_true',
-        help='Resize 200 percent.',
-    )
-
-    parser.add_argument(
-        '-S',
-        '--threshold-series',
-        action='store_true',
-        help='Convert the samge image with different threshold values to \
-        find the best threshold value.',
-    )
-
-    parser.add_argument(
-        '-t',
-        '--threshold',
-        default='50%',
-        type=check_threshold,
-        help='threshold, default 50 percent.',
     )
 
     parser.add_argument(
@@ -155,7 +74,112 @@ def get_parser():
         version='%(prog)s {version}'.format(version=__version__),
     )
 
-    parser.add_argument(
+    subcommand = parser.add_subparsers(
+        dest='subcommand',
+        help='Subcommand',
+    )
+    subcommand.required = True
+
+    bitmap_parser = subcommand.add_parser('bitmap')
+
+    bitmap_parser.add_argument(
+        '-b',
+        '--backup',
+        action='store_true',
+        help='Backup original images (add _backup.ext to filename).',
+    )
+
+    bitmap_parser.add_argument(
+        '-B',
+        '--border',
+        action='store_true',
+        help='Frame the images with a white border.',
+    )
+
+    bitmap_parser.add_argument(
+        '-e',
+        '--enlighten-border',
+        action='store_true',
+        help='Enlighten the border.',
+    )
+
+    bitmap_parser.add_argument(
+        '-f',
+        '--force',
+        action='store_true',
+        help='Overwrite the target file even if it exists and it seems to be '
+        'already converted.',
+    )
+
+    bitmap_parser.add_argument(
+        '-j',
+        '--join',
+        action='store_true',
+        help='Join single paged PDF files to one PDF file. This option takes '
+        'only effect with the option --pdf.',
+    )
+
+    bitmap_parser.add_argument(
+        '-N',
+        '--no-cleanup',
+        action='store_true',
+        help='Don’t clean up the temporary files..',
+    )
+
+    bitmap_parser.add_argument(
+        '-n',
+        '--no-multiprocessing',
+        action='store_true',
+        help='Disable multiprocessing.',
+    )
+
+    bitmap_parser.add_argument(
+        '-p',
+        '--pdf',
+        action='store_true',
+        help='Generate a PDF file using CCITT Group 4 compression.',
+    )
+
+    bitmap_parser.add_argument(
+        '-r',
+        '--resize',
+        action='store_true',
+        help='Resize 200 percent.',
+    )
+
+    bitmap_parser.add_argument(
+        '-S',
+        '--threshold-series',
+        action='store_true',
+        help='Convert the samge image with different threshold values to \
+        find the best threshold value.',
+    )
+
+    bitmap_parser.add_argument(
+        '-t',
+        '--threshold',
+        default='50%',
+        type=check_threshold,
+        help='threshold, default 50 percent.',
+    )
+
+    bitmap_parser.add_argument(
+        'input_files',
+        help=list_files.doc_examples('%(prog)s', 'tiff'),
+        nargs='+',
+    )
+
+    extract_parser = subcommand.add_parser('extract')
+
+    extract_parser.add_argument(
+        'input_files',
+        help=list_files.doc_examples('%(prog)s', 'tiff'),
+        nargs='+',
+    )
+
+    join_parser = subcommand.add_parser('join')
+
+    join_parser.add_argument(
         'input_files',
         help=list_files.doc_examples('%(prog)s', 'tiff'),
         nargs='+',

@@ -108,41 +108,19 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-b] [-B] [-c] [-e] [-f] [-j] [-N] [-n] [-p] [-r]
-                           [-S] [-t THRESHOLD] [-v] [-V]
-                           input_files [input_files ...]
+    usage: magick-imslp.py [-h] [-c] [-v] [-V] {bitmap,extract,join} ...
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
     http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern
     
     positional arguments:
-      input_files           magick-imslp.py a.tiff magick-imslp.py a.tiff b.tiff
-                            c.tiff magick-imslp.py (asterisk).tiff magick-imslp.py
-                            "(asterisk).tiff" magick-imslp.py dir/ magick-imslp.py
-                            "dir/(asterisk).tiff"
+      {bitmap,extract,join}
+                            Subcommand
     
     optional arguments:
       -h, --help            show this help message and exit
-      -b, --backup          Backup original images (add _backup.ext to filename).
-      -B, --border          Frame the images with a white border.
       -c, --colorize        Colorize the terminal output.
-      -e, --enlighten-border
-                            Enlighten the border.
-      -f, --force           Overwrite the target file even if it exists and it
-                            seems to be already converted.
-      -j, --join            Join single paged PDF files to one PDF file. This
-                            option takes only effect with the option --pdf.
-      -N, --no-cleanup      Don’t clean up the temporary files..
-      -n, --no-multiprocessing
-                            Disable multiprocessing.
-      -p, --pdf             Generate a PDF file using CCITT Group 4 compression.
-      -r, --resize          Resize 200 percent.
-      -S, --threshold-series
-                            Convert the samge image with different threshold
-                            values to find the best threshold value.
-      -t THRESHOLD, --threshold THRESHOLD
-                            threshold, default 50 percent.
       -v, --verbose         Make the command line output more verbose.
       -V, --version         show program's version number and exit
 
