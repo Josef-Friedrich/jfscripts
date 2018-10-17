@@ -50,7 +50,9 @@ def get_parser():
     parser = argparse.ArgumentParser(
         description='A wrapper script for imagemagick to process image \
         files suitable for imslp.org (International Music Score Library \
-        Project). See also http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern',
+        Project). See also http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern. \
+        The target files are monochrome bitmap images at a resolution of \
+        600 dpi and the compression format CCITT group 4.',
     )
 
     parser.add_argument(
@@ -180,7 +182,7 @@ def get_parser():
     join_parser = subcommand.add_parser(
         'join',
         description='Join the input files into a single PDF file. If the '
-        'input file is not PDF file, it is converted to a monochrome CCITT '
+        'input file is not PDF file, it is converted into a monochrome CCITT '
         'Group 4 compressed PDF file.',
     )
 

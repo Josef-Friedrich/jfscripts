@@ -1,6 +1,5 @@
-Comande line interface (sphinx-argparse)
-========================================
-
+Comande line interfaces
+=======================
 
 dns-ipv6-prefix.py
 ------------------

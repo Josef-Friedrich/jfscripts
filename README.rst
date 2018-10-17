@@ -112,7 +112,9 @@ magick-imslp.py
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
-    http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern
+    http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern. The target files are
+    monochrome bitmap images at a resolution of 600 dpi and the compression format
+    CCITT group 4.
     
     positional arguments:
       {bitmap,extract,join}
