@@ -613,13 +613,22 @@ def main():
 
     elif args.subcommand == 'join':
         input_files = convert_file_paths(state.input_files)
-        pdf_files = []
+
+        files_to_convert = []
+        files_already_converted = []
         for input_file in input_files:
             if input_file.extension != 'pdf':
-                pdf_files.append(convert_to_pdf(input_file))
+                files_to_convert.append(input_file)
             else:
-                pdf_files.append(input_file)
-        join_to_pdf(pdf_files, state)
+                files_already_converted.append(input_file)
+
+        pool = multiprocessing.Pool()
+        data = []
+        for input_file in files_to_convert:
+            data.append(input_file)
+        files_converted = pool.map(convert_to_pdf, data)
+
+        join_to_pdf(files_already_converted + files_converted, state)
 
     print('Execution time: {}'.format(timer.stop()))
 
