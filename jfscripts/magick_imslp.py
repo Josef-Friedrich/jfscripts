@@ -123,7 +123,7 @@ def get_parser():
         '-N',
         '--no-cleanup',
         action='store_true',
-        help='Don’t clean up the temporary files..',
+        help='Don’t clean up the temporary files.',
     )
 
     bitmap_parser.add_argument(
@@ -177,11 +177,16 @@ def get_parser():
         nargs='+',
     )
 
-    join_parser = subcommand.add_parser('join')
+    join_parser = subcommand.add_parser(
+        'join',
+        description='Join the input files into a single PDF file. If the '
+        'input file is not PDF file, it is converted to a monochrome CCITT '
+        'Group 4 compressed PDF file.',
+    )
 
     join_parser.add_argument(
         'input_files',
-        help=list_files.doc_examples('%(prog)s', 'tiff'),
+        help=list_files.doc_examples('%(prog)s', 'png'),
         nargs='+',
     )
 
@@ -356,6 +361,27 @@ def do_magick(arguments):
         if state.args.backup:
             backup = source.new(append='_backup')
             shutil.copy2(str(source), str(backup))
+
+    run.run(cmd_args)
+    return target
+
+
+def convert_to_pdf(source):
+    """
+
+    :return: The target image file.
+    :rtype: jfscripts._utils.FilePath
+    """
+
+    cmd_args = convert_executable()
+
+    cmd_args += ['-compress', 'Group4', '-monochrome']
+
+    cmd_args.append(str(source))
+
+    target = source.new(extension='pdf')
+
+    cmd_args.append(str(target))
 
     run.run(cmd_args)
     return target
@@ -542,42 +568,56 @@ def main():
     """
     timer = Timer()
     args = get_parser().parse_args()
-    if args.join and not args.pdf:
-        args.pdf = True
+
     run.setup(verbose=args.verbose, colorize=args.colorize)
     state = State(args)
 
     check_bin(*dependencies)
 
-    if state.args.threshold_series:
-        threshold_series(state.first_input_file, state)
+    if args.subcommand == 'bitmap':
+
+        if state.args.join and not state.args.pdf:
+            state.args.pdf = True
+
+        if state.args.threshold_series:
+            threshold_series(state.first_input_file, state)
+            if not state.args.no_cleanup:
+                cleanup(state)
+            return
+
+        if state.first_input_file.extension == 'pdf':
+            if len(state.input_files) > 1:
+                raise ValueError('Specify only one PDF file.')
+            pdf_to_images(state.first_input_file, state)
+            input_files = collect_images(state)
+        else:
+            input_files = state.input_files
+
+        input_files = convert_file_paths(input_files)
+
+        if state.args.no_multiprocessing:
+            output_files = []
+            for input_file in input_files:
+                pack = (input_file, state)
+                output_files.append(do_magick(pack))
+        else:
+            output_files = do_multiprocessing_magick(input_files, state)
+
+        if state.args.join:
+            join_to_pdf(output_files, state)
+
         if not state.args.no_cleanup:
             cleanup(state)
-        return
 
-    if state.first_input_file.extension == 'pdf':
-        if len(state.input_files) > 1:
-            raise ValueError('Specify only one PDF file.')
-        pdf_to_images(state.first_input_file, state)
-        input_files = collect_images(state)
-    else:
-        input_files = state.input_files
-
-    input_files = convert_file_paths(input_files)
-
-    if state.args.no_multiprocessing:
-        output_files = []
+    elif args.subcommand == 'join':
+        input_files = convert_file_paths(state.input_files)
+        pdf_files = []
         for input_file in input_files:
-            pack = (input_file, state)
-            output_files.append(do_magick(pack))
-    else:
-        output_files = do_multiprocessing_magick(input_files, state)
-
-    if state.args.join:
-        join_to_pdf(output_files, state)
-
-    if not state.args.no_cleanup:
-        cleanup(state)
+            if input_file.extension != 'pdf':
+                pdf_files.append(convert_to_pdf(input_file))
+            else:
+                pdf_files.append(input_file)
+        join_to_pdf(pdf_files, state)
 
     print('Execution time: {}'.format(timer.stop()))
 

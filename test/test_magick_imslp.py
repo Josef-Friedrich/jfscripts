@@ -360,6 +360,12 @@ class TestIntegrationWithDependencies(TestCase):
             filename = 'test_threshold-{}.png'.format(threshold)
             self.assertIn(filename, files)
 
+    def test_subcommand_join(self):
+        joined_pdf = '/tmp/jfscripts/magick_imslp/bach-busoni_300_magick.pdf'
+        check_output(['magick-imslp.py', 'join', tmp_png1, tmp_png2])
+        self.assertExists(joined_pdf)
+        os.remove(joined_pdf)
+
 
 if __name__ == '__main__':
     unittest.main()
