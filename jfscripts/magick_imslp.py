@@ -82,7 +82,11 @@ def get_parser():
     )
     subcommand.required = True
 
-    convert_parser = subcommand.add_parser('convert')
+    convert_parser = subcommand.add_parser(
+        'convert', description='Convert scanned images (can be many image '
+        'file formats or a PDF files) in monochrome bitmap images. The '
+        'resulting images are compressed using the CCITT group 4 compression.'
+    )
 
     convert_parser.add_argument(
         '-b',
