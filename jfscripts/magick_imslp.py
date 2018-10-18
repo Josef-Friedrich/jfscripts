@@ -371,7 +371,7 @@ def do_magick(arguments):
     if state.args.pdf:
         extension = 'pdf'
     else:
-        extension = 'png'
+        extension = 'tiff'
 
     if not state.args.join:
         target = source.new(extension=extension,

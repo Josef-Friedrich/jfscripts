@@ -42,6 +42,14 @@ if dependencies and internet:
         'png/liszt-weinen_300.png',
         local_path='/tmp/jfscripts/magick_imslp/liszt-weinen_300.png'
     )
+    tmp_tiff1 = download(
+        'tiff/bach-busoni_300.tiff',
+        local_path='/tmp/jfscripts/magick_imslp/bach-busoni_300.tiff'
+    )
+    tmp_tiff2 = download(
+        'tiff/liszt-weinen_300.tiff',
+        local_path='/tmp/jfscripts/magick_imslp/liszt-weinen_300.tiff'
+    )
 
 
 class TestUnit(TestCase):
@@ -176,7 +184,7 @@ class TestUnit(TestCase):
         magick_imslp.do_magick([FilePath('test.tif'), state])
         run.assert_called_with(
             ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
-             '+repage', 'test.tif', 'test.png']
+             '+repage', 'test.tif', 'test.tiff']
         )
 
     @patch('jfscripts.magick_imslp.do_multiprocessing_magick')
@@ -240,7 +248,7 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertExists(tmp)
         path = FilePath(tmp)
         check_output(['magick-imslp.py', 'convert', tmp])
-        result = ('0.png', '1.png', '2.png')
+        result = ('0.tiff', '1.tiff', '2.tiff')
         for test_file in result:
             self.assertExists(path.base + '-00' + test_file, test_file)
 
@@ -250,7 +258,7 @@ class TestIntegrationWithDependencies(TestCase):
         path = FilePath(pdf)
         check_output(['magick-imslp.py', 'convert', '--no-multiprocessing',
                       pdf])
-        result = ('0.png', '1.png', '2.png')
+        result = ('0.tiff', '1.tiff', '2.tiff')
         for test_file in result:
             self.assertExists(path.base + '-00' + test_file, test_file)
 
@@ -285,30 +293,30 @@ class TestIntegrationWithDependencies(TestCase):
                       out.stderr)
 
     def test_real_backup_no_backup(self):
-        tmp = copy(tmp_png1)
+        tmp = copy(tmp_tiff1)
         check_output(['magick-imslp.py', 'convert', tmp])
-        backup = FilePath(tmp).new(append='_backup')
+        backup = FilePath(tmp).new(append='_backup', extension='tiff')
         self.assertExistsNot(str(backup))
 
     def test_real_backup_do_backup(self):
-        tmp = copy(tmp_png1)
+        tmp = copy(tmp_tiff1)
         check_output(['magick-imslp.py', 'convert', '--backup', tmp])
-        backup = FilePath(tmp).new(append='_backup')
+        backup = FilePath(tmp).new(append='_backup', extension='tiff')
         self.assertExists(str(backup))
 
     def test_already_converted(self):
-        tmp = copy(tmp_png1)
+        tmp = copy(tmp_tiff1)
         check_output(['magick-imslp.py', 'convert', tmp])
         out = check_output(['magick-imslp.py', 'convert', tmp])
         self.assertIn('The target file seems to be already converted.',
                       out.decode('utf-8'))
 
     def test_option_border(self):
-        png = copy(tmp_png1)
+        tiff = copy(tmp_tiff1)
 
-        info_before = magick_imslp.get_image_info(FilePath(png))
-        check_output(['magick-imslp.py', 'convert', '--border', png])
-        info_after = magick_imslp.get_image_info(FilePath(png))
+        info_before = magick_imslp.get_image_info(FilePath(tiff))
+        check_output(['magick-imslp.py', 'convert', '--border', tiff])
+        info_after = magick_imslp.get_image_info(FilePath(tiff))
 
         self.assertEqual(info_before['width'], 300)
         self.assertEqual(info_after['width'], 311)
