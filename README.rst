@@ -108,7 +108,8 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-c] [-v] [-V] {convert,extract,join} ...
+    usage: magick-imslp.py [-h] [-c] [-N] [-v] [-V]
+                           {convert,extract,join,threshold-series} ...
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
@@ -117,12 +118,13 @@ magick-imslp.py
     CCITT group 4.
     
     positional arguments:
-      {convert,extract,join}
+      {convert,extract,join,threshold-series}
                             Subcommand
     
     optional arguments:
       -h, --help            show this help message and exit
       -c, --colorize        Colorize the terminal output.
+      -N, --no-cleanup      Don’t clean up the temporary files.
       -v, --verbose         Make the command line output more verbose.
       -V, --version         show program's version number and exit
 

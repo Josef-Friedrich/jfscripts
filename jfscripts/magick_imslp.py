@@ -62,7 +62,6 @@ def get_parser():
         help='Colorize the terminal output.',
     )
 
-
     parser.add_argument(
         '-N',
         '--no-cleanup',
@@ -214,7 +213,8 @@ def get_parser():
     )
 
     threshold_parser.add_argument(
-        'input_file', dest='input_files',
+        'input_files',
+        metavar='input_file',
         help='A image or a PDF file. The script selects randomly one page of \
         a multipaged PDF to build the series with differnt threshold values.',
     )
@@ -655,7 +655,7 @@ def main():
 
         join_to_pdf(files_already_converted + files_converted, state)
 
-    elif args.subcommand == 'threshold-series'
+    elif args.subcommand == 'threshold-series':
         threshold_series(state.first_input_file, state)
         if not state.args.no_cleanup:
             cleanup(state)

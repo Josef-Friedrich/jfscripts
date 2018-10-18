@@ -276,15 +276,6 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertExists(os.path.join(str(Path(tmp_png1).parent),
                                        'bach-busoni_300_magick.pdf'))
 
-    def test_real_threshold_series(self):
-        tmp = copy(tmp_png1)
-        check_output(['magick-imslp.py', 'convert', '--threshold-series', tmp])
-        result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
-        for threshold in result:
-            suffix = '_threshold-{}.png'.format(threshold)
-            path = tmp.replace('.png', suffix)
-            self.assertExists(path, path)
-
     def test_real_invalid_threshold(self):
         out = run(['magick-imslp.py', 'convert', '--threshold', '1000',
                    'test.pdf'],
@@ -347,12 +338,25 @@ class TestIntegrationWithDependencies(TestCase):
             self.assertEqual(count, len(files))
 
         assert_no_cleanup(['magick-imslp.py', 'convert'], 4)
-        assert_no_cleanup(['magick-imslp.py', 'convert', '--no-cleanup'], 7)
+        assert_no_cleanup(['magick-imslp.py', '--no-cleanup', 'convert'], 7)
+
+    ##
+    # threshold-series
+    ##
+
+    def test_real_threshold_series(self):
+        tmp = copy(tmp_png1)
+        check_output(['magick-imslp.py', 'threshold-series', tmp])
+        result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
+        for threshold in result:
+            suffix = '_threshold-{}.png'.format(threshold)
+            path = tmp.replace('.png', suffix)
+            self.assertExists(path, path)
 
     def test_option_threshold_series_on_pdf(self):
         pdf = copy(tmp_pdf)
         parent_dir = Path(pdf).parent
-        check_output(['magick-imslp.py', 'convert', '--threshold-series', pdf])
+        check_output(['magick-imslp.py', 'threshold-series', pdf])
         files = os.listdir(parent_dir)
         self.assertEqual(len(files), 13)
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
