@@ -62,6 +62,14 @@ def get_parser():
         help='Colorize the terminal output.',
     )
 
+
+    parser.add_argument(
+        '-N',
+        '--no-cleanup',
+        action='store_true',
+        help='Don’t clean up the temporary files.',
+    )
+
     parser.add_argument(
         '-v',
         '--verbose',
@@ -81,6 +89,10 @@ def get_parser():
         help='Subcommand',
     )
     subcommand.required = True
+
+    ##
+    # convert
+    ##
 
     convert_parser = subcommand.add_parser(
         'convert', description='Convert scanned images (can be many image '
@@ -126,13 +138,6 @@ def get_parser():
     )
 
     convert_parser.add_argument(
-        '-N',
-        '--no-cleanup',
-        action='store_true',
-        help='Don’t clean up the temporary files.',
-    )
-
-    convert_parser.add_argument(
         '-n',
         '--no-multiprocessing',
         action='store_true',
@@ -154,19 +159,13 @@ def get_parser():
     )
 
     convert_parser.add_argument(
-        '-S',
-        '--threshold-series',
-        action='store_true',
-        help='Convert the samge image with different threshold values to \
-        find the best threshold value.',
-    )
-
-    convert_parser.add_argument(
         '-t',
         '--threshold',
         default='50%',
         type=check_threshold,
-        help='threshold, default 50 percent.',
+        help='Threshold for monochrome, black and white images, default 50 \
+        percent. Colors above the threshold will be white and below will be \
+        black.',
     )
 
     convert_parser.add_argument(
@@ -174,6 +173,10 @@ def get_parser():
         help=list_files.doc_examples('%(prog)s', 'tiff'),
         nargs='+',
     )
+
+    ##
+    # extract
+    ##
 
     extract_parser = subcommand.add_parser('extract')
 
@@ -182,6 +185,10 @@ def get_parser():
         help=list_files.doc_examples('%(prog)s', 'tiff'),
         nargs='+',
     )
+
+    ##
+    # join
+    ##
 
     join_parser = subcommand.add_parser(
         'join',
@@ -194,6 +201,22 @@ def get_parser():
         'input_files',
         help=list_files.doc_examples('%(prog)s', 'png'),
         nargs='+',
+    )
+
+    ##
+    # threshold
+    ##
+
+    threshold_parser = subcommand.add_parser(
+        'threshold-series',
+        description='Convert the samge image with different threshold values \
+        to find the best threshold value.',
+    )
+
+    threshold_parser.add_argument(
+        'input_file', dest='input_files',
+        help='A image or a PDF file. The script selects randomly one page of \
+        a multipaged PDF to build the series with differnt threshold values.',
     )
 
     return parser
@@ -524,8 +547,12 @@ class State(object):
         self.cwd = os.getcwd()
         """The current working directory"""
 
-        self.input_files = list_files.list_files(self.args.input_files)
+        self.input_files = []
         """A list of all input files."""
+        if isinstance(self.args.input_files, str):
+            self.input_files = [self.args.input_files]
+        else:
+            self.input_files = list_files.list_files(self.args.input_files)
 
         self.common_path = \
             list_files.common_path(self.input_files)
@@ -585,12 +612,6 @@ def main():
         if state.args.join and not state.args.pdf:
             state.args.pdf = True
 
-        if state.args.threshold_series:
-            threshold_series(state.first_input_file, state)
-            if not state.args.no_cleanup:
-                cleanup(state)
-            return
-
         if state.first_input_file.extension == 'pdf':
             if len(state.input_files) > 1:
                 raise ValueError('Specify only one PDF file.')
@@ -633,6 +654,11 @@ def main():
         files_converted = pool.map(convert_to_pdf, data)
 
         join_to_pdf(files_already_converted + files_converted, state)
+
+    elif args.subcommand == 'threshold-series'
+        threshold_series(state.first_input_file, state)
+        if not state.args.no_cleanup:
+            cleanup(state)
 
     print('Execution time: {}'.format(timer.stop()))
 
