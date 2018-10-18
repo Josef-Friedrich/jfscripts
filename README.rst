@@ -108,7 +108,7 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-c] [-v] [-V] {bitmap,extract,join} ...
+    usage: magick-imslp.py [-h] [-c] [-v] [-V] {convert,extract,join} ...
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
@@ -117,7 +117,7 @@ magick-imslp.py
     CCITT group 4.
     
     positional arguments:
-      {bitmap,extract,join}
+      {convert,extract,join}
                             Subcommand
     
     optional arguments:

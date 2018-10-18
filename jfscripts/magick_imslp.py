@@ -82,30 +82,30 @@ def get_parser():
     )
     subcommand.required = True
 
-    bitmap_parser = subcommand.add_parser('bitmap')
+    convert_parser = subcommand.add_parser('convert')
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-b',
         '--backup',
         action='store_true',
         help='Backup original images (add _backup.ext to filename).',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-B',
         '--border',
         action='store_true',
         help='Frame the images with a white border.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-e',
         '--enlighten-border',
         action='store_true',
         help='Enlighten the border.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-f',
         '--force',
         action='store_true',
@@ -113,7 +113,7 @@ def get_parser():
         'already converted.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-j',
         '--join',
         action='store_true',
@@ -121,35 +121,35 @@ def get_parser():
         'only effect with the option --pdf.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-N',
         '--no-cleanup',
         action='store_true',
         help='Don’t clean up the temporary files.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-n',
         '--no-multiprocessing',
         action='store_true',
         help='Disable multiprocessing.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-p',
         '--pdf',
         action='store_true',
         help='Generate a PDF file using CCITT Group 4 compression.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-r',
         '--resize',
         action='store_true',
         help='Resize 200 percent.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-S',
         '--threshold-series',
         action='store_true',
@@ -157,7 +157,7 @@ def get_parser():
         find the best threshold value.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         '-t',
         '--threshold',
         default='50%',
@@ -165,7 +165,7 @@ def get_parser():
         help='threshold, default 50 percent.',
     )
 
-    bitmap_parser.add_argument(
+    convert_parser.add_argument(
         'input_files',
         help=list_files.doc_examples('%(prog)s', 'tiff'),
         nargs='+',
@@ -576,7 +576,7 @@ def main():
 
     check_bin(*dependencies)
 
-    if args.subcommand == 'bitmap':
+    if args.subcommand == 'convert':
 
         if state.args.join and not state.args.pdf:
             state.args.pdf = True
