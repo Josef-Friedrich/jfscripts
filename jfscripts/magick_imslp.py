@@ -250,7 +250,7 @@ def pdf_page_count(pdf_file):
     return int(page_count.group(1))
 
 
-def pdf_to_images(pdf_file, state, page_number=None, tmp_identifier=True):
+def do_pdfimages(pdf_file, state, page_number=None, tmp_identifier=True):
     """Convert a PDF file to images in the TIFF format.
 
     :param pdf_file: The input file.
@@ -462,7 +462,7 @@ def threshold_series(input_file, state):
         print('Used page number {} of {} pages to generate a series of images '
               'with different threshold values.'
               .format(page_number, page_count))
-        pdf_to_images(input_file, state, page_number)
+        do_pdfimages(input_file, state, page_number)
         images = collect_images(state)
         input_file = FilePath(images[0], absolute=True)
 
@@ -626,7 +626,7 @@ def main():
         if state.first_input_file.extension == 'pdf':
             if len(state.input_files) > 1:
                 raise ValueError('Specify only one PDF file.')
-            pdf_to_images(state.first_input_file, state)
+            do_pdfimages(state.first_input_file, state)
             input_files = collect_images(state)
         else:
             input_files = state.input_files
@@ -643,8 +643,8 @@ def main():
     elif args.subcommand == 'extract':
         if not state.input_is_pdf:
             raise ValueError('Specify a PDF file.')
-        pdf_to_images(state.first_input_file, state, page_number=None,
-                      tmp_identifier=False)
+        do_pdfimages(state.first_input_file, state, page_number=None,
+                     tmp_identifier=False)
 
     elif args.subcommand == 'join':
         input_files = convert_file_paths(state.input_files)

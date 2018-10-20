@@ -131,10 +131,10 @@ class TestUnit(TestCase):
         with self.assertRaises(argparse.ArgumentTypeError):
             check(101)
 
-    def test_pdf_to_images(self):
+    def test_do_pdfimages(self):
         state = get_state()
         with mock.patch('subprocess.run') as mock_run:
-            magick_imslp.pdf_to_images(FilePath('test.pdf'), state)
+            magick_imslp.do_pdfimages(FilePath('test.pdf'), state)
             args = mock_run.call_args[0][0]
             self.assertEqual(args[0], 'pdfimages')
             self.assertEqual(args[1], '-tiff')
