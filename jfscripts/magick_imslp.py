@@ -350,7 +350,7 @@ def convert_executable():
         return ['convert']
 
 
-def do_magick(arguments):
+def do_magick_convert(arguments):
     """
     Convert a source image file using the subcommand convert of the
     imagemagick suite.
@@ -415,21 +415,14 @@ def do_magick(arguments):
 
 def convert_to_pdf(source):
     """
-
     :return: The target image file.
     :rtype: jfscripts._utils.FilePath
     """
-
     cmd_args = convert_executable()
-
     cmd_args += ['-compress', 'Group4', '-monochrome']
-
     cmd_args.append(str(source))
-
     target = source.new(extension='pdf')
-
     cmd_args.append(str(target))
-
     run.run(cmd_args)
     return target
 
@@ -498,7 +491,7 @@ def get_image_info(input_file):
 
 
 def do_multiprocessing_magick(input_files, state):
-    """Run the function `do_magick` in a multiprocessing environment.
+    """Run the function `do_magick_convert` in a multiprocessing environment.
 
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
@@ -507,7 +500,7 @@ def do_multiprocessing_magick(input_files, state):
     data = []
     for input_file in input_files:
         data.append((input_file, state))
-    return pool.map(do_magick, data)
+    return pool.map(do_magick_convert, data)
 
 
 def join_to_pdf(pdf_files, state):

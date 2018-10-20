@@ -160,11 +160,12 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.convert_executable')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_do_magick_false_enlighten_border(self, run, convert_executable):
+    def test_do_magick_convert_false_enlighten_border(self, run,
+                                                      convert_executable):
         convert_executable.return_value = ['convert']
         state = get_state()
         state.args.enlighten_border = False
-        magick_imslp.do_magick([FilePath('test.tif'), state])
+        magick_imslp.do_magick_convert([FilePath('test.tif'), state])
         run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
              '50%', '-trim', '+repage', '-border', '5%', '-bordercolor',
@@ -174,14 +175,14 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.convert_executable')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_do_magick_more_false(self, run, convert_executable):
+    def test_do_magick_convert_more_false(self, run, convert_executable):
         convert_executable.return_value = ['convert']
         state = get_state()
         state.args.enlighten_border = False
         state.args.pdf = False
         state.args.resize = False
         state.args.border = False
-        magick_imslp.do_magick([FilePath('test.tif'), state])
+        magick_imslp.do_magick_convert([FilePath('test.tif'), state])
         run.assert_called_with(
             ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
              '+repage', 'test.tif', 'test.tiff']
