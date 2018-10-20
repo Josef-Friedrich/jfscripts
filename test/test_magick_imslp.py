@@ -98,10 +98,10 @@ class TestUnit(TestCase):
             '-region', '950x50+50+950', '-level', '0%,30%',
             '-region', '50x950+0+50', '-level', '0%,30%'])
 
-    @patch('jfscripts.magick_imslp.convert_executable')
+    @patch('jfscripts.magick_imslp.magick_command')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_threshold(self, run, convert_executable):
-        convert_executable.return_value = ['convert']
+    def test_threshold(self, run, magick_command):
+        magick_command.return_value = ['convert']
         state = get_state()
         magick_imslp.do_magick_convert_threshold(FilePath('test.jpg'), 99,
                                                  state)
@@ -159,11 +159,11 @@ class TestUnit(TestCase):
             out = magick_imslp.collect_images(state)
             self.assertEqual(out, return_files)
 
-    @patch('jfscripts.magick_imslp.convert_executable')
+    @patch('jfscripts.magick_imslp.magick_command')
     @patch('jfscripts.magick_imslp.run.run')
     def test_do_magick_convert_false_enlighten_border(self, run,
-                                                      convert_executable):
-        convert_executable.return_value = ['convert']
+                                                      magick_command):
+        magick_command.return_value = ['convert']
         state = get_state()
         state.args.enlighten_border = False
         magick_imslp.do_magick_convert([FilePath('test.tif'), state])
@@ -174,10 +174,10 @@ class TestUnit(TestCase):
              'test.pdf']
         )
 
-    @patch('jfscripts.magick_imslp.convert_executable')
+    @patch('jfscripts.magick_imslp.magick_command')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_do_magick_convert_more_false(self, run, convert_executable):
-        convert_executable.return_value = ['convert']
+    def test_do_magick_convert_more_false(self, run, magick_command):
+        magick_command.return_value = ['convert']
         state = get_state()
         state.args.enlighten_border = False
         state.args.pdf = False

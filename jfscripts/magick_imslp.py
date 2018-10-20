@@ -338,16 +338,16 @@ def enlighten_border(width, height):
     return out
 
 
-def convert_executable():
+def magick_command(command):
     """ImageMagick version 7 introduces a new top level command named
     `magick`. Use this newer command if present.
 
     :return: A list of command segments
     """
     if shutil.which('magick'):
-        return ['magick', 'convert']
+        return ['magick', command]
     else:
-        return ['convert']
+        return [command]
 
 
 def do_magick_convert(arguments):
@@ -364,7 +364,7 @@ def do_magick_convert(arguments):
     source = arguments[0]
     state = arguments[1]
 
-    cmd_args = convert_executable()
+    cmd_args = magick_command('convert')
 
     if state.args.enlighten_border:
         info_source = do_magick_identify(source)
@@ -418,7 +418,7 @@ def do_magick_convert_pdf(source):
     :return: The target image file.
     :rtype: jfscripts._utils.FilePath
     """
-    cmd_args = convert_executable()
+    cmd_args = magick_command('convert')
     cmd_args += ['-compress', 'Group4', '-monochrome']
     cmd_args.append(str(source))
     target = source.new(extension='pdf')
@@ -442,7 +442,7 @@ def do_magick_convert_threshold(input_file, threshold, state):
     output_file = input_file.new(extension='png', append=appendix,
                                  del_substring=state.tmp_identifier)
     output_file = str(output_file).replace('_-000', '')
-    run.run(convert_executable() + ['-threshold', '{}%'.format(threshold),
+    run.run(magick_command('convert') + ['-threshold', '{}%'.format(threshold),
             str(input_file), output_file])
 
 
@@ -480,8 +480,8 @@ def do_magick_identify(input_file):
     :rtype: dict
     """
     def _get_by_format(input_file, format):
-        return run.check_output(['identify', '-format', format,
-                                 str(input_file)]).decode('utf-8')
+        return run.check_output(magick_command('identify') + ['-format',
+                                format, str(input_file)]).decode('utf-8')
 
     return {
         'width': int(_get_by_format(input_file, '%w')),
