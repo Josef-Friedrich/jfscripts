@@ -51,7 +51,7 @@ def get_parser():
         description='A wrapper script for imagemagick to process image \
         files suitable for imslp.org (International Music Score Library \
         Project). See also http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern. \
-        The target files are monochrome bitmap images at a resolution of \
+        The output files are monochrome bitmap images at a resolution of \
         600 dpi and the compression format CCITT group 4.',
     )
 
@@ -133,7 +133,7 @@ def get_parser():
         '-f',
         '--force',
         action='store_true',
-        help='Overwrite the target file even if it exists and it seems to be '
+        help='Overwrite the output file even if it exists and it seems to be '
         'already converted.',
     )
 
@@ -350,26 +350,21 @@ def magick_command(command):
         return [command]
 
 
-def do_magick_convert(arguments):
+def do_magick_convert(input_file, state):
     """
-    Convert a source image file using the subcommand convert of the
+    Convert a input image file using the subcommand convert of the
     imagemagick suite.
 
-    :param tuple arguments: A tuple containing two elements: The first element
-      is the source file object and the second element is the state object.
-
-    :return: The target image file.
+    :return: The output image file.
     :rtype: jfscripts._utils.FilePath
     """
-    source = arguments[0]
-    state = arguments[1]
 
     cmd_args = magick_command('convert')
 
     if state.args.enlighten_border:
-        info_source = do_magick_identify(source)
-        cmd_args += enlighten_border(info_source['width'],
-                                     info_source['height'])
+        info_input_file = do_magick_identify(input_file)
+        cmd_args += enlighten_border(info_input_file['width'],
+                                     info_input_file['height'])
 
     if state.args.resize:
         cmd_args += ['-resize', '200%']
@@ -384,7 +379,7 @@ def do_magick_convert(arguments):
     if state.args.pdf:
         cmd_args += ['-compress', 'Group4', '-monochrome']
 
-    cmd_args.append(str(source))
+    cmd_args.append(str(input_file))
 
     if state.args.pdf:
         extension = 'pdf'
@@ -392,39 +387,51 @@ def do_magick_convert(arguments):
         extension = 'tiff'
 
     if not state.args.join:
-        target = source.new(extension=extension,
-                            del_substring='_' + state.tmp_identifier)
+        output_file = input_file.new(extension=extension,
+                                     del_substring='_' + state.tmp_identifier)
     else:
-        target = source.new(extension=extension)
+        output_file = input_file.new(extension=extension)
 
-    cmd_args.append(str(target))
+    cmd_args.append(str(output_file))
 
-    if source == target:
-        info_target = do_magick_identify(target)
-        if info_target['colors'] == 2 and not state.args.force:
-            print('The target file seems to be already converted.')
-            return target
+    if input_file == output_file:
+        info_output_file = do_magick_identify(output_file)
+        if info_output_file['colors'] == 2 and not state.args.force:
+            print('The output file seems to be already converted.')
+            return output_file
 
         if state.args.backup:
-            backup = source.new(append='_backup')
-            shutil.copy2(str(source), str(backup))
+            backup = input_file.new(append='_backup')
+            shutil.copy2(str(input_file), str(backup))
 
     run.run(cmd_args)
-    return target
+    return output_file
 
 
-def do_magick_convert_pdf(source):
+def convert_one_file(arguments):
+    """Manipulate one input file
+
+    :param tuple arguments: A tuple containing two elements: The first element
+      is the input_file file object and the second element is the state object.
     """
-    :return: The target image file.
+    input_file = arguments[0]
+    state = arguments[1]
+
+    return do_magick_convert(input_file, state)
+
+
+def do_magick_convert_pdf(input_file):
+    """
+    :return: The output image file.
     :rtype: jfscripts._utils.FilePath
     """
     cmd_args = magick_command('convert')
     cmd_args += ['-compress', 'Group4', '-monochrome']
-    cmd_args.append(str(source))
-    target = source.new(extension='pdf')
-    cmd_args.append(str(target))
+    cmd_args.append(str(input_file))
+    output_file = input_file.new(extension='pdf')
+    cmd_args.append(str(output_file))
     run.run(cmd_args)
-    return target
+    return output_file
 
 
 def do_magick_convert_threshold(input_file, threshold, state):
@@ -504,15 +511,15 @@ def do_pdftk_cat(pdf_files, state):
     pdf_file_paths = map(lambda pdf_file: str(pdf_file), pdf_files)
     cmd += pdf_file_paths
 
-    target_path = os.path.join(
+    output_file_path = os.path.join(
         state.common_path,
         '{}_magick.pdf'.format(state.first_input_file.basename)
     )
-    cmd += ['cat', 'output', target_path]
+    cmd += ['cat', 'output', output_file_path]
 
     result = run.run(cmd)
     if result.returncode == 0:
-        print('Successfully created: {}'.format(target_path))
+        print('Successfully created: {}'.format(output_file_path))
 
 
 class Timer(object):
@@ -624,7 +631,7 @@ def main():
         data = []
         for input_file in input_files:
             data.append((input_file, state))
-        output_files = pool.map(do_magick_convert, data)
+        output_files = pool.map(convert_one_file, data)
 
         if state.args.join:
             do_pdftk_cat(output_files, state)

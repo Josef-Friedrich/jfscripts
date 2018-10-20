@@ -166,7 +166,7 @@ class TestUnit(TestCase):
         magick_command.return_value = ['convert']
         state = get_state()
         state.args.enlighten_border = False
-        magick_imslp.do_magick_convert([FilePath('test.tif'), state])
+        magick_imslp.do_magick_convert(FilePath('test.tif'), state)
         run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
              '50%', '-trim', '+repage', '-border', '5%', '-bordercolor',
@@ -183,7 +183,7 @@ class TestUnit(TestCase):
         state.args.pdf = False
         state.args.resize = False
         state.args.border = False
-        magick_imslp.do_magick_convert([FilePath('test.tif'), state])
+        magick_imslp.do_magick_convert(FilePath('test.tif'), state)
         run.assert_called_with(
             ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
              '+repage', 'test.tif', 'test.tiff']
@@ -304,7 +304,7 @@ class TestIntegrationWithDependencies(TestCase):
         tmp = copy(tmp_tiff1)
         check_output(['magick-imslp.py', 'convert', tmp])
         out = check_output(['magick-imslp.py', 'convert', tmp])
-        self.assertIn('The target file seems to be already converted.',
+        self.assertIn('The output file seems to be already converted.',
                       out.decode('utf-8'))
 
     def test_option_border(self):
