@@ -80,13 +80,13 @@ class TestUnit(TestCase):
         self.assertEqual(result, 3)
 
     @mock.patch('jfscripts.magick_imslp.run.check_output')
-    def test_get_image_info(self, check_output):
+    def test_do_magick_identify(self, check_output):
         check_output.side_effect = [
             bytes('2552'.encode('utf-8')),
             bytes('3656'.encode('utf-8')),
             bytes('256'.encode('utf-8')),
         ]
-        result = magick_imslp.get_image_info(FilePath('test.pdf'))
+        result = magick_imslp.do_magick_identify(FilePath('test.pdf'))
         self.assertEqual(result, {'width': 2552, 'height': 3656,
                                   'channels': 256})
 
@@ -310,9 +310,9 @@ class TestIntegrationWithDependencies(TestCase):
     def test_option_border(self):
         tiff = copy(tmp_tiff1)
 
-        info_before = magick_imslp.get_image_info(FilePath(tiff))
+        info_before = magick_imslp.do_magick_identify(FilePath(tiff))
         check_output(['magick-imslp.py', 'convert', '--border', tiff])
-        info_after = magick_imslp.get_image_info(FilePath(tiff))
+        info_after = magick_imslp.do_magick_identify(FilePath(tiff))
 
         self.assertEqual(info_before['width'], 300)
         self.assertEqual(info_after['width'], 311)

@@ -367,7 +367,7 @@ def do_magick_convert(arguments):
     cmd_args = convert_executable()
 
     if state.args.enlighten_border:
-        info_source = get_image_info(source)
+        info_source = do_magick_identify(source)
         cmd_args += enlighten_border(info_source['width'],
                                      info_source['height'])
 
@@ -400,7 +400,7 @@ def do_magick_convert(arguments):
     cmd_args.append(str(target))
 
     if source == target:
-        info_target = get_image_info(target)
+        info_target = do_magick_identify(target)
         if info_target['channels'] == 2 and not state.args.force:
             print('The target file seems to be already converted.')
             return target
@@ -470,7 +470,7 @@ def threshold_series(input_file, state):
         do_magick_convert_threshold(input_file, number, state)
 
 
-def get_image_info(input_file):
+def do_magick_identify(input_file):
     """The different informations of an image.
 
     :param input_file: The input file.
