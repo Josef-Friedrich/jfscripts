@@ -490,7 +490,7 @@ def get_image_info(input_file):
     }
 
 
-def join_to_pdf(pdf_files, state):
+def do_pdftk_cat(pdf_files, state):
     """Join a list of PDF files into a single PDF file using the tool `pdftk`.
 
     :param list pdf_files: a list of PDF files
@@ -627,7 +627,7 @@ def main():
         output_files = pool.map(do_magick_convert, data)
 
         if state.args.join:
-            join_to_pdf(output_files, state)
+            do_pdftk_cat(output_files, state)
 
         if not state.args.no_cleanup:
             cleanup(state)
@@ -655,7 +655,7 @@ def main():
             data.append(input_file)
         files_converted = pool.map(do_magick_convert_pdf, data)
 
-        join_to_pdf(files_already_converted + files_converted, state)
+        do_pdftk_cat(files_already_converted + files_converted, state)
 
     elif args.subcommand == 'threshold-series':
         threshold_series(state.first_input_file, state)
