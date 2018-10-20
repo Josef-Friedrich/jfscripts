@@ -237,6 +237,10 @@ class TestIntegration(TestCase):
                  'Some dependencies are not installed')
 class TestIntegrationWithDependencies(TestCase):
 
+    ##
+    # convert
+    ##
+
     def test_input_file_pdf_exception(self):
         out = run(['magick-imslp.py', 'convert', 'test1.pdf', 'test2.pdf'],
                   encoding='utf-8', stderr=subprocess.PIPE)
@@ -347,6 +351,26 @@ class TestIntegrationWithDependencies(TestCase):
 
         assert_no_cleanup(['magick-imslp.py', 'convert'], 4)
         assert_no_cleanup(['magick-imslp.py', '--no-cleanup', 'convert'], 7)
+
+    ##
+    # extract
+    ##
+
+    def test_extract(self):
+        pdf = copy(tmp_pdf)
+        parent_dir = Path(pdf).parent
+        check_output(['magick-imslp.py', 'extract', pdf])
+        files = os.listdir(parent_dir)
+        for num in [0, 1, 2]:
+            self.assertIn('test-00{}.tif'.format(num), files)
+        self.assertEqual(len(files), 4)
+
+    def test_extract_no_pdf(self):
+        png = copy(tmp_png1)
+        CompletedProcess = run(['magick-imslp.py', 'extract', png],
+                               encoding='utf-8', stderr=subprocess.PIPE)
+        self.assertEqual(CompletedProcess.returncode, 1)
+        self.assertIn('Specify a PDF file.', CompletedProcess.stderr)
 
     ##
     # threshold-series

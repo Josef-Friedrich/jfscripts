@@ -33,6 +33,10 @@ class Run(object):
             print(' '.join(cmd))
 
     def run(self, *args, **kwargs):
+        """
+        :return: A `CompletedProcess` object.
+        :rtype: subprocess.CompletedProcess
+        """
         if self.verbose:
             self._print_cmd(args[0])
         return subprocess.run(*args, **kwargs)

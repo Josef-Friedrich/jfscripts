@@ -177,11 +177,16 @@ def get_parser():
     # extract
     ##
 
-    extract_parser = subcommand.add_parser('extract')
+    extract_parser = subcommand.add_parser(
+        'extract',
+        description='Extract images from a PDF file and export them in the '
+        'TIFF format.'
+    )
 
     extract_parser.add_argument(
         'input_files',
-        help=list_files.doc_examples('%(prog)s', 'tiff'),
+        metavar='input_file',
+        help='A pdf file',
         nargs='+',
     )
 
@@ -235,7 +240,7 @@ def pdf_page_count(pdf_file):
     return int(page_count.group(1))
 
 
-def pdf_to_images(pdf_file, state, page_number=None):
+def pdf_to_images(pdf_file, state, page_number=None, tmp_identifier=True):
     """Convert a PDF file to images in the TIFF format.
 
     :param pdf_file: The input file.
@@ -247,7 +252,10 @@ def pdf_to_images(pdf_file, state, page_number=None):
     :return: The return value of `subprocess.run`.
     :rtype: subprocess.CompletedProcess
     """
-    image_root = '{}_{}'.format(pdf_file.basename, state.tmp_identifier)
+    if tmp_identifier:
+        image_root = '{}_{}'.format(pdf_file.basename, state.tmp_identifier)
+    else:
+        image_root = pdf_file.basename
 
     command = ['pdfimages', '-tiff', str(pdf_file), image_root]
 
@@ -635,6 +643,12 @@ def main():
 
         if not state.args.no_cleanup:
             cleanup(state)
+
+    elif args.subcommand == 'extract':
+        if not state.input_is_pdf:
+            raise ValueError('Specify a PDF file.')
+        pdf_to_images(state.first_input_file, state, page_number=None,
+                      tmp_identifier=False)
 
     elif args.subcommand == 'join':
         input_files = convert_file_paths(state.input_files)
