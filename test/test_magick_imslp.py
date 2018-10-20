@@ -256,16 +256,6 @@ class TestIntegrationWithDependencies(TestCase):
         for test_file in result:
             self.assertExists(path.base + '-00' + test_file, test_file)
 
-    def test_option_no_multiprocessing(self):
-        pdf = copy(tmp_pdf)
-        self.assertExists(pdf)
-        path = FilePath(pdf)
-        check_output(['magick-imslp.py', 'convert', '--no-multiprocessing',
-                      pdf])
-        result = ('0.tiff', '1.tiff', '2.tiff')
-        for test_file in result:
-            self.assertExists(path.base + '-00' + test_file, test_file)
-
     def test_with_real_pdf_join(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
