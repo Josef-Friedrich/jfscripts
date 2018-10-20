@@ -401,7 +401,7 @@ def do_magick_convert(arguments):
 
     if source == target:
         info_target = do_magick_identify(target)
-        if info_target['channels'] == 2 and not state.args.force:
+        if info_target['colors'] == 2 and not state.args.force:
             print('The target file seems to be already converted.')
             return target
 
@@ -476,7 +476,7 @@ def do_magick_identify(input_file):
     :param input_file: The input file.
     :type input_file: jfscripts._utils.FilePath
 
-    :return: A directory with the keys `width`, `height` and `channels`.
+    :return: A directory with the keys `width`, `height` and `colors`.
     :rtype: dict
     """
     def _get_by_format(input_file, format):
@@ -486,7 +486,7 @@ def do_magick_identify(input_file):
     return {
         'width': int(_get_by_format(input_file, '%w')),
         'height': int(_get_by_format(input_file, '%h')),
-        'channels': int(_get_by_format(input_file, '%k')),
+        'colors': int(_get_by_format(input_file, '%k')),
     }
 
 

@@ -88,7 +88,7 @@ class TestUnit(TestCase):
         ]
         result = magick_imslp.do_magick_identify(FilePath('test.pdf'))
         self.assertEqual(result, {'width': 2552, 'height': 3656,
-                                  'channels': 256})
+                                  'colors': 256})
 
     def test_enlighten_border(self):
         result = magick_imslp.enlighten_border(1000, 1000)
