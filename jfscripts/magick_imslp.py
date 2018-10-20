@@ -490,19 +490,6 @@ def get_image_info(input_file):
     }
 
 
-def do_multiprocessing_magick(input_files, state):
-    """Run the function `do_magick_convert` in a multiprocessing environment.
-
-    :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
-    """
-    pool = multiprocessing.Pool()
-    data = []
-    for input_file in input_files:
-        data.append((input_file, state))
-    return pool.map(do_magick_convert, data)
-
-
 def join_to_pdf(pdf_files, state):
     """Join a list of PDF files into a single PDF file using the tool `pdftk`.
 
@@ -632,7 +619,12 @@ def main():
             input_files = state.input_files
 
         input_files = convert_file_paths(input_files)
-        output_files = do_multiprocessing_magick(input_files, state)
+
+        pool = multiprocessing.Pool()
+        data = []
+        for input_file in input_files:
+            data.append((input_file, state))
+        output_files = pool.map(do_magick_convert, data)
 
         if state.args.join:
             join_to_pdf(output_files, state)
