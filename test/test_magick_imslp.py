@@ -103,13 +103,14 @@ class TestUnit(TestCase):
     def test_threshold(self, run, convert_executable):
         convert_executable.return_value = ['convert']
         state = get_state()
-        magick_imslp.threshold(FilePath('test.jpg'), 99, state)
+        magick_imslp.do_magick_convert_threshold(FilePath('test.jpg'), 99,
+                                                 state)
         run.assert_called_with(
             ['convert', '-threshold', '99%', 'test.jpg',
              'test_threshold-99.png']
         )
 
-    @patch('jfscripts.magick_imslp.threshold')
+    @patch('jfscripts.magick_imslp.do_magick_convert_threshold')
     def test_threshold_series(self, threshold):
         state = get_state()
         magick_imslp.threshold_series(FilePath('test.jpg'), state)

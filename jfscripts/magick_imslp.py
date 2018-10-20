@@ -413,7 +413,7 @@ def do_magick_convert(arguments):
     return target
 
 
-def convert_to_pdf(source):
+def do_magick_convert_pdf(source):
     """
     :return: The target image file.
     :rtype: jfscripts._utils.FilePath
@@ -427,7 +427,7 @@ def convert_to_pdf(source):
     return target
 
 
-def threshold(input_file, threshold, state):
+def do_magick_convert_threshold(input_file, threshold, state):
     """Convert a image to a given threshold value.
 
     :param input_file: The input file.
@@ -467,7 +467,7 @@ def threshold_series(input_file, state):
         input_file = FilePath(images[0], absolute=True)
 
     for number in range(40, 100, 5):
-        threshold(input_file, number, state)
+        do_magick_convert_threshold(input_file, number, state)
 
 
 def get_image_info(input_file):
@@ -661,7 +661,7 @@ def main():
         data = []
         for input_file in files_to_convert:
             data.append(input_file)
-        files_converted = pool.map(convert_to_pdf, data)
+        files_converted = pool.map(do_magick_convert_pdf, data)
 
         join_to_pdf(files_already_converted + files_converted, state)
 
