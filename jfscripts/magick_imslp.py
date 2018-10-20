@@ -114,6 +114,15 @@ def get_parser():
     )
 
     convert_parser.add_argument(
+        '-o',
+        '--ocr',
+        action='store_true',
+        default=False,
+        help='Perform optical character recognition (OCR) on the input files.'
+        'The output format must be PDF.',
+    )
+
+    convert_parser.add_argument(
         '-e',
         '--enlighten-border',
         action='store_true',
@@ -199,6 +208,14 @@ def get_parser():
         description='Join the input files into a single PDF file. If the '
         'input file is not PDF file, it is converted into a monochrome CCITT '
         'Group 4 compressed PDF file.',
+    )
+
+    join_parser.add_argument(
+        '-o',
+        '--ocr',
+        action='store_true',
+        default=False,
+        help='Perform optical character recognition (OCR) on the input files.',
     )
 
     join_parser.add_argument(
