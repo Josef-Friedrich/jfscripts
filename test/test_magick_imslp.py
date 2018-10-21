@@ -51,6 +51,10 @@ if dependencies and internet:
         'tiff/liszt-weinen_300.tiff',
         local_path='/tmp/jfscripts/magick_imslp/liszt-weinen_300.tiff'
     )
+    tmp_ocr = download(
+        'ocr/Walter-Benjamin_Einbahnstrasse.jpg',
+        local_path='/tmp/jfscripts/magick_imslp/ocr.jpg'
+    )
 
 
 class TestUnit(TestCase):
@@ -363,6 +367,12 @@ class TestIntegrationWithDependencies(TestCase):
         for num in [0, 1, 2]:
             self.assertIn('test-00{}.pdf'.format(num), files)
         self.assertEqual(len(files), 4)
+
+    def test_option_ocr_input_jpg(self):
+        jpg = copy(tmp_ocr)
+        check_output(['magick-imslp.py', 'convert', '--ocr', jpg])
+        result = FilePath(jpg).new(extension='pdf')
+        self.assertExists(str(result))
 
     ##
     # extract
