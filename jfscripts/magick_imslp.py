@@ -237,7 +237,7 @@ def get_parser():
     return parser
 
 
-def pdf_page_count(pdf_file):
+def do_pdfinfo_page_count(pdf_file):
     """Get the amount of pages a PDF files have.
 
     :param str pdf_file: Path of the PDF file.
@@ -482,7 +482,7 @@ def threshold_series(input_file, state):
     :return: None
     """
     if state.input_is_pdf:
-        page_count = pdf_page_count(input_file)
+        page_count = do_pdfinfo_page_count(input_file)
         page_number = random.randint(1, page_count)
         print('Used page number {} of {} pages to generate a series of images '
               'with different threshold values.'

@@ -77,7 +77,7 @@ class TestUnit(TestCase):
 
         mock.return_value = b''.join(return_values)
 
-        result = magick_imslp.pdf_page_count('test.pdf')
+        result = magick_imslp.do_pdfinfo_page_count('test.pdf')
         self.assertEqual(result, 3)
 
     @mock.patch('jfscripts.magick_imslp.run.check_output')
