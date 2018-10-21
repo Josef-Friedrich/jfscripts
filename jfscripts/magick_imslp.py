@@ -458,12 +458,12 @@ def cleanup(state):
             os.remove(os.path.join(state.common_path, work_file))
 
 
-##
+###############################################################################
 # subcommand wrapper functions
-##
+###############################################################################
 
 
-def convert_one_file(arguments):
+def subcommand_convert_file(arguments):
     """Manipulate one input file
 
     :param tuple arguments: A tuple containing two elements: The first element
@@ -522,7 +522,7 @@ def convert_one_file(arguments):
     return output_file
 
 
-def subcommand_join(input_file):
+def subcommand_join_convert_pdf(input_file):
     output_file = input_file.new(extension='pdf')
     process = do_magick_convert(input_file, output_file)
     if process.returncode != 0:
@@ -530,7 +530,7 @@ def subcommand_join(input_file):
     return output_file
 
 
-def threshold_series(input_file, state):
+def subcommand_threshold_series(input_file, state):
     """Generate a list of example files with different threshold values.
 
     :param input_file: The input file.
@@ -672,7 +672,7 @@ def main():
         data = []
         for input_file in input_files:
             data.append((input_file, state))
-        output_files = pool.map(convert_one_file, data)
+        output_files = pool.map(subcommand_convert_file, data)
 
         if state.args.join:
             do_pdftk_cat(output_files, state)
@@ -709,7 +709,7 @@ def main():
         data = []
         for input_file in files_to_convert:
             data.append(input_file)
-        files_converted = pool.map(subcommand_join, data)
+        files_converted = pool.map(subcommand_join_convert_pdf, data)
 
         do_pdftk_cat(files_already_converted + files_converted, state)
 
@@ -718,7 +718,7 @@ def main():
     ##
 
     elif args.subcommand == 'threshold-series':
-        threshold_series(state.first_input_file, state)
+        subcommand_threshold_series(state.first_input_file, state)
         if not state.args.no_cleanup:
             cleanup(state)
 
