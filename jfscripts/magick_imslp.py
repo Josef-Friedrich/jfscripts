@@ -63,6 +63,14 @@ def get_parser():
     )
 
     parser.add_argument(
+        '-m',
+        '--multiprocessing',
+        action='store_true',
+        default=False,
+        help='Use multiprocessing to run commands in parallel.',
+    )
+
+    parser.add_argument(
         '-N',
         '--no-cleanup',
         action='store_true',
@@ -688,11 +696,18 @@ def main():
 
         input_files = convert_file_paths(input_files)
 
-        pool = multiprocessing.Pool()
-        data = []
-        for input_file in input_files:
-            data.append((input_file, state))
-        output_files = pool.map(subcommand_convert_file, data)
+        if state.args.multiprocessing:
+            pool = multiprocessing.Pool()
+            data = []
+            for input_file in input_files:
+                data.append((input_file, state))
+            output_files = pool.map(subcommand_convert_file, data)
+        else:
+            output_files = []
+            for input_file in input_files:
+                output_files.append(
+                    subcommand_convert_file((input_file, state))
+                )
 
         if state.args.join:
             do_pdftk_cat(output_files, state)
@@ -716,11 +731,18 @@ def main():
 
     elif args.subcommand == 'join':
         input_files = convert_file_paths(state.input_files)
-        pool = multiprocessing.Pool()
-        data = []
-        for input_file in input_files:
-            data.append((input_file, state))
-        files_converted = pool.map(subcommand_join_convert_pdf, data)
+        if state.args.multiprocessing:
+            pool = multiprocessing.Pool()
+            data = []
+            for input_file in input_files:
+                data.append((input_file, state))
+            files_converted = pool.map(subcommand_join_convert_pdf, data)
+        else:
+            files_converted = []
+            for input_file in input_files:
+                files_converted.append(
+                    subcommand_join_convert_pdf((input_file, state))
+                )
         do_pdftk_cat(files_converted, state)
 
     ##

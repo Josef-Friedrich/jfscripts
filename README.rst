@@ -108,7 +108,7 @@ magick-imslp.py
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-c] [-N] [-v] [-V]
+    usage: magick-imslp.py [-h] [-c] [-m] [-N] [-v] [-V]
                            {convert,extract,join,threshold-series} ...
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -124,6 +124,8 @@ magick-imslp.py
     optional arguments:
       -h, --help            show this help message and exit
       -c, --colorize        Colorize the terminal output.
+      -m, --multiprocessing
+                            Use multiprocessing to run commands in parallel.
       -N, --no-cleanup      Don’t clean up the temporary files.
       -v, --verbose         Make the command line output more verbose.
       -V, --version         show program's version number and exit
