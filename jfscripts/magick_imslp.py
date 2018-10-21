@@ -355,8 +355,11 @@ def do_tesseract(input_file, languages=['deu', 'eng']):
                    input_file.base, 'pdf'], stderr=run.PIPE, stdout=run.PIPE)
 
 
-def do_magick_convert(input_file, output_file, threshold='50%',
-                      enlighten_border=False, border=False, resize=False):
+def do_magick_convert(input_file, output_file, threshold=None,
+                      enlighten_border=False, border=False, resize=False,
+                      deskew=False, trim=False
+
+                      ):
     """
     Convert a input image file using the subcommand convert of the
     imagemagick suite.
@@ -377,9 +380,14 @@ def do_magick_convert(input_file, output_file, threshold='50%',
     if resize:
         cmd_args += ['-resize', '200%']
 
-    cmd_args += ['-deskew', '40%']
-    cmd_args += ['-threshold', threshold]
-    cmd_args += ['-trim', '+repage']
+    if deskew:
+        cmd_args += ['-deskew', '40%']
+
+    if threshold:
+        cmd_args += ['-threshold', threshold]
+
+    if trim:
+        cmd_args += ['-trim', '+repage']
 
     if border:
         cmd_args += ['-border', '5%', '-bordercolor', '#FFFFFF']
@@ -430,6 +438,8 @@ def convert_one_file(arguments):
         enlighten_border=state.args.enlighten_border,
         border=state.args.border,
         resize=state.args.resize,
+        deskew=True,
+        trim=True,
     )
 
     if completed_process.returncode != 0:

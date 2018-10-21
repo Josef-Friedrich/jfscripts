@@ -169,8 +169,7 @@ class TestUnit(TestCase):
             FilePath('test.tiff'),
         )
         run.assert_called_with(
-            ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
-             '+repage',  '-compress', 'Group4', '-monochrome', 'test.tif',
+            ['convert', '-compress', 'Group4', '-monochrome', 'test.tif',
              'test.tiff']
         )
 
@@ -185,6 +184,8 @@ class TestUnit(TestCase):
             enlighten_border=False,
             border=True,
             resize=True,
+            trim=True,
+            deskew=True,
         )
         run.assert_called_with(
             ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
