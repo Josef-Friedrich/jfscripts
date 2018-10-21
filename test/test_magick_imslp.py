@@ -11,6 +11,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import time
 import unittest
 
 
@@ -192,6 +193,13 @@ class TestUnit(TestCase):
              'test.pdf']
         )
 
+    @patch('jfscripts.magick_imslp.run.run')
+    def test_do_tesseract(self, run):
+        magick_imslp.do_tesseract(FilePath('test.tiff'))
+        run.assert_called_with(
+            ['tesseract', '-l', 'deu+eng', 'test.tiff', 'test', 'pdf']
+        )
+
     @unittest.skip('skipped')
     @patch('jfscripts.magick_imslp.check_bin')
     def test_multiple_input_files(self, cb):
@@ -306,6 +314,8 @@ class TestIntegrationWithDependencies(TestCase):
     def test_already_converted(self):
         tmp = copy(tmp_tiff1)
         check_output(['magick-imslp.py', 'convert', tmp])
+        # The test fails sometimes. Maybe we should wait a little bit.
+        time.sleep(1)
         out = check_output(['magick-imslp.py', 'convert', tmp])
         self.assertIn('The output file seems to be already converted.',
                       out.decode('utf-8'))

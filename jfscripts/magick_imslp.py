@@ -350,6 +350,11 @@ def magick_command(command):
         return [command]
 
 
+def do_tesseract(input_file, languages=['deu', 'eng']):
+    return run.run(['tesseract', '-l', '+'.join(languages), str(input_file),
+                   input_file.base, 'pdf'])
+
+
 def do_magick_convert(input_file, output_file, threshold='50%',
                       enlighten_border=False, border=False, resize=False):
     """
