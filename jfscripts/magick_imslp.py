@@ -471,25 +471,6 @@ def do_magick_convert_pdf(input_file):
     return output_file
 
 
-def do_magick_convert_threshold(input_file, threshold, state):
-    """Convert a image to a given threshold value.
-
-    :param input_file: The input file.
-    :type input_file: jfscripts._utils.FilePath
-    :param int threshold: A integer number between 0 - 100.
-    :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
-
-    :return: None
-    """
-    appendix = '_threshold-{}'.format(threshold)
-    output_file = input_file.new(extension='png', append=appendix,
-                                 del_substring=state.tmp_identifier)
-    output_file = str(output_file).replace('_-000', '')
-    run.run(magick_command('convert') + ['-threshold', '{}%'.format(threshold),
-            str(input_file), output_file])
-
-
 def threshold_series(input_file, state):
     """Generate a list of example files with different threshold values.
 
@@ -510,8 +491,13 @@ def threshold_series(input_file, state):
         images = collect_images(state)
         input_file = FilePath(images[0], absolute=True)
 
-    for number in range(40, 100, 5):
-        do_magick_convert_threshold(input_file, number, state)
+    for threshold in range(40, 100, 5):
+        appendix = '_threshold-{}'.format(threshold)
+        output_file = input_file.new(extension='tiff', append=appendix,
+                                     del_substring=state.tmp_identifier)
+        output_file = str(output_file).replace('_-000', '')
+        do_magick_convert(input_file, output_file,
+                          threshold='{}%'.format(threshold))
 
 
 def do_magick_identify(input_file):

@@ -99,19 +99,7 @@ class TestUnit(TestCase):
             '-region', '950x50+50+950', '-level', '0%,30%',
             '-region', '50x950+0+50', '-level', '0%,30%'])
 
-    @patch('jfscripts.magick_imslp.magick_command')
-    @patch('jfscripts.magick_imslp.run.run')
-    def test_threshold(self, run, magick_command):
-        magick_command.return_value = ['convert']
-        state = get_state()
-        magick_imslp.do_magick_convert_threshold(FilePath('test.jpg'), 99,
-                                                 state)
-        run.assert_called_with(
-            ['convert', '-threshold', '99%', 'test.jpg',
-             'test_threshold-99.png']
-        )
-
-    @patch('jfscripts.magick_imslp.do_magick_convert_threshold')
+    @patch('jfscripts.magick_imslp.do_magick_convert')
     def test_threshold_series(self, threshold):
         state = get_state()
         magick_imslp.threshold_series(FilePath('test.jpg'), state)
@@ -405,8 +393,8 @@ class TestIntegrationWithDependencies(TestCase):
         check_output(['magick-imslp.py', 'threshold-series', tmp])
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
         for threshold in result:
-            suffix = '_threshold-{}.png'.format(threshold)
-            path = tmp.replace('.png', suffix)
+            suffix = '_threshold-{}.tiff'.format(threshold)
+            path = tmp.replace('.tiff', suffix)
             self.assertExists(path, path)
 
     def test_option_threshold_series_on_pdf(self):
@@ -417,7 +405,7 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertEqual(len(files), 13)
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
         for threshold in result:
-            filename = 'test_threshold-{}.png'.format(threshold)
+            filename = 'test_threshold-{}.tiff'.format(threshold)
             self.assertIn(filename, files)
 
     def test_subcommand_join(self):
