@@ -1,4 +1,5 @@
 from _helper import TestCase, download, check_internet_connectifity
+from jfscripts import list_files
 from jfscripts import magick_imslp
 from jfscripts._utils import check_bin
 from jfscripts.magick_imslp import FilePath, State, Timer
@@ -389,10 +390,36 @@ class TestIntegrationWithDependencies(TestCase):
 
     def test_extract_no_pdf(self):
         png = copy(tmp_png1)
-        CompletedProcess = run(['magick-imslp.py', 'extract', png],
-                               encoding='utf-8', stderr=subprocess.PIPE)
-        self.assertEqual(CompletedProcess.returncode, 1)
-        self.assertIn('Specify a PDF file.', CompletedProcess.stderr)
+        process = run(['magick-imslp.py', 'extract', png],
+                      encoding='utf-8', stderr=subprocess.PIPE)
+        self.assertEqual(process.returncode, 1)
+        self.assertIn('Specify a PDF file.', process.stderr)
+
+    ##
+    # join
+    ##
+
+    def test_join(self):
+        png1 = copy(tmp_png1)
+        png2 = copy(tmp_png2)
+        check_output(['magick-imslp.py', 'join', png1, png2])
+        self.assertExists(
+            os.path.join(
+                list_files.common_path((png1, png2)),
+                FilePath(png1).basename + '_magick.pdf',
+            )
+        )
+
+    def test_join_ocr(self):
+        png1 = copy(tmp_png1)
+        png2 = copy(tmp_png2)
+        check_output(['magick-imslp.py', 'join', '--ocr', png1, png2])
+        self.assertExists(
+            os.path.join(
+                list_files.common_path((png1, png2)),
+                FilePath(png1).basename + '_magick.pdf',
+            )
+        )
 
     ##
     # threshold-series
