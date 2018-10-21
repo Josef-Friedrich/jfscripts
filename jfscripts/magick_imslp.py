@@ -308,7 +308,7 @@ def cleanup(state):
             os.remove(os.path.join(state.common_path, work_file))
 
 
-def enlighten_border(width, height):
+def do_magick_convert_enlighten_border(width, height):
     """
     Build the command line arguments to enlighten the border in four regions.
 
@@ -350,7 +350,8 @@ def magick_command(command):
         return [command]
 
 
-def do_magick_convert(input_file, state):
+def do_magick_convert(input_file, output_file, threshold='50%',
+                      enlighten_border=False, border=False, resize=False):
     """
     Convert a input image file using the subcommand convert of the
     imagemagick suite.
@@ -361,25 +362,37 @@ def do_magick_convert(input_file, state):
 
     cmd_args = magick_command('convert')
 
-    if state.args.enlighten_border:
+    if enlighten_border:
         info_input_file = do_magick_identify(input_file)
-        cmd_args += enlighten_border(info_input_file['width'],
-                                     info_input_file['height'])
+        cmd_args += do_magick_convert_enlighten_border(
+            info_input_file['width'],
+            info_input_file['height'],
+        )
 
-    if state.args.resize:
+    if resize:
         cmd_args += ['-resize', '200%']
 
     cmd_args += ['-deskew', '40%']
-    cmd_args += ['-threshold', state.args.threshold]
+    cmd_args += ['-threshold', threshold]
     cmd_args += ['-trim', '+repage']
 
-    if state.args.border:
+    if border:
         cmd_args += ['-border', '5%', '-bordercolor', '#FFFFFF']
 
-    if state.args.pdf:
-        cmd_args += ['-compress', 'Group4', '-monochrome']
+    cmd_args += ['-compress', 'Group4', '-monochrome']
+    cmd_args += [str(input_file), str(output_file)]
 
-    cmd_args.append(str(input_file))
+    return run.run(cmd_args)
+
+
+def convert_one_file(arguments):
+    """Manipulate one input file
+
+    :param tuple arguments: A tuple containing two elements: The first element
+      is the input_file file object and the second element is the state object.
+    """
+    input_file = arguments[0]
+    state = arguments[1]
 
     if state.args.pdf:
         extension = 'pdf'
@@ -392,8 +405,6 @@ def do_magick_convert(input_file, state):
     else:
         output_file = input_file.new(extension=extension)
 
-    cmd_args.append(str(output_file))
-
     if input_file == output_file:
         info_output_file = do_magick_identify(output_file)
         if info_output_file['colors'] == 2 and not state.args.force:
@@ -404,20 +415,16 @@ def do_magick_convert(input_file, state):
             backup = input_file.new(append='_backup')
             shutil.copy2(str(input_file), str(backup))
 
-    run.run(cmd_args)
+    do_magick_convert(
+        input_file,
+        output_file,
+        threshold=state.args.threshold,
+        enlighten_border=state.args.enlighten_border,
+        border=state.args.border,
+        resize=state.args.resize,
+    )
+
     return output_file
-
-
-def convert_one_file(arguments):
-    """Manipulate one input file
-
-    :param tuple arguments: A tuple containing two elements: The first element
-      is the input_file file object and the second element is the state object.
-    """
-    input_file = arguments[0]
-    state = arguments[1]
-
-    return do_magick_convert(input_file, state)
 
 
 def do_magick_convert_pdf(input_file):

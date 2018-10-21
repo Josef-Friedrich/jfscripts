@@ -91,7 +91,7 @@ class TestUnit(TestCase):
                                   'colors': 256})
 
     def test_enlighten_border(self):
-        result = magick_imslp.enlighten_border(1000, 1000)
+        result = magick_imslp.do_magick_convert_enlighten_border(1000, 1000)
         self.assertEqual(result, [
             '-region', '950x50', '-level', '0%,30%',
             '-region', '50x950+950', '-level', '0%,30%',
@@ -161,32 +161,35 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.magick_command')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_do_magick_convert_false_enlighten_border(self, run,
-                                                      magick_command):
+    def test_do_magick_convert_without_kwargs(self, run, magick_command):
         magick_command.return_value = ['convert']
-        state = get_state()
-        state.args.enlighten_border = False
-        magick_imslp.do_magick_convert(FilePath('test.tif'), state)
+        magick_imslp.do_magick_convert(
+            FilePath('test.tif'),
+            FilePath('test.tiff'),
+        )
         run.assert_called_with(
-            ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
-             '50%', '-trim', '+repage', '-border', '5%', '-bordercolor',
-             '#FFFFFF', '-compress', 'Group4', '-monochrome', 'test.tif',
-             'test.pdf']
+            ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
+             '+repage',  '-compress', 'Group4', '-monochrome', 'test.tif',
+             'test.tiff']
         )
 
     @patch('jfscripts.magick_imslp.magick_command')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_do_magick_convert_more_false(self, run, magick_command):
+    def test_do_magick_convert_kwargs(self, run, magick_command):
         magick_command.return_value = ['convert']
-        state = get_state()
-        state.args.enlighten_border = False
-        state.args.pdf = False
-        state.args.resize = False
-        state.args.border = False
-        magick_imslp.do_magick_convert(FilePath('test.tif'), state)
+        magick_imslp.do_magick_convert(
+            FilePath('test.tif'),
+            FilePath('test.pdf'),
+            threshold='60%',
+            enlighten_border=False,
+            border=True,
+            resize=True,
+        )
         run.assert_called_with(
-            ['convert', '-deskew', '40%', '-threshold', '50%', '-trim',
-             '+repage', 'test.tif', 'test.tiff']
+            ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
+             '60%', '-trim', '+repage', '-border', '5%', '-bordercolor',
+             '#FFFFFF', '-compress', 'Group4', '-monochrome', 'test.tif',
+             'test.pdf']
         )
 
     @unittest.skip('skipped')
