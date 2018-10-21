@@ -333,20 +333,6 @@ def do_magick_convert(input_file, output_file, threshold=None,
     return run.run(cmd_args)
 
 
-def do_magick_convert_pdf(input_file):
-    """
-    :return: The output image file.
-    :rtype: jfscripts._utils.FilePath
-    """
-    cmd_args = _do_magick_command('convert')
-    cmd_args += ['-compress', 'Group4', '-monochrome']
-    cmd_args.append(str(input_file))
-    output_file = input_file.new(extension='pdf')
-    cmd_args.append(str(output_file))
-    run.run(cmd_args)
-    return output_file
-
-
 def do_magick_identify(input_file):
     """The different informations of an image.
 
@@ -536,6 +522,14 @@ def convert_one_file(arguments):
     return output_file
 
 
+def subcommand_join(input_file):
+    output_file = input_file.new(extension='pdf')
+    process = do_magick_convert(input_file, output_file)
+    if process.returncode != 0:
+        raise('join: convert to pdf failed.')
+    return output_file
+
+
 def threshold_series(input_file, state):
     """Generate a list of example files with different threshold values.
 
@@ -655,6 +649,10 @@ def main():
 
     check_bin(*dependencies)
 
+    ##
+    # convert
+    ##
+
     if args.subcommand == 'convert':
 
         if state.args.join and not state.args.pdf:
@@ -682,11 +680,19 @@ def main():
         if not state.args.no_cleanup:
             cleanup(state)
 
+    ##
+    # extract
+    ##
+
     elif args.subcommand == 'extract':
         if not state.input_is_pdf:
             raise ValueError('Specify a PDF file.')
         do_pdfimages(state.first_input_file, state, page_number=None,
                      tmp_identifier=False)
+
+    ##
+    # join
+    ##
 
     elif args.subcommand == 'join':
         input_files = convert_file_paths(state.input_files)
@@ -703,9 +709,13 @@ def main():
         data = []
         for input_file in files_to_convert:
             data.append(input_file)
-        files_converted = pool.map(do_magick_convert_pdf, data)
+        files_converted = pool.map(subcommand_join, data)
 
         do_pdftk_cat(files_already_converted + files_converted, state)
+
+    ##
+    # threshold-series
+    ##
 
     elif args.subcommand == 'threshold-series':
         threshold_series(state.first_input_file, state)
