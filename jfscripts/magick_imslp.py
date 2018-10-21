@@ -237,17 +237,134 @@ def get_parser():
     return parser
 
 
-def do_pdfinfo_page_count(pdf_file):
-    """Get the amount of pages a PDF files have.
+###############################################################################
+# do_* functions (alphabetically sorted)
+###############################################################################
 
-    :param str pdf_file: Path of the PDF file.
+# do_magick_convert
+# do_magick_convert_pdf
+# do_magick_identify
+# do_pdfimages
+# do_pdfinfo_page_count
+# do_pdftk_cat
+# do_tesseract
 
-    :return: Page count
-    :rtype: int
+
+def _do_magick_command(command):
+    """ImageMagick version 7 introduces a new top level command named
+    `magick`. Use this newer command if present.
+
+    :return: A list of command segments
     """
-    output = run.check_output(['pdfinfo', str(pdf_file)]).decode('utf-8')
-    page_count = re.search(r'Pages:\s*([0-9]*)', output)
-    return int(page_count.group(1))
+    if shutil.which('magick'):
+        return ['magick', command]
+    else:
+        return [command]
+
+
+def _do_magick_convert_enlighten_border(width, height):
+    """
+    Build the command line arguments to enlighten the border in four regions.
+
+    :param int width: The width of the image.
+    :param int height: The height of the image.
+
+    :return: Command line arguments for imagemagicks’ `convert`.
+    :rtype: list
+    """
+    border = int(round(((width + height) / 2) * 0.05))
+
+    # top
+    # right
+    # bottom
+    # left
+    r = ('{}x{}'.format(width - border, border),
+         '{}x{}+{}'.format(border, height - border, width - border),
+         '{}x{}+{}+{}'.format(width - border, border, border, height - border),
+         '{}x{}+{}+{}'.format(border, height - border, 0, border))
+
+    out = []
+    for region in r:
+        out += ['-region', region, '-level', '0%,30%']
+
+    return out
+
+
+def do_magick_convert(input_file, output_file, threshold=None,
+                      enlighten_border=False, border=False, resize=False,
+                      deskew=False, trim=False
+
+                      ):
+    """
+    Convert a input image file using the subcommand convert of the
+    imagemagick suite.
+
+    :return: The output image file.
+    :rtype: jfscripts._utils.FilePath
+    """
+
+    cmd_args = _do_magick_command('convert')
+
+    if enlighten_border:
+        info_input_file = do_magick_identify(input_file)
+        cmd_args += _do_magick_convert_enlighten_border(
+            info_input_file['width'],
+            info_input_file['height'],
+        )
+
+    if resize:
+        cmd_args += ['-resize', '200%']
+
+    if deskew:
+        cmd_args += ['-deskew', '40%']
+
+    if threshold:
+        cmd_args += ['-threshold', threshold]
+
+    if trim:
+        cmd_args += ['-trim', '+repage']
+
+    if border:
+        cmd_args += ['-border', '5%', '-bordercolor', '#FFFFFF']
+
+    cmd_args += ['-compress', 'Group4', '-monochrome']
+    cmd_args += [str(input_file), str(output_file)]
+
+    return run.run(cmd_args)
+
+
+def do_magick_convert_pdf(input_file):
+    """
+    :return: The output image file.
+    :rtype: jfscripts._utils.FilePath
+    """
+    cmd_args = _do_magick_command('convert')
+    cmd_args += ['-compress', 'Group4', '-monochrome']
+    cmd_args.append(str(input_file))
+    output_file = input_file.new(extension='pdf')
+    cmd_args.append(str(output_file))
+    run.run(cmd_args)
+    return output_file
+
+
+def do_magick_identify(input_file):
+    """The different informations of an image.
+
+    :param input_file: The input file.
+    :type input_file: jfscripts._utils.FilePath
+
+    :return: A directory with the keys `width`, `height` and `colors`.
+    :rtype: dict
+    """
+    def _get_by_format(input_file, format):
+        return run.check_output(_do_magick_command('identify') + ['-format',
+                                format, str(input_file)]).decode('utf-8')
+
+    return {
+        'width': int(_get_by_format(input_file, '%w')),
+        'height': int(_get_by_format(input_file, '%h')),
+        'colors': int(_get_by_format(input_file, '%k')),
+    }
 
 
 def do_pdfimages(pdf_file, state, page_number=None, tmp_identifier=True):
@@ -276,6 +393,53 @@ def do_pdfimages(pdf_file, state, page_number=None, tmp_identifier=True):
     return run.run(command, cwd=state.common_path)
 
 
+def do_pdfinfo_page_count(pdf_file):
+    """Get the amount of pages a PDF files have.
+
+    :param str pdf_file: Path of the PDF file.
+
+    :return: Page count
+    :rtype: int
+    """
+    output = run.check_output(['pdfinfo', str(pdf_file)]).decode('utf-8')
+    page_count = re.search(r'Pages:\s*([0-9]*)', output)
+    return int(page_count.group(1))
+
+
+def do_pdftk_cat(pdf_files, state):
+    """Join a list of PDF files into a single PDF file using the tool `pdftk`.
+
+    :param list pdf_files: a list of PDF files
+    :param state: The state object.
+    :type state: jfscripts.magick_imslp.State
+
+    :return: None
+    """
+    cmd = ['pdftk']
+
+    pdf_file_paths = map(lambda pdf_file: str(pdf_file), pdf_files)
+    cmd += pdf_file_paths
+
+    output_file_path = os.path.join(
+        state.common_path,
+        '{}_magick.pdf'.format(state.first_input_file.basename)
+    )
+    cmd += ['cat', 'output', output_file_path]
+
+    result = run.run(cmd)
+    if result.returncode == 0:
+        print('Successfully created: {}'.format(output_file_path))
+
+
+def do_tesseract(input_file, languages=['deu', 'eng']):
+    return run.run(['tesseract', '-l', '+'.join(languages), str(input_file),
+                   input_file.base, 'pdf'], stderr=run.PIPE, stdout=run.PIPE)
+
+
+###############################################################################
+#
+###############################################################################
+
 def collect_images(state):
     """Collection all images using the temporary identifier in a common path.
 
@@ -296,7 +460,7 @@ def collect_images(state):
 
 
 def cleanup(state):
-    """Delete all images  using the temporary identifier in a common path.
+    """Delete all images using the temporary identifier in a common path.
 
     :param state: The state object.
     :type state: jfscripts.magick_imslp.State
@@ -308,94 +472,9 @@ def cleanup(state):
             os.remove(os.path.join(state.common_path, work_file))
 
 
-def do_magick_convert_enlighten_border(width, height):
-    """
-    Build the command line arguments to enlighten the border in four regions.
-
-    :param int width: The width of the image.
-    :param int height: The height of the image.
-
-    :return: Command line arguments for imagemagicks’ `convert`.
-    :rtype: list
-
-
-    """
-    border = int(round(((width + height) / 2) * 0.05))
-
-    # top
-    # right
-    # bottom
-    # left
-    r = ('{}x{}'.format(width - border, border),
-         '{}x{}+{}'.format(border, height - border, width - border),
-         '{}x{}+{}+{}'.format(width - border, border, border, height - border),
-         '{}x{}+{}+{}'.format(border, height - border, 0, border))
-
-    out = []
-    for region in r:
-        out += ['-region', region, '-level', '0%,30%']
-
-    return out
-
-
-def magick_command(command):
-    """ImageMagick version 7 introduces a new top level command named
-    `magick`. Use this newer command if present.
-
-    :return: A list of command segments
-    """
-    if shutil.which('magick'):
-        return ['magick', command]
-    else:
-        return [command]
-
-
-def do_tesseract(input_file, languages=['deu', 'eng']):
-    return run.run(['tesseract', '-l', '+'.join(languages), str(input_file),
-                   input_file.base, 'pdf'], stderr=run.PIPE, stdout=run.PIPE)
-
-
-def do_magick_convert(input_file, output_file, threshold=None,
-                      enlighten_border=False, border=False, resize=False,
-                      deskew=False, trim=False
-
-                      ):
-    """
-    Convert a input image file using the subcommand convert of the
-    imagemagick suite.
-
-    :return: The output image file.
-    :rtype: jfscripts._utils.FilePath
-    """
-
-    cmd_args = magick_command('convert')
-
-    if enlighten_border:
-        info_input_file = do_magick_identify(input_file)
-        cmd_args += do_magick_convert_enlighten_border(
-            info_input_file['width'],
-            info_input_file['height'],
-        )
-
-    if resize:
-        cmd_args += ['-resize', '200%']
-
-    if deskew:
-        cmd_args += ['-deskew', '40%']
-
-    if threshold:
-        cmd_args += ['-threshold', threshold]
-
-    if trim:
-        cmd_args += ['-trim', '+repage']
-
-    if border:
-        cmd_args += ['-border', '5%', '-bordercolor', '#FFFFFF']
-
-    cmd_args += ['-compress', 'Group4', '-monochrome']
-    cmd_args += [str(input_file), str(output_file)]
-
-    return run.run(cmd_args)
+##
+# subcommand wrapper functions
+##
 
 
 def convert_one_file(arguments):
@@ -457,20 +536,6 @@ def convert_one_file(arguments):
     return output_file
 
 
-def do_magick_convert_pdf(input_file):
-    """
-    :return: The output image file.
-    :rtype: jfscripts._utils.FilePath
-    """
-    cmd_args = magick_command('convert')
-    cmd_args += ['-compress', 'Group4', '-monochrome']
-    cmd_args.append(str(input_file))
-    output_file = input_file.new(extension='pdf')
-    cmd_args.append(str(output_file))
-    run.run(cmd_args)
-    return output_file
-
-
 def threshold_series(input_file, state):
     """Generate a list of example files with different threshold values.
 
@@ -498,51 +563,6 @@ def threshold_series(input_file, state):
         output_file = str(output_file).replace('_-000', '')
         do_magick_convert(input_file, output_file,
                           threshold='{}%'.format(threshold))
-
-
-def do_magick_identify(input_file):
-    """The different informations of an image.
-
-    :param input_file: The input file.
-    :type input_file: jfscripts._utils.FilePath
-
-    :return: A directory with the keys `width`, `height` and `colors`.
-    :rtype: dict
-    """
-    def _get_by_format(input_file, format):
-        return run.check_output(magick_command('identify') + ['-format',
-                                format, str(input_file)]).decode('utf-8')
-
-    return {
-        'width': int(_get_by_format(input_file, '%w')),
-        'height': int(_get_by_format(input_file, '%h')),
-        'colors': int(_get_by_format(input_file, '%k')),
-    }
-
-
-def do_pdftk_cat(pdf_files, state):
-    """Join a list of PDF files into a single PDF file using the tool `pdftk`.
-
-    :param list pdf_files: a list of PDF files
-    :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
-
-    :return: None
-    """
-    cmd = ['pdftk']
-
-    pdf_file_paths = map(lambda pdf_file: str(pdf_file), pdf_files)
-    cmd += pdf_file_paths
-
-    output_file_path = os.path.join(
-        state.common_path,
-        '{}_magick.pdf'.format(state.first_input_file.basename)
-    )
-    cmd += ['cat', 'output', output_file_path]
-
-    result = run.run(cmd)
-    if result.returncode == 0:
-        print('Successfully created: {}'.format(output_file_path))
 
 
 class Timer(object):

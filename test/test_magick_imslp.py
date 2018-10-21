@@ -92,7 +92,7 @@ class TestUnit(TestCase):
                                   'colors': 256})
 
     def test_enlighten_border(self):
-        result = magick_imslp.do_magick_convert_enlighten_border(1000, 1000)
+        result = magick_imslp._do_magick_convert_enlighten_border(1000, 1000)
         self.assertEqual(result, [
             '-region', '950x50', '-level', '0%,30%',
             '-region', '50x950+950', '-level', '0%,30%',
@@ -148,10 +148,10 @@ class TestUnit(TestCase):
             out = magick_imslp.collect_images(state)
             self.assertEqual(out, return_files)
 
-    @patch('jfscripts.magick_imslp.magick_command')
+    @patch('jfscripts.magick_imslp._do_magick_command')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_do_magick_convert_without_kwargs(self, run, magick_command):
-        magick_command.return_value = ['convert']
+    def test_do_magick_convert_without_kwargs(self, run, _do_magick_command):
+        _do_magick_command.return_value = ['convert']
         magick_imslp.do_magick_convert(
             FilePath('test.tif'),
             FilePath('test.tiff'),
@@ -161,10 +161,10 @@ class TestUnit(TestCase):
              'test.tiff']
         )
 
-    @patch('jfscripts.magick_imslp.magick_command')
+    @patch('jfscripts.magick_imslp._do_magick_command')
     @patch('jfscripts.magick_imslp.run.run')
-    def test_do_magick_convert_kwargs(self, run, magick_command):
-        magick_command.return_value = ['convert']
+    def test_do_magick_convert_kwargs(self, run, _do_magick_command):
+        _do_magick_command.return_value = ['convert']
         magick_imslp.do_magick_convert(
             FilePath('test.tif'),
             FilePath('test.pdf'),
