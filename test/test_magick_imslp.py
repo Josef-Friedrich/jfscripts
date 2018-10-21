@@ -196,15 +196,17 @@ class TestUnit(TestCase):
     @patch('jfscripts.magick_imslp.run.run')
     def test_do_tesseract(self, run):
         magick_imslp.do_tesseract(FilePath('test.tiff'))
-        run.assert_called_with(
-            ['tesseract', '-l', 'deu+eng', 'test.tiff', 'test', 'pdf']
+        self.assertEqual(
+            run.call_args[0][0],
+            ['tesseract', '-l', 'deu+eng', 'test.tiff', 'test', 'pdf'],
         )
 
     @patch('jfscripts.magick_imslp.run.run')
     def test_do_tesseract_one_language(self, run):
         magick_imslp.do_tesseract(FilePath('test.tiff'), languages=['deu'])
-        run.assert_called_with(
-            ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf']
+        self.assertEqual(
+            run.call_args[0][0],
+            ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf'],
         )
 
     @unittest.skip('skipped')
@@ -363,6 +365,15 @@ class TestIntegrationWithDependencies(TestCase):
 
         assert_no_cleanup(['magick-imslp.py', 'convert'], 4)
         assert_no_cleanup(['magick-imslp.py', '--no-cleanup', 'convert'], 7)
+
+    def test_option_ocr_input_pdf(self):
+        pdf = copy(tmp_pdf)
+        parent_dir = Path(pdf).parent
+        check_output(['magick-imslp.py', 'convert', '--ocr', pdf])
+        files = os.listdir(parent_dir)
+        for num in [0, 1, 2]:
+            self.assertIn('test-00{}.pdf'.format(num), files)
+        self.assertEqual(len(files), 4)
 
     ##
     # extract

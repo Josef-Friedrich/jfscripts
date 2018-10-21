@@ -352,7 +352,7 @@ def magick_command(command):
 
 def do_tesseract(input_file, languages=['deu', 'eng']):
     return run.run(['tesseract', '-l', '+'.join(languages), str(input_file),
-                   input_file.base, 'pdf'])
+                   input_file.base, 'pdf'], stderr=run.PIPE, stdout=run.PIPE)
 
 
 def do_magick_convert(input_file, output_file, threshold='50%',
@@ -404,6 +404,9 @@ def convert_one_file(arguments):
     else:
         extension = 'tiff'
 
+    if state.args.ocr:
+        extension = 'tiff'
+
     if not state.args.join:
         output_file = input_file.new(extension=extension,
                                      del_substring='_' + state.tmp_identifier)
@@ -420,7 +423,7 @@ def convert_one_file(arguments):
             backup = input_file.new(append='_backup')
             shutil.copy2(str(input_file), str(backup))
 
-    do_magick_convert(
+    completed_process = do_magick_convert(
         input_file,
         output_file,
         threshold=state.args.threshold,
@@ -428,6 +431,18 @@ def convert_one_file(arguments):
         border=state.args.border,
         resize=state.args.resize,
     )
+
+    if completed_process.returncode != 0:
+        raise('magick convert failed.')
+
+    if state.args.ocr:
+        if not output_file.extension == 'tiff':
+            raise('Tesseract needs a tiff file as input.')
+        completed_process = do_tesseract(output_file)
+        if completed_process.returncode != 0:
+            raise('tesseract failed.')
+        os.remove(str(output_file))
+        output_file = output_file.new(extension='pdf')
 
     return output_file
 
