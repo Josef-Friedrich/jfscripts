@@ -20,6 +20,7 @@ dependencies = (
     ('pdfimages', 'poppler'),
     ('pdfinfo', 'poppler'),
     'pdftk',
+    'tesseract',
 )
 
 
