@@ -64,6 +64,14 @@ def get_parser():
     )
 
     parser.add_argument(
+        '-m',
+        '--multiprocessing',
+        action='store_true',
+        default=False,
+        help='Use multiprocessing to run commands in parallel.',
+    )
+
+    parser.add_argument(
         '-N',
         '--no-cleanup',
         action='store_true',
@@ -523,11 +531,26 @@ def subcommand_convert_file(arguments):
     return output_file
 
 
-def subcommand_join_convert_pdf(input_file):
-    output_file = input_file.new(extension='pdf')
+def subcommand_join_convert_pdf(arguments):
+    input_file = arguments[0]
+    state = arguments[1]
+    if state.args.ocr:
+        extension = 'tiff'
+    else:
+        extension = 'pdf'
+
+    output_file = input_file.new(extension=extension)
     process = do_magick_convert(input_file, output_file)
     if process.returncode != 0:
         raise('join: convert to pdf failed.')
+
+    if state.args.ocr:
+        process = do_tesseract(output_file)
+        if process.returncode != 0:
+            raise('join: ocr failed.')
+        os.remove(str(output_file))
+        output_file = output_file.new(extension='pdf')
+
     return output_file
 
 
@@ -558,6 +581,11 @@ def subcommand_threshold_series(input_file, state):
         output_file = str(output_file).replace('_-000', '')
         do_magick_convert(input_file, output_file,
                           threshold='{}%'.format(threshold))
+
+
+###############################################################################
+#
+###############################################################################
 
 
 class Timer(object):
@@ -669,11 +697,18 @@ def main():
 
         input_files = convert_file_paths(input_files)
 
-        pool = multiprocessing.Pool()
-        data = []
-        for input_file in input_files:
-            data.append((input_file, state))
-        output_files = pool.map(subcommand_convert_file, data)
+        if state.args.multiprocessing:
+            pool = multiprocessing.Pool()
+            data = []
+            for input_file in input_files:
+                data.append((input_file, state))
+            output_files = pool.map(subcommand_convert_file, data)
+        else:
+            output_files = []
+            for input_file in input_files:
+                output_files.append(
+                    subcommand_convert_file((input_file, state))
+                )
 
         if state.args.join:
             do_pdftk_cat(output_files, state)
@@ -697,22 +732,19 @@ def main():
 
     elif args.subcommand == 'join':
         input_files = convert_file_paths(state.input_files)
-
-        files_to_convert = []
-        files_already_converted = []
-        for input_file in input_files:
-            if input_file.extension != 'pdf':
-                files_to_convert.append(input_file)
-            else:
-                files_already_converted.append(input_file)
-
-        pool = multiprocessing.Pool()
-        data = []
-        for input_file in files_to_convert:
-            data.append(input_file)
-        files_converted = pool.map(subcommand_join_convert_pdf, data)
-
-        do_pdftk_cat(files_already_converted + files_converted, state)
+        if state.args.multiprocessing:
+            pool = multiprocessing.Pool()
+            data = []
+            for input_file in input_files:
+                data.append((input_file, state))
+            files_converted = pool.map(subcommand_join_convert_pdf, data)
+        else:
+            files_converted = []
+            for input_file in input_files:
+                files_converted.append(
+                    subcommand_join_convert_pdf((input_file, state))
+                )
+        do_pdftk_cat(files_converted, state)
 
     ##
     # threshold-series
