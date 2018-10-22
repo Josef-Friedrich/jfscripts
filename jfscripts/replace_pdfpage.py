@@ -11,7 +11,34 @@ run = Run()
 
 dependencies = ('pdfinfo', 'pdftk', 'convert')
 
-# magick identify -verbose -format "x: %x y: %y h: %h w: %w\n" pdf/scans.pdf
+tmp_dir = tempfile.mkdtemp()
+
+
+def do_pdftk_cat_first_page(pdf_file):
+    """The command magick identify is very slow on page pages hence it
+    examines every page. We extract the first page to get some informations
+    about the dimensions of the PDF file."""
+
+    output_file = os.path.join(tmp_dir, 'identify.pdf')
+
+    cmd_args = ['pdftk', pdf_file, 'cat', '1', 'output', output_file]
+    run.run(cmd_args)
+    return output_file
+
+
+def do_magick_identify_dimensions(pdf_file):
+    """"""
+    cmd_args = ['magick', 'identify', '-format', 'w: %w h: %h x: %x y: %y\n',
+                pdf_file]
+    output = run.check_output(cmd_args, encoding='utf-8')
+    dimensions = re.search(r'w: (\d*) h: (\d*) x: (\d*) y: (\d*)', output)
+
+    return {
+                'width': int(dimensions.group(1)),
+                'height': int(dimensions.group(2)),
+                'x': int(dimensions.group(3)),
+                'y': int(dimensions.group(4)),
+            }
 
 
 def get_pdf_info(pdf_file):
@@ -20,7 +47,6 @@ def get_pdf_info(pdf_file):
     # Page size:      522.249 x 644.573 pts
     dimension = re.search(r'Page size:\s*([0-9.]*) x ([0-9.]*)\s*pts', output)
     page_count = re.search(r'Pages:\s*([0-9]*)', output)
-
     return {
                 'width': dimension.group(1),
                 'height': dimension.group(2),
@@ -28,21 +54,22 @@ def get_pdf_info(pdf_file):
             }
 
 
-def convert_image_to_pdf_page(image_file, page_width, page_height):
+def convert_image_to_pdf_page(image_file, page_width, page_height, density_x,
+                              density_y):
     # convert image.jpg -page 540x650\! image.pdf
-    tmp_dir = tempfile.mkdtemp()
+    dimension = '{}x{}'.format(page_width, page_height)
+    density = '{}x{}'.format(density_x, density_y)
     tmp_pdf = os.path.join(tmp_dir, 'tmp.pdf')
-    command = ['convert',
-               image_file,
-               '-page',
-               '{}x{}'.format(page_width, page_height),
-               tmp_pdf]
-    print(' '.join(command))
-    run.run(command)
+    cmd_args = ['convert', image_file, '-compress', 'JPEG', '-quality', '8',
+                '-resize', dimension,
+                '-density', density,
+                tmp_pdf]
+    run.run(cmd_args)
     return tmp_pdf
 
 
-def assemble_pdf(main_pdf, insert_pdf, page_count, page_number):
+def assemble_pdf(main_pdf, insert_pdf, page_count, page_number, replace=False,
+                 before=False):
     # pdftk A=book.pdf B=image.pdf cat A1-12 B3 A14-end output out.pdf
 
     command = ['pdftk',
@@ -62,7 +89,6 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number):
         command.append('A{}-end'.format(page_number + 1))
 
     command += ['output', 'out.pdf']
-    print(' '.join(command))
     run.run(command)
 
 
@@ -113,11 +139,25 @@ def get_parser():
     )
 
     add_parser.add_argument(
-        '-a, --after', help=''
+        '-a', '--after',
+        nargs=1,
+        help='Place image after page X.'
     )
 
     add_parser.add_argument(
-        '-b, --before', help=''
+        '-b', '--before',
+        nargs=1,
+        help='Place image before page X.'
+    )
+
+    add_parser.add_argument(
+        'image',
+        help='The image file to add to the PDF page.',
+    )
+
+    add_parser.add_argument(
+        'pdf',
+        help='The PDF file.',
     )
 
     ##
@@ -154,11 +194,21 @@ def main():
 
     check_dependencies(*dependencies)
 
-    if args.subcommand == 'replace':
+    output_file = do_pdftk_cat_first_page(args.pdf)
+    dimensions = do_magick_identify_dimensions(output_file)
+    info = get_pdf_info(args.pdf)
+    image_pdf = convert_image_to_pdf_page(
+        args.image,
+        dimensions['width'],
+        dimensions['height'],
+        dimensions['x'],
+        dimensions['y'],
+    )
+    if args.subcommand == 'add':
+        print(dimensions)
 
-        info = get_pdf_info(args.pdf)
-        image_pdf = convert_image_to_pdf_page(args.image, info['width'],
-                                              info['height'])
+    elif args.subcommand == 'replace':
+
         assemble_pdf(args.pdf, image_pdf, info['page_count'], args.number)
 
 

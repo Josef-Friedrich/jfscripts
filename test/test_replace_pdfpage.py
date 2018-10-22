@@ -29,6 +29,14 @@ if dependencies and internet:
 
 class TestUnits(unittest.TestCase):
 
+    @unittest.skip('skip')
+    @mock.patch('jfscripts.replace_pdfpage.run.check_output')
+    def do_magick_identify_dimensions(self, check_output):
+        check_output.return_value = 'lol'
+        result = replace.get_pdf_info('test.pdf')
+        self.assertEqual(result, {'width': '658.8', 'height': '866.52',
+                         'page_count': 3})
+
     @mock.patch('jfscripts.replace_pdfpage.run.check_output')
     def test_get_pdf_info(self, mock):
 
@@ -55,6 +63,7 @@ class TestUnits(unittest.TestCase):
         self.assertEqual(result, {'width': '658.8', 'height': '866.52',
                          'page_count': 3})
 
+    @unittest.skip('skip')
     @mock.patch('jfscripts.replace_pdfpage.run.run')
     def test_convert_image_to_pdf_page(self, mock):
 
@@ -109,6 +118,9 @@ class TestIntegrationWithDependencies(TestCase):
     def test_replace(self):
         subprocess.run(['replace-pdfpage.py', 'replace', tmp_pdf, '1',
                         tmp_png])
+
+    def test_add(self):
+        subprocess.run(['replace-pdfpage.py', 'add', tmp_png, tmp_pdf])
 
 
 if __name__ == '__main__':
