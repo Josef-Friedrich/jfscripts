@@ -135,15 +135,16 @@ replace-pdfpage.py
 
 .. code-block:: text
 
-    usage: replace-pdfpage.py [-h] [-V] pdf number image
+    usage: replace-pdfpage.py [-h] [-c] [-v] [-V] {add,replace} ...
     
-    Replace one page in a PDF file with an image file.
+    Add or replace one page in a PDF file with an image file of the same page
+    size.
     
     positional arguments:
-      pdf            The PDF file
-      number         The page number of the PDF page to replace
-      image          The image file to replace the PDF page with
+      {add,replace}   Subcommand
     
     optional arguments:
-      -h, --help     show this help message and exit
-      -V, --version  show program's version number and exit
+      -h, --help      show this help message and exit
+      -c, --colorize  Colorize the terminal output.
+      -v, --verbose   Make the command line output more verbose.
+      -V, --version   show program's version number and exit

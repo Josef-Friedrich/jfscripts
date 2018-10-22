@@ -7,8 +7,11 @@ import os
 import re
 import tempfile
 
-
 run = Run()
+
+dependencies = ('pdfinfo', 'pdftk', 'convert')
+
+# magick identify -verbose -format "x: %x y: %y h: %h w: %w\n" pdf/scans.pdf
 
 
 def get_pdf_info(pdf_file):
@@ -70,23 +73,22 @@ def get_parser():
     :rtype: argparse.ArgumentParser
     """
     parser = argparse.ArgumentParser(
-        description='Replace one page in a PDF file with an image file.',
+        description='Add or replace one page in a PDF file with an image '
+        'file of the same page size.',
     )
 
     parser.add_argument(
-        'pdf',
-        help='The PDF file',
+        '-c',
+        '--colorize',
+        action='store_true',
+        help='Colorize the terminal output.',
     )
 
     parser.add_argument(
-        'number',
-        type=int,
-        help='The page number of the PDF page to replace',
-    )
-
-    parser.add_argument(
-        'image',
-        help='The image file to replace the PDF page with',
+        '-v',
+        '--verbose',
+        action='store_true',
+        help='Make the command line output more verbose.',
     )
 
     parser.add_argument(
@@ -94,6 +96,52 @@ def get_parser():
         '--version',
         action='version',
         version='%(prog)s {version}'.format(version=__version__),
+    )
+
+    subcommand = parser.add_subparsers(
+        dest='subcommand',
+        help='Subcommand',
+    )
+    subcommand.required = True
+
+    ##
+    # add
+    ##
+
+    add_parser = subcommand.add_parser(
+        'add', description=''
+    )
+
+    add_parser.add_argument(
+        '-a, --after', help=''
+    )
+
+    add_parser.add_argument(
+        '-b, --before', help=''
+    )
+
+    ##
+    # replace
+    ##
+
+    replace_parser = subcommand.add_parser(
+        'replace', description=''
+    )
+
+    replace_parser.add_argument(
+        'pdf',
+        help='The PDF file',
+    )
+
+    replace_parser.add_argument(
+        'number',
+        type=int,
+        help='The page number of the PDF page to replace',
+    )
+
+    replace_parser.add_argument(
+        'image',
+        help='The image file to replace the PDF page with',
     )
 
     return parser
@@ -104,12 +152,14 @@ def main():
 
     run.setup(verbose=args.verbose, colorize=args.colorize)
 
-    check_bin('pdfinfo', 'pdftk', 'convert')
+    check_bin(*dependencies)
 
-    info = get_pdf_info(args.pdf)
-    image_pdf = convert_image_to_pdf_page(args.image, info['width'],
-                                          info['height'])
-    assemble_pdf(args.pdf, image_pdf, info['page_count'], args.number)
+    if args.subcommand == 'replace':
+
+        info = get_pdf_info(args.pdf)
+        image_pdf = convert_image_to_pdf_page(args.image, info['width'],
+                                              info['height'])
+        assemble_pdf(args.pdf, image_pdf, info['page_count'], args.number)
 
 
 if __name__ == '__main__':

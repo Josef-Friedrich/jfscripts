@@ -1,8 +1,30 @@
-from _helper import TestCase, Capturing
+from _helper import TestCase, download, Capturing, check_internet_connectifity
 from jfscripts import replace_pdfpage as replace
+from jfscripts._utils import check_bin
 from unittest import mock
-import unittest
+import os
+import shutil
 import subprocess
+import tempfile
+import unittest
+
+
+def copy(path):
+    basename = os.path.basename(path)
+    tmp = os.path.join(tempfile.mkdtemp(), basename)
+    return shutil.copy(path, tmp)
+
+
+dependencies = check_bin(*replace.dependencies, raise_error=False)
+internet = check_internet_connectifity()
+
+if dependencies and internet:
+    tmp_pdf = download('pdf/scans.pdf',
+                       local_path='/tmp/jfs-replace_pdfpage/test.pdf')
+    tmp_png = download(
+        'png/bach-busoni_300.png',
+        local_path='/tmp/jfscripts/magick_imslp/bach-busoni_300.png'
+    )
 
 
 class TestUnits(unittest.TestCase):
@@ -78,6 +100,15 @@ class TestIntegration(TestCase):
         output = subprocess.check_output(['replace-pdfpage.py', '--version'])
         self.assertTrue(output)
         self.assertIn('replace-pdfpage.py', str(output))
+
+
+@unittest.skipIf(not dependencies or not internet,
+                 'Some dependencies are not installed')
+class TestIntegrationWithDependencies(TestCase):
+
+    def test_replace(self):
+        subprocess.run(['replace-pdfpage.py', 'replace', tmp_pdf, '1',
+                        tmp_png])
 
 
 if __name__ == '__main__':
