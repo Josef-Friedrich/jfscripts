@@ -212,6 +212,51 @@ class TestUnit(TestCase):
             # self.assertIn('one.tif', str(args[0]))
             # self.assertIn('two.tif', str(args[1]))
 
+    @patch('jfscripts.magick_imslp.os.remove')
+    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.magick_imslp.check_bin')
+    def test_convert_ocr(self, check_bin, run, remove):
+        run.return_value.returncode = 0
+        with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif']):
+            magick_imslp.main()
+        cmd_args = run.call_args[0][0]
+        self.assertNotEqual(cmd_args[1], '-l')
+        self.assertEqual(cmd_args[3], 'pdf')
+
+    @patch('jfscripts.magick_imslp.os.remove')
+    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.magick_imslp.check_bin')
+    def test_convert_ocr_language(self, check_bin, run, remove):
+        run.return_value.returncode = 0
+        with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif',
+                   '--ocr-language', 'xxx']):
+            magick_imslp.main()
+        cmd_args = run.call_args[0][0]
+        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx'])
+
+    @patch('jfscripts.magick_imslp.os.remove')
+    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.magick_imslp.check_bin')
+    def test_convert_ocr_language_multiple(self, check_bin, run, remove):
+        run.return_value.returncode = 0
+        with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif',
+                   '--ocr-language', 'xxx', 'yyy']):
+            magick_imslp.main()
+        cmd_args = run.call_args[0][0]
+        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+yyy'])
+
+    @patch('jfscripts.magick_imslp.os.remove')
+    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.magick_imslp.check_bin')
+    def test_convert_ocr_language_multiple_in_front_of(self, check_bin, run,
+                                                       remove):
+        run.return_value.returncode = 0
+        with patch('sys.argv',  ['cmd', 'convert', '--ocr', '--ocr-language',
+                   'xxx', 'zzz', '--', 'one.tif']):
+            magick_imslp.main()
+        cmd_args = run.call_args[0][0]
+        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+zzz'])
+
 
 class TestClassTimer(TestCase):
 

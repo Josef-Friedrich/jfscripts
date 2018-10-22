@@ -155,6 +155,13 @@ def get_parser():
     )
 
     convert_parser.add_argument(
+        '-l',
+        '--ocr-language',
+        nargs='+',
+        help='Run tesseract --list-langs to get your installed languages.',
+    )
+
+    convert_parser.add_argument(
         '-p',
         '--pdf',
         action='store_true',
@@ -218,6 +225,13 @@ def get_parser():
         action='store_true',
         default=False,
         help='Perform optical character recognition (OCR) on the input files.',
+    )
+
+    join_parser.add_argument(
+        '-l',
+        '--ocr-language',
+        nargs='+',
+        help='Run tesseract --list-langs to get your installed languages.',
     )
 
     join_parser.add_argument(
@@ -427,8 +441,11 @@ def do_pdftk_cat(pdf_files, state):
 
 
 def do_tesseract(input_file, languages=['deu', 'eng']):
-    return run.run(['tesseract', '-l', '+'.join(languages), str(input_file),
-                   input_file.base, 'pdf'], stderr=run.PIPE, stdout=run.PIPE)
+    cmd_args = ['tesseract']
+    if languages:
+        cmd_args += ['-l', '+'.join(languages)]
+    cmd_args += [str(input_file), input_file.base, 'pdf']
+    return run.run(cmd_args, stderr=run.PIPE, stdout=run.PIPE)
 
 
 ###############################################################################
@@ -522,7 +539,7 @@ def subcommand_convert_file(arguments):
     if state.args.ocr:
         if not output_file.extension == 'tiff':
             raise('Tesseract needs a tiff file as input.')
-        completed_process = do_tesseract(output_file)
+        completed_process = do_tesseract(output_file, state.args.ocr_language)
         if completed_process.returncode != 0:
             raise('tesseract failed.')
         os.remove(str(output_file))
