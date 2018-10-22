@@ -83,6 +83,17 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number, mode='add',
     """
     # pdftk A=book.pdf B=image.pdf cat A1-12 B3 A14-end output out.pdf
 
+    # add
+    # A1-12 B1 A13-end
+
+    # add after page 12
+    # A1-12 B1 A13-end
+    # add before page 12
+    # A1-11 B1 A12-end
+
+    # replace
+    # A1-12 B1 A14-end
+
     if mode == 'replace':
 
         cmd_args = ['A={}'.format(main_pdf),
