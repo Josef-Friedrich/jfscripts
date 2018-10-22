@@ -15,7 +15,7 @@ tmp_dir = tempfile.mkdtemp()
 
 
 def do_pdftk_cat_first_page(pdf_file):
-    """The command magick identify is very slow on page pages hence it
+    """The cmd_args magick identify is very slow on page pages hence it
     examines every page. We extract the first page to get some informations
     about the dimensions of the PDF file."""
 
@@ -68,32 +68,52 @@ def convert_image_to_pdf_page(image_file, page_width, page_height, density_x,
     return tmp_pdf
 
 
-def assemble_pdf(main_pdf, insert_pdf, page_count, page_number, replace=False,
-                 before=False):
+def assemble_pdf(main_pdf, insert_pdf, page_count, page_number, mode='add',
+                 position='before'):
+    """
+    :param str main_pdf: Path of the main PDF file.
+    :param str insert_pdf: Path of the PDF file to insert into the main PDF
+      file.
+    :param int page_count: Page count of the main PDF file.
+    :param int page_number: Page number in the main PDF file to add / to
+      replace the insert PDF file.
+    :param string mode: Mode how the PDF to insert is treated. Possible choices
+      are: `add` or `replace`.
+    :param str position: Possible choices: `before` and `after`
+    """
     # pdftk A=book.pdf B=image.pdf cat A1-12 B3 A14-end output out.pdf
 
-    command = ['pdftk',
-               'A={}'.format(main_pdf),
-               'B={}'.format(insert_pdf),
-               'cat']
+    if mode == 'replace':
 
-    if page_number > 1:
-        pre_insert = 'A1'
-        if page_number > 2:
-            pre_insert += '-{}'.format(page_number - 1)
-        command.append(pre_insert)
+        cmd_args = ['A={}'.format(main_pdf),
+                    'B={}'.format(insert_pdf),
+                    'cat']
 
-    command.append('B1')
+        if page_number > 1:
+            pre_insert = 'A1'
+            if page_number > 2:
+                pre_insert += '-{}'.format(page_number - 1)
+            cmd_args.append(pre_insert)
 
-    if page_number < page_count:
-        command.append('A{}-end'.format(page_number + 1))
+        cmd_args.append('B1')
 
-    command += ['output', 'out.pdf']
-    run.run(command)
+        if page_number < page_count:
+            cmd_args.append('A{}-end'.format(page_number + 1))
+
+    elif mode == 'add':
+
+        if page_number == 1 and position == 'before':
+            cmd_args = [insert_pdf, main_pdf, 'cat']
+
+        elif page_number == page_count and position == 'after':
+            cmd_args = [main_pdf, insert_pdf, 'cat']
+
+    cmd_args = ['pdftk'] + cmd_args + ['output', 'out.pdf']
+    run.run(cmd_args)
 
 
 def get_parser():
-    """The argument parser for the command line interface.
+    """The argument parser for the cmd_args line interface.
 
     :return: A ArgumentParser object.
     :rtype: argparse.ArgumentParser
@@ -114,7 +134,7 @@ def get_parser():
         '-v',
         '--verbose',
         action='store_true',
-        help='Make the command line output more verbose.',
+        help='Make the cmd_args line output more verbose.',
     )
 
     parser.add_argument(
@@ -124,17 +144,17 @@ def get_parser():
         version='%(prog)s {version}'.format(version=__version__),
     )
 
-    subcommand = parser.add_subparsers(
-        dest='subcommand',
-        help='Subcommand',
+    subcmd_args = parser.add_subparsers(
+        dest='subcmd_args',
+        help='Subcmd_args',
     )
-    subcommand.required = True
+    subcmd_args.required = True
 
     ##
     # add
     ##
 
-    add_parser = subcommand.add_parser(
+    add_parser = subcmd_args.add_parser(
         'add', description=''
     )
 
@@ -164,7 +184,7 @@ def get_parser():
     # replace
     ##
 
-    replace_parser = subcommand.add_parser(
+    replace_parser = subcmd_args.add_parser(
         'replace', description=''
     )
 
@@ -204,10 +224,10 @@ def main():
         dimensions['x'],
         dimensions['y'],
     )
-    if args.subcommand == 'add':
+    if args.subcmd_args == 'add':
         print(dimensions)
 
-    elif args.subcommand == 'replace':
+    elif args.subcmd_args == 'replace':
 
         assemble_pdf(args.pdf, image_pdf, info['page_count'], args.number)
 

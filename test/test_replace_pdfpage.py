@@ -77,27 +77,53 @@ class TestUnits(unittest.TestCase):
         self.assertEqual(args[3], '111.1x222.2')
         self.assertTrue('tmp.pdf' in args[4])
 
-    @mock.patch('jfscripts.replace_pdfpage.run.run')
-    def test_assemble_pdf(self, mock):
-
-        replace.assemble_pdf('m.pdf', 'i.pdf', 5, 1)
-        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'B1',
-                                 'A2-end', 'output', 'out.pdf'])
-
-        replace.assemble_pdf('m.pdf', 'i.pdf', 5, 2)
-        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'A1',
-                                 'B1', 'A3-end', 'output', 'out.pdf'])
-
-        replace.assemble_pdf('m.pdf', 'i.pdf', 5, 5)
-        mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'A1-4',
-                                 'B1', 'output', 'out.pdf'])
-
     @mock.patch('jfscripts.replace_pdfpage.check_dependencies')
     def test_main(self, check_executable):
         with Capturing(channel='err'):
             with unittest.mock.patch('sys.argv',  ['cmd']):
                 with self.assertRaises(SystemExit):
                     replace.main()
+
+
+class TestUnitAssemblePdf(TestCase):
+
+    def assertAssemble(self, kwargs, called_with):
+        with mock.patch('jfscripts.replace_pdfpage.run.run') as run:
+            replace.assemble_pdf('m.pdf', 'i.pdf', **kwargs)
+            run.assert_called_with(['pdftk'] + called_with + ['output',
+                                   'out.pdf'])
+
+    def test_replace_first_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 1, 'mode': 'replace'},
+            ['A=m.pdf', 'B=i.pdf', 'cat', 'B1', 'A2-end'],
+        )
+
+    def test_replace_second_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 2, 'mode': 'replace'},
+            ['A=m.pdf', 'B=i.pdf', 'cat', 'A1', 'B1', 'A3-end'],
+        )
+
+    def test_replace_last_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 5, 'mode': 'replace'},
+            ['A=m.pdf', 'B=i.pdf', 'cat', 'A1-4', 'B1'],
+        )
+
+    def test_add_before_first_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 1, 'mode': 'add',
+             'position': 'before'},
+            ['i.pdf', 'm.pdf', 'cat'],
+        )
+
+    def test_add_after_last_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 5, 'mode': 'add',
+             'position': 'after'},
+            ['m.pdf', 'i.pdf', 'cat'],
+        )
 
 
 class TestIntegration(TestCase):

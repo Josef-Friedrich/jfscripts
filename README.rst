@@ -141,10 +141,10 @@ replace-pdfpage.py
     size.
     
     positional arguments:
-      {add,replace}   Subcommand
+      {add,replace}   Subcmd_args
     
     optional arguments:
       -h, --help      show this help message and exit
       -c, --colorize  Colorize the terminal output.
-      -v, --verbose   Make the command line output more verbose.
+      -v, --verbose   Make the cmd_args line output more verbose.
       -V, --version   show program's version number and exit
