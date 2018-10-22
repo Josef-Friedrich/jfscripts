@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 from jfscripts import __version__
-from jfscripts._utils import check_dependencies, Run
+from jfscripts._utils import check_dependencies, Run, FilePath
 import argparse
 import os
 import re
@@ -18,10 +18,8 @@ def do_pdftk_cat_first_page(pdf_file):
     """The cmd_args magick identify is very slow on page pages hence it
     examines every page. We extract the first page to get some informations
     about the dimensions of the PDF file."""
-
     output_file = os.path.join(tmp_dir, 'identify.pdf')
-
-    cmd_args = ['pdftk', pdf_file, 'cat', '1', 'output', output_file]
+    cmd_args = ['pdftk', str(pdf_file), 'cat', '1', 'output', output_file]
     run.run(cmd_args)
     return output_file
 
@@ -29,7 +27,7 @@ def do_pdftk_cat_first_page(pdf_file):
 def do_magick_identify_dimensions(pdf_file):
     """"""
     cmd_args = ['magick', 'identify', '-format', 'w: %w h: %h x: %x y: %y\n',
-                pdf_file]
+                str(pdf_file)]
     output = run.check_output(cmd_args, encoding='utf-8')
     dimensions = re.search(r'w: (\d*) h: (\d*) x: (\d*) y: (\d*)', output)
 
@@ -42,7 +40,7 @@ def do_magick_identify_dimensions(pdf_file):
 
 
 def get_pdf_info(pdf_file):
-    output = run.check_output(['pdfinfo', pdf_file])
+    output = run.check_output(['pdfinfo', str(pdf_file)])
     output = output.decode('utf-8')
     # Page size:      522.249 x 644.573 pts
     dimension = re.search(r'Page size:\s*([0-9.]*) x ([0-9.]*)\s*pts', output)
@@ -60,7 +58,8 @@ def convert_image_to_pdf_page(image_file, page_width, page_height, density_x,
     dimension = '{}x{}'.format(page_width, page_height)
     density = '{}x{}'.format(density_x, density_y)
     tmp_pdf = os.path.join(tmp_dir, 'tmp.pdf')
-    cmd_args = ['convert', image_file, '-compress', 'JPEG', '-quality', '8',
+    cmd_args = ['convert', str(image_file), '-compress', 'JPEG',
+                '-quality', '8',
                 '-resize', dimension,
                 '-density', density,
                 tmp_pdf]
@@ -83,18 +82,37 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number, mode='add',
     """
     # pdftk A=book.pdf B=image.pdf cat A1-12 B3 A14-end output out.pdf
 
-    # add
-    # A1-12 B1 A13-end
-
     # add after page 12
     # A1-12 B1 A13-end
     # add before page 12
     # A1-11 B1 A12-end
 
-    # replace
-    # A1-12 B1 A14-end
+    # replace page 12
+    # A1-11 B1 A13-end
 
+    # page_insert_begin: Page before the insert
+    # page_insert_end: Page after the insert
+
+    page_insert_begin = page_number - 1
+
+    # add before page 12
+    # A1-11 B1 A12-end
+    if position == 'after':
+        page_insert_begin = page_number
+
+    page_insert_end = page_insert_begin + 1
+
+    # A1-12 B1 A14-end
     if mode == 'replace':
+        page_insert_end += 1
+
+    if mode == 'add' and page_number == 1 and position == 'before':
+        cmd_args = [str(insert_pdf), str(main_pdf), 'cat']
+
+    elif mode == 'add' and page_number == page_count and position == 'after':
+        cmd_args = [str(main_pdf), str(insert_pdf), 'cat']
+
+    else:
 
         cmd_args = ['A={}'.format(main_pdf),
                     'B={}'.format(insert_pdf),
@@ -102,25 +120,23 @@ def assemble_pdf(main_pdf, insert_pdf, page_count, page_number, mode='add',
 
         if page_number > 1:
             pre_insert = 'A1'
-            if page_number > 2:
-                pre_insert += '-{}'.format(page_number - 1)
+            if page_insert_begin >= 2:
+                pre_insert += '-{}'.format(page_insert_begin)
             cmd_args.append(pre_insert)
 
         cmd_args.append('B1')
 
-        if page_number < page_count:
-            cmd_args.append('A{}-end'.format(page_number + 1))
+        if page_insert_end == page_count:
+            cmd_args.append('A{}'.format(page_insert_end))
 
-    elif mode == 'add':
+        elif page_insert_end < page_count:
+            cmd_args.append('A{}-end'.format(page_insert_end))
 
-        if page_number == 1 and position == 'before':
-            cmd_args = [insert_pdf, main_pdf, 'cat']
+    joined_pdf = main_pdf.new(append='_joined')
 
-        elif page_number == page_count and position == 'after':
-            cmd_args = [main_pdf, insert_pdf, 'cat']
-
-    cmd_args = ['pdftk'] + cmd_args + ['output', 'out.pdf']
+    cmd_args = ['pdftk'] + cmd_args + ['output', str(joined_pdf)]
     run.run(cmd_args)
+    return joined_pdf
 
 
 def get_parser():
@@ -225,22 +241,40 @@ def main():
 
     check_dependencies(*dependencies)
 
-    output_file = do_pdftk_cat_first_page(args.pdf)
-    dimensions = do_magick_identify_dimensions(output_file)
-    info = get_pdf_info(args.pdf)
-    image_pdf = convert_image_to_pdf_page(
-        args.image,
+    main_pdf = FilePath(args.pdf)
+    image = FilePath(args.image)
+
+    identify_pdf = do_pdftk_cat_first_page(main_pdf)
+    dimensions = do_magick_identify_dimensions(identify_pdf)
+    info = get_pdf_info(main_pdf)
+    insert_pdf = convert_image_to_pdf_page(
+        image,
         dimensions['width'],
         dimensions['height'],
         dimensions['x'],
         dimensions['y'],
     )
+
     if args.subcmd_args == 'add':
-        print(dimensions)
+
+        if args.after:
+            number = int(args.after[0])
+            position = 'after'
+        elif args.before:
+            number = int(args.before[0])
+            position = 'before'
+        else:
+            number = info['page_count']
+            position = 'after'
+
+        joined_pdf = assemble_pdf(main_pdf, insert_pdf, info['page_count'],
+                                  number, mode='add', position=position)
 
     elif args.subcmd_args == 'replace':
+        joined_pdf = assemble_pdf(main_pdf, insert_pdf, info['page_count'],
+                                  args.number, mode='replace')
 
-        assemble_pdf(args.pdf, image_pdf, info['page_count'], args.number)
+    print('{} {} {}'.format(main_pdf, image, joined_pdf))
 
 
 if __name__ == '__main__':
