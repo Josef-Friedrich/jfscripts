@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 from jfscripts import __version__
-from jfscripts._utils import check_bin, FilePath, Run
+from jfscripts._utils import check_dependencies, FilePath, Run
 import argparse
 import os
 import re
@@ -108,7 +108,7 @@ def main():
 
     run.setup(verbose=args.verbose, colorize=args.colorize)
 
-    check_bin(*dependencies)
+    check_dependencies(*dependencies)
 
     pdf = FilePath(args.file, absolute=True)
     txt_path = pdf.new(extension='txt')

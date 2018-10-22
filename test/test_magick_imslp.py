@@ -1,7 +1,7 @@
 from _helper import TestCase, download, check_internet_connectifity
 from jfscripts import list_files
 from jfscripts import magick_imslp
-from jfscripts._utils import check_bin
+from jfscripts._utils import check_dependencies
 from jfscripts.magick_imslp import FilePath, State, Timer
 from pathlib import Path
 from subprocess import check_output, run
@@ -30,7 +30,8 @@ def copy(path):
     return shutil.copy(path, tmp)
 
 
-dependencies = check_bin(*magick_imslp.dependencies, raise_error=False)
+dependencies = check_dependencies(*magick_imslp.dependencies,
+                                  raise_error=False)
 internet = check_internet_connectifity()
 
 if dependencies and internet:
@@ -204,7 +205,7 @@ class TestUnit(TestCase):
         )
 
     @unittest.skip('skipped')
-    @patch('jfscripts.magick_imslp.check_bin')
+    @patch('jfscripts.magick_imslp.check_dependencies')
     def test_multiple_input_files(self, cb):
         with patch('sys.argv',  ['cmd', 'convert', 'one.tif', 'two.tif']):
             magick_imslp.main()
@@ -214,8 +215,8 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.os.remove')
     @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_bin')
-    def test_convert_ocr(self, check_bin, run, remove):
+    @patch('jfscripts.magick_imslp.check_dependencies')
+    def test_convert_ocr(self, check_dependencies, run, remove):
         run.return_value.returncode = 0
         with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif']):
             magick_imslp.main()
@@ -225,8 +226,8 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.os.remove')
     @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_bin')
-    def test_convert_ocr_language(self, check_bin, run, remove):
+    @patch('jfscripts.magick_imslp.check_dependencies')
+    def test_convert_ocr_language(self, check_dependencies, run, remove):
         run.return_value.returncode = 0
         with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif',
                    '--ocr-language', 'xxx']):
@@ -236,8 +237,9 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.os.remove')
     @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_bin')
-    def test_convert_ocr_language_multiple(self, check_bin, run, remove):
+    @patch('jfscripts.magick_imslp.check_dependencies')
+    def test_convert_ocr_language_multiple(self, check_dependencies, run,
+                                           remove):
         run.return_value.returncode = 0
         with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif',
                    '--ocr-language', 'xxx', 'yyy']):
@@ -247,9 +249,8 @@ class TestUnit(TestCase):
 
     @patch('jfscripts.magick_imslp.os.remove')
     @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_bin')
-    def test_convert_ocr_language_multiple_in_front_of(self, check_bin, run,
-                                                       remove):
+    @patch('jfscripts.magick_imslp.check_dependencies')
+    def test_convert_ocr_languages_mid(self, check_dependencies, run, remove):
         run.return_value.returncode = 0
         with patch('sys.argv',  ['cmd', 'convert', '--ocr', '--ocr-language',
                    'xxx', 'zzz', '--', 'one.tif']):

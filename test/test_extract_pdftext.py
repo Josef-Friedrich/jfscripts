@@ -1,12 +1,13 @@
 from _helper import TestCase, download, check_internet_connectifity
 import unittest
 from jfscripts import extract_pdftext
-from jfscripts._utils import check_bin, FilePath
+from jfscripts._utils import check_dependencies, FilePath
 import subprocess
 import os
 
 
-dependencies = check_bin(*extract_pdftext.dependencies, raise_error=False)
+dependencies = check_dependencies(*extract_pdftext.dependencies,
+                                  raise_error=False)
 internet = check_internet_connectifity()
 
 if dependencies and internet:

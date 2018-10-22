@@ -47,7 +47,7 @@ class Run(object):
         return subprocess.check_output(*args, **kwargs)
 
 
-def check_bin(*executables, raise_error=True):
+def check_dependencies(*executables, raise_error=True):
     errors = []
     for executable in executables:
         if isinstance(executable, tuple):

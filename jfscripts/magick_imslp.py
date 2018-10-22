@@ -2,7 +2,7 @@
 
 from jfscripts import __version__
 from jfscripts import list_files
-from jfscripts._utils import check_bin, Run, FilePath
+from jfscripts._utils import check_dependencies, Run, FilePath
 import argparse
 import multiprocessing
 import os
@@ -693,7 +693,7 @@ def main():
     run.setup(verbose=args.verbose, colorize=args.colorize)
     state = State(args)
 
-    check_bin(*dependencies)
+    check_dependencies(*dependencies)
 
     ##
     # convert

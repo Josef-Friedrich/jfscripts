@@ -1,6 +1,6 @@
 from _helper import TestCase, download, Capturing, check_internet_connectifity
 from jfscripts import replace_pdfpage as replace
-from jfscripts._utils import check_bin
+from jfscripts._utils import check_dependencies
 from unittest import mock
 import os
 import shutil
@@ -15,7 +15,7 @@ def copy(path):
     return shutil.copy(path, tmp)
 
 
-dependencies = check_bin(*replace.dependencies, raise_error=False)
+dependencies = check_dependencies(*replace.dependencies, raise_error=False)
 internet = check_internet_connectifity()
 
 if dependencies and internet:
@@ -83,7 +83,7 @@ class TestUnits(unittest.TestCase):
         mock.assert_called_with(['pdftk', 'A=m.pdf', 'B=i.pdf', 'cat', 'A1-4',
                                  'B1', 'output', 'out.pdf'])
 
-    @mock.patch('jfscripts.replace_pdfpage.check_bin')
+    @mock.patch('jfscripts.replace_pdfpage.check_dependencies')
     def test_main(self, check_executable):
         with Capturing(channel='err'):
             with unittest.mock.patch('sys.argv',  ['cmd']):
