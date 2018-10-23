@@ -55,6 +55,19 @@ def get_pdf_info(pdf_file):
 def convert_image_to_pdf_page(image_file, page_width, page_height, density_x,
                               density_y):
     # convert image.jpg -page 540x650\! image.pdf
+
+    # pdf_density_x    x
+    # -------------  = -----------
+    # pdf_width        image_width
+
+    # x = pdf_density_x / pdf_width * image_width
+
+    # image_width: 1024
+    # pdf_width: 542
+    # pdf_density_x: 72
+
+    # 72 / 542 * 1024 = 136,0295
+
     dimension = '{}x{}'.format(page_width, page_height)
     density = '{}x{}'.format(density_x, density_y)
     tmp_pdf = os.path.join(tmp_dir, 'tmp.pdf')
