@@ -1,6 +1,6 @@
 from _helper import TestCase, download, Capturing, check_internet_connectifity
 from jfscripts import replace_pdfpage as replace
-from jfscripts._utils import check_dependencies
+from jfscripts._utils import check_dependencies, FilePath
 from unittest import mock
 import os
 import shutil
@@ -89,9 +89,12 @@ class TestUnitAssemblePdf(TestCase):
 
     def assertAssemble(self, kwargs, called_with):
         with mock.patch('jfscripts.replace_pdfpage.run.run') as run:
-            replace.assemble_pdf('m.pdf', 'i.pdf', **kwargs)
+            # m = main
+            # i = insert
+            replace.assemble_pdf(FilePath('m.pdf'), FilePath('i.pdf'),
+                                 **kwargs)
             run.assert_called_with(['pdftk'] + called_with + ['output',
-                                   'out.pdf'])
+                                   'm_joined.pdf'])
 
     def test_replace_first_page(self):
         self.assertAssemble(
@@ -118,6 +121,27 @@ class TestUnitAssemblePdf(TestCase):
             ['i.pdf', 'm.pdf', 'cat'],
         )
 
+    def test_add_before_second_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 2, 'mode': 'add',
+             'position': 'before'},
+            ['A=m.pdf', 'B=i.pdf', 'cat', 'A1', 'B1', 'A2-end'],
+        )
+
+    def test_add_after_second_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 2, 'mode': 'add',
+             'position': 'after'},
+            ['A=m.pdf', 'B=i.pdf', 'cat', 'A1-2', 'B1', 'A3-end'],
+        )
+
+    def test_add_before_last_page(self):
+        self.assertAssemble(
+            {'page_count': 5, 'page_number': 5, 'mode': 'add',
+             'position': 'before'},
+            ['A=m.pdf', 'B=i.pdf', 'cat', 'A1-4', 'B1', 'A5'],
+        )
+
     def test_add_after_last_page(self):
         self.assertAssemble(
             {'page_count': 5, 'page_number': 5, 'mode': 'add',
@@ -141,12 +165,32 @@ class TestIntegration(TestCase):
                  'Some dependencies are not installed')
 class TestIntegrationWithDependencies(TestCase):
 
+    def setUp(self):
+        self.tmp_pdf = copy(tmp_pdf)
+        self.tmp_png = copy(tmp_png)
+
+    def assertExistsJoinedPdf(self):
+        self.assertExists(str(FilePath(self.tmp_pdf).new(append='_joined')))
+
     def test_replace(self):
-        subprocess.run(['replace-pdfpage.py', 'replace', tmp_pdf, '1',
-                        tmp_png])
+        subprocess.run(['replace-pdfpage.py', 'replace', self.tmp_pdf, '1',
+                        self.tmp_png])
+        self.assertExistsJoinedPdf()
 
     def test_add(self):
-        subprocess.run(['replace-pdfpage.py', 'add', tmp_png, tmp_pdf])
+        subprocess.run(['replace-pdfpage.py', 'add', self.tmp_png,
+                        self.tmp_pdf])
+        self.assertExistsJoinedPdf()
+
+    def test_add_after(self):
+        subprocess.run(['replace-pdfpage.py', 'add', '--after', '1',
+                        self.tmp_png, self.tmp_pdf])
+        self.assertExistsJoinedPdf()
+
+    def test_add_before(self):
+        subprocess.run(['replace-pdfpage.py', 'add', '--before', '1',
+                        self.tmp_png, self.tmp_pdf])
+        self.assertExistsJoinedPdf()
 
 
 if __name__ == '__main__':
