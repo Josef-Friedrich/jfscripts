@@ -1,5 +1,5 @@
 from _helper import TestCase, download, Capturing, check_internet_connectifity
-from jfscripts import replace_pdfpage as replace
+from jfscripts import image_into_pdf as replace
 from jfscripts._utils import check_dependencies, FilePath
 from unittest import mock
 import os
@@ -20,7 +20,7 @@ internet = check_internet_connectifity()
 
 if dependencies and internet:
     tmp_pdf = download('pdf/scans.pdf',
-                       local_path='/tmp/jfs-replace_pdfpage/test.pdf')
+                       local_path='/tmp/jfs-image_into_pdf/test.pdf')
     tmp_png = download(
         'png/bach-busoni_300.png',
         local_path='/tmp/jfscripts/magick_imslp/bach-busoni_300.png'
@@ -30,14 +30,14 @@ if dependencies and internet:
 class TestUnits(unittest.TestCase):
 
     @unittest.skip('skip')
-    @mock.patch('jfscripts.replace_pdfpage.run.check_output')
+    @mock.patch('jfscripts.image_into_pdf.run.check_output')
     def do_magick_identify_dimensions(self, check_output):
         check_output.return_value = 'lol'
         result = replace.get_pdf_info('test.pdf')
         self.assertEqual(result, {'width': '658.8', 'height': '866.52',
                          'page_count': 3})
 
-    @mock.patch('jfscripts.replace_pdfpage.run.check_output')
+    @mock.patch('jfscripts.image_into_pdf.run.check_output')
     def test_get_pdf_info(self, mock):
 
         return_values = [
@@ -64,7 +64,7 @@ class TestUnits(unittest.TestCase):
                          'page_count': 3})
 
     @unittest.skip('skip')
-    @mock.patch('jfscripts.replace_pdfpage.run.run')
+    @mock.patch('jfscripts.image_into_pdf.run.run')
     def test_convert_image_to_pdf_page(self, mock):
 
         result = replace.convert_image_to_pdf_page('test.png', '111.1',
@@ -77,7 +77,7 @@ class TestUnits(unittest.TestCase):
         self.assertEqual(args[3], '111.1x222.2')
         self.assertTrue('tmp.pdf' in args[4])
 
-    @mock.patch('jfscripts.replace_pdfpage.check_dependencies')
+    @mock.patch('jfscripts.image_into_pdf.check_dependencies')
     def test_main(self, check_executable):
         with Capturing(channel='err'):
             with unittest.mock.patch('sys.argv',  ['cmd']):
@@ -88,7 +88,7 @@ class TestUnits(unittest.TestCase):
 class TestUnitAssemblePdf(TestCase):
 
     def assertAssemble(self, kwargs, called_with):
-        with mock.patch('jfscripts.replace_pdfpage.run.run') as run:
+        with mock.patch('jfscripts.image_into_pdf.run.run') as run:
             # m = main
             # i = insert
             replace.assemble_pdf(FilePath('m.pdf'), FilePath('i.pdf'),
@@ -153,12 +153,12 @@ class TestUnitAssemblePdf(TestCase):
 class TestIntegration(TestCase):
 
     def test_command_line_interface(self):
-        self.assertIsExecutable('replace_pdfpage')
+        self.assertIsExecutable('image_into_pdf')
 
     def test_option_version(self):
-        output = subprocess.check_output(['replace-pdfpage.py', '--version'])
+        output = subprocess.check_output(['image-into-pdf.py', '--version'])
         self.assertTrue(output)
-        self.assertIn('replace-pdfpage.py', str(output))
+        self.assertIn('image-into-pdf.py', str(output))
 
 
 @unittest.skipIf(not dependencies or not internet,
@@ -173,27 +173,27 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertExists(str(FilePath(self.tmp_pdf).new(append='_joined')))
 
     def test_replace(self):
-        subprocess.run(['replace-pdfpage.py', 'replace', self.tmp_pdf, '1',
+        subprocess.run(['image-into-pdf.py', 'replace', self.tmp_pdf, '1',
                         self.tmp_png])
         self.assertExistsJoinedPdf()
 
     def test_add(self):
-        subprocess.run(['replace-pdfpage.py', 'add', self.tmp_png,
+        subprocess.run(['image-into-pdf.py', 'add', self.tmp_png,
                         self.tmp_pdf])
         self.assertExistsJoinedPdf()
 
     def test_add_after(self):
-        subprocess.run(['replace-pdfpage.py', 'add', '--after', '1',
+        subprocess.run(['image-into-pdf.py', 'add', '--after', '1',
                         self.tmp_png, self.tmp_pdf])
         self.assertExistsJoinedPdf()
 
     def test_add_before(self):
-        subprocess.run(['replace-pdfpage.py', 'add', '--before', '1',
+        subprocess.run(['image-into-pdf.py', 'add', '--before', '1',
                         self.tmp_png, self.tmp_pdf])
         self.assertExistsJoinedPdf()
 
     def test_convert(self):
-        subprocess.run(['replace-pdfpage.py', 'convert', self.tmp_png,
+        subprocess.run(['image-into-pdf.py', 'convert', self.tmp_png,
                         self.tmp_pdf])
         self.assertExists(str(FilePath(self.tmp_pdf).new(append='_insert')))
 

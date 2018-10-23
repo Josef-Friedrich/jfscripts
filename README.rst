@@ -130,12 +130,12 @@ magick-imslp.py
       -v, --verbose         Make the command line output more verbose.
       -V, --version         show program's version number and exit
 
-replace-pdfpage.py
-------------------
+image-into-pdf.py
+-----------------
 
 .. code-block:: text
 
-    usage: replace-pdfpage.py [-h] [-c] [-v] [-V] {add,convert,replace} ...
+    usage: image-into-pdf.py [-h] [-c] [-v] [-V] {add,convert,replace} ...
     
     Add or replace one page in a PDF file with an image file of the same page
     size.

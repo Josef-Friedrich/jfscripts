@@ -31,7 +31,7 @@ setup(
             'list-files.py = jfscripts.list_files:main',
             'mac-to-eui64.py = jfscripts.mac_to_eui64:main',
             'magick-imslp.py = jfscripts.magick_imslp:main',
-            'replace-pdfpage.py = jfscripts.replace_pdfpage:main',
+            'image-into-pdf.py = jfscripts.image_into_pdf:main',
         ],
     },
     python_requires='>=3.6',

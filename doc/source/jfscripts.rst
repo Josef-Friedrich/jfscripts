@@ -39,7 +39,7 @@ jfscripts.magick_imslp module
 
 .. automodule:: jfscripts.magick_imslp
 
-jfscripts.replace_pdfpage module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jfscripts.image_into_pdf module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: jfscripts.replace_pdfpage
+.. automodule:: jfscripts.image_into_pdf

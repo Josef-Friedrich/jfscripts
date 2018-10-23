@@ -55,10 +55,10 @@ magick-imslp.py
    :prog: magick-imslp.py
 
 
-replace-pdfpage.py
+image-into-pdf.py
 ------------------
 
 .. argparse::
-   :module: jfscripts.replace_pdfpage
+   :module: jfscripts.image_into_pdf
    :func: get_parser
-   :prog: replace-pdfpage.py
+   :prog: image-into-pdf.py
