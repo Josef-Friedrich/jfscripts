@@ -64,7 +64,7 @@ def convert_image_to_pdf_page(image_file, page_width, page_height, density_x,
                 '-density', density,
                 tmp_pdf]
     run.run(cmd_args)
-    return tmp_pdf
+    return FilePath(tmp_pdf)
 
 
 def assemble_pdf(main_pdf, insert_pdf, page_count, page_number, mode='add',
@@ -177,8 +177,6 @@ def get_parser():
     )
     subcmd_args.required = True
 
-
-
     ##
     # add
     ##
@@ -220,10 +218,14 @@ def get_parser():
         'dimensions.'
     )
 
-    add_parser.add_argument(
-        '-a', '--after',
-        nargs=1,
-        help='Place image after page X.'
+    convert_parser.add_argument(
+        'image',
+        help='The image file to convert to the PDF format.',
+    )
+
+    convert_parser.add_argument(
+        'pdf',
+        help='The PDF file (to get the dimensions) .',
     )
 
     ##
@@ -261,8 +263,10 @@ def main():
 
     check_dependencies(*dependencies)
 
-    main_pdf = FilePath(args.pdf)
-    image = FilePath(args.image)
+    main_pdf = FilePath(args.pdf, absolute=True)
+    image = FilePath(args.image, absolute=True)
+    if hasattr(args, 'number'):
+        number = args.number
 
     identify_pdf = do_pdftk_cat_first_page(main_pdf)
     dimensions = do_magick_identify_dimensions(identify_pdf)
@@ -289,12 +293,23 @@ def main():
 
         joined_pdf = assemble_pdf(main_pdf, insert_pdf, info['page_count'],
                                   number, mode='add', position=position)
+        message = 'Successfully added the image “{}” {} page {} of the PDF ' \
+                  'file “{}”. Result: “{}”'
+        print(message.format(image, position, number, main_pdf, joined_pdf))
+
+    elif args.subcmd_args == 'convert':
+        result_pdf = main_pdf.new(append='_insert')
+        os.rename(str(insert_pdf), str(result_pdf))
+        message = 'Successfully converted the image “{}” to the PDF file ' \
+                  '“{}” using the dimensions of the PDF “{}”.'
+        print(message.format(image, result_pdf, main_pdf))
 
     elif args.subcmd_args == 'replace':
         joined_pdf = assemble_pdf(main_pdf, insert_pdf, info['page_count'],
                                   args.number, mode='replace')
-
-    print('{} {} {}'.format(main_pdf, image, joined_pdf))
+        message = 'Successfully replaced page {} of the PDF file “{}” with ' \
+                  'the image “{}”. Result: “{}”'
+        print(message.format(number, main_pdf, image, joined_pdf))
 
 
 if __name__ == '__main__':

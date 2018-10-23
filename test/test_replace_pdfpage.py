@@ -192,6 +192,11 @@ class TestIntegrationWithDependencies(TestCase):
                         self.tmp_png, self.tmp_pdf])
         self.assertExistsJoinedPdf()
 
+    def test_convert(self):
+        subprocess.run(['replace-pdfpage.py', 'convert', self.tmp_png,
+                        self.tmp_pdf])
+        self.assertExists(str(FilePath(self.tmp_pdf).new(append='_insert')))
+
 
 if __name__ == '__main__':
     unittest.main()
