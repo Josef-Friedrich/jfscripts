@@ -161,12 +161,15 @@ def get_parser():
     )
     subcmd_args.required = True
 
+
+
     ##
     # add
     ##
 
     add_parser = subcmd_args.add_parser(
-        'add', description=''
+        'add',
+        description='Add one image to an PDF file.'
     )
 
     add_parser.add_argument(
@@ -192,11 +195,28 @@ def get_parser():
     )
 
     ##
+    # convert
+    ##
+
+    convert_parser = subcmd_args.add_parser(
+        'convert',
+        description='Convert a image file into a PDF file with the same '
+        'dimensions.'
+    )
+
+    add_parser.add_argument(
+        '-a', '--after',
+        nargs=1,
+        help='Place image after page X.'
+    )
+
+    ##
     # replace
     ##
 
     replace_parser = subcmd_args.add_parser(
-        'replace', description=''
+        'replace',
+        description='Replace one page in a PDF file with an image file.'
     )
 
     replace_parser.add_argument(
