@@ -88,7 +88,7 @@ def convert_image_to_pdf_page(image, image_width, pdf_width, pdf_density_x):
               'the density of “{}”'
     print(message.format(image, density))
     tmp_pdf = os.path.join(tmp_dir, 'tmp.pdf')
-    cmd_args = ['convert', str(image),
+    cmd_args = ['convert', str(image), '-units', 'PixelsPerInch',
                 '-density', str(int(density)),
                 tmp_pdf]
     run.run(cmd_args)
