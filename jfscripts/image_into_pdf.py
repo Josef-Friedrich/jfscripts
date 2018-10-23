@@ -26,16 +26,21 @@ def do_pdftk_cat_first_page(pdf_file):
 
 def do_magick_identify_dimensions(pdf_file):
     """"""
+
+    def to_int(number):
+        return int(round(float(number)))
+
     cmd_args = ['magick', 'identify', '-format', 'w: %w h: %h x: %x y: %y\n',
                 str(pdf_file)]
     output = run.check_output(cmd_args, encoding='utf-8')
-    dimensions = re.search(r'w: (\d*) h: (\d*) x: (\d*) y: (\d*)', output)
+    dimensions = re.search(r'w: ([\d.]*) h: ([\d.]*) x: ([\d.]*) y: ([\d.]*)',
+                           output)
 
     return {
-                'width': int(dimensions.group(1)),
-                'height': int(dimensions.group(2)),
-                'x': int(dimensions.group(3)),
-                'y': int(dimensions.group(4)),
+                'width': to_int(dimensions.group(1)),
+                'height': to_int(dimensions.group(2)),
+                'x': to_int(dimensions.group(3)),
+                'y': to_int(dimensions.group(4)),
             }
 
 
@@ -52,9 +57,12 @@ def get_pdf_info(pdf_file):
             }
 
 
-def convert_image_to_pdf_page(image_file, page_width, page_height, density_x,
-                              density_y):
+def convert_image_to_pdf_page(image, image_width, pdf_width, pdf_density_x):
     # convert image.jpg -page 540x650\! image.pdf
+
+    print('image_width {} pdf_width {} pdf_density_x {}'.format(
+        image_width, pdf_width, pdf_density_x
+    ))
 
     # pdf_density_x    x
     # -------------  = -----------
@@ -68,13 +76,20 @@ def convert_image_to_pdf_page(image_file, page_width, page_height, density_x,
 
     # 72 / 542 * 1024 = 136,0295
 
-    dimension = '{}x{}'.format(page_width, page_height)
-    density = '{}x{}'.format(density_x, density_y)
+    # '-compress', 'JPEG',
+    # '-quality', '8',
+    # '-resize', dimension,
+    # dimension = '{}x{}'.format(page_width, page_height)
+    # density = '{}x{}'.format(density_x, density_y)
+
+    density = pdf_density_x / pdf_width * image_width
+
+    message = 'Generate from the image file “{}” a temporary pdf file with ' \
+              'the density of “{}”'
+    print(message.format(image, density))
     tmp_pdf = os.path.join(tmp_dir, 'tmp.pdf')
-    cmd_args = ['convert', str(image_file), '-compress', 'JPEG',
-                '-quality', '8',
-                '-resize', dimension,
-                '-density', density,
+    cmd_args = ['convert', str(image),
+                '-density', str(int(density)),
                 tmp_pdf]
     run.run(cmd_args)
     return FilePath(tmp_pdf)
@@ -282,14 +297,14 @@ def main():
         number = args.number
 
     identify_pdf = do_pdftk_cat_first_page(main_pdf)
-    dimensions = do_magick_identify_dimensions(identify_pdf)
+    pdf_dimensions = do_magick_identify_dimensions(identify_pdf)
+    image_dimensions = do_magick_identify_dimensions(image)
     info = get_pdf_info(main_pdf)
     insert_pdf = convert_image_to_pdf_page(
         image,
-        dimensions['width'],
-        dimensions['height'],
-        dimensions['x'],
-        dimensions['y'],
+        image_dimensions['width'],
+        pdf_dimensions['width'],
+        pdf_dimensions['x'],
     )
 
     if args.subcmd_args == 'add':
