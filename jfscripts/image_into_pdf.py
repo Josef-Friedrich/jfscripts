@@ -221,6 +221,18 @@ def get_parser():
     )
 
     add_parser.add_argument(
+        '-f', '--first',
+        action='store_true',
+        help='Place the image to the first position.',
+    )
+
+    add_parser.add_argument(
+        '-l', '--last',
+        action='store_true',
+        help='Place the image to the last position.',
+    )
+
+    add_parser.add_argument(
         'image',
         help='A image (or a PDF) file to add to the PDF page.',
     )
@@ -314,6 +326,12 @@ def main():
         elif args.before:
             number = int(args.before[0])
             position = 'before'
+        elif args.first:
+            number = 1
+            position = 'before'
+        elif args.last:
+            number = info['page_count']
+            position = 'after'
         else:
             number = info['page_count']
             position = 'after'
