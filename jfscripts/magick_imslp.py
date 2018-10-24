@@ -103,7 +103,9 @@ def get_parser():
     ##
 
     convert_parser = subcommand.add_parser(
-        'convert', description='Convert scanned images (can be many image '
+        'convert',
+        aliases=['con', 'c'],
+        description='Convert scanned images (can be many image '
         'file formats or a PDF files) in monochrome bitmap images. The '
         'resulting images are compressed using the CCITT group 4 compression.'
     )
@@ -197,6 +199,7 @@ def get_parser():
 
     extract_parser = subcommand.add_parser(
         'extract',
+        aliases=['ex', 'e'],
         description='Extract images from a PDF file and export them in the '
         'TIFF format.'
     )
@@ -214,6 +217,7 @@ def get_parser():
 
     join_parser = subcommand.add_parser(
         'join',
+        aliases=['j'],
         description='Join the input files into a single PDF file. If the '
         'input file is not PDF file, it is converted into a monochrome CCITT '
         'Group 4 compressed PDF file.',
@@ -246,6 +250,7 @@ def get_parser():
 
     threshold_parser = subcommand.add_parser(
         'threshold-series',
+        aliases=['threshold', 'thres', 't'],
         description='Convert the samge image with different threshold values \
         to find the best threshold value.',
     )
