@@ -58,8 +58,6 @@ def get_pdf_info(pdf_file):
 
 
 def convert_image_to_pdf_page(image, image_width, pdf_width, pdf_density_x):
-    # convert image.jpg -page 540x650\! image.pdf
-
     print('image_width {} pdf_width {} pdf_density_x {}'.format(
         image_width, pdf_width, pdf_density_x
     ))
@@ -76,18 +74,14 @@ def convert_image_to_pdf_page(image, image_width, pdf_width, pdf_density_x):
 
     # 72 / 542 * 1024 = 136,0295
 
-    # '-compress', 'JPEG',
-    # '-quality', '8',
-    # '-resize', dimension,
-    # dimension = '{}x{}'.format(page_width, page_height)
-    # density = '{}x{}'.format(density_x, density_y)
-
     density = pdf_density_x / pdf_width * image_width
 
     message = 'Generate from the image file “{}” a temporary pdf file with ' \
               'the density of “{}”'
     print(message.format(image, density))
     tmp_pdf = os.path.join(tmp_dir, 'tmp.pdf')
+    # '-compress', 'JPEG',
+    # '-quality', '8',
     cmd_args = ['convert', str(image), '-units', 'PixelsPerInch',
                 '-density', str(int(density)),
                 tmp_pdf]
