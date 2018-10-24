@@ -9,7 +9,7 @@ import re
 
 
 def is_glob(string):
-    if re.search('[\*\?]', string) or re.search('\[\!?.*\]', string):
+    if re.search(r'[\*\?]', string) or re.search(r'\[\!?.*\]', string):
         return True
     else:
         return False

@@ -33,7 +33,7 @@ class Txt(object):
 
 def get_page_count(pdf):
     pdfinfo_stdout = run.check_output(['pdfinfo', str(pdf)])
-    match = re.search('Pages:\s*(.*)\n', pdfinfo_stdout.decode('utf-8'))
+    match = re.search(r'Pages:\s*(.*)\n', pdfinfo_stdout.decode('utf-8'))
     if match:
         return int(match.group(1))
 
