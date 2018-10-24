@@ -205,24 +205,24 @@ def get_parser():
 
     add_parser = subcmd_args.add_parser(
         'add',
-        description='Add one image to an PDF file.'
+        description='Add one image to an PDF file.',
     )
 
     add_parser.add_argument(
         '-a', '--after',
         nargs=1,
-        help='Place image after page X.'
+        help='Place image after page X.',
     )
 
     add_parser.add_argument(
         '-b', '--before',
         nargs=1,
-        help='Place image before page X.'
+        help='Place image before page X.',
     )
 
     add_parser.add_argument(
         'image',
-        help='The image file to add to the PDF page.',
+        help='A image (or a PDF) file to add to the PDF page.',
     )
 
     add_parser.add_argument(
@@ -237,7 +237,7 @@ def get_parser():
     convert_parser = subcmd_args.add_parser(
         'convert',
         description='Convert a image file into a PDF file with the same '
-        'dimensions.'
+        'dimensions.',
     )
 
     convert_parser.add_argument(
@@ -247,7 +247,7 @@ def get_parser():
 
     convert_parser.add_argument(
         'pdf',
-        help='The PDF file (to get the dimensions) .',
+        help='The main PDF file (to get the dimensions).',
     )
 
     ##
@@ -256,23 +256,24 @@ def get_parser():
 
     replace_parser = subcmd_args.add_parser(
         'replace',
-        description='Replace one page in a PDF file with an image file.'
+        description='Replace one page in a PDF file with an image (or an PDF) '
+        'file.',
     )
 
     replace_parser.add_argument(
         'pdf',
-        help='The PDF file',
+        help='The main PDF file',
     )
 
     replace_parser.add_argument(
         'number',
         type=int,
-        help='The page number of the PDF page to replace',
+        help='The page number of the PDF page to replace.',
     )
 
     replace_parser.add_argument(
         'image',
-        help='The image file to replace the PDF page with',
+        help='A image (or a PDF) file to replace the PDF page with.',
     )
 
     return parser
@@ -290,16 +291,20 @@ def main():
     if hasattr(args, 'number'):
         number = args.number
 
-    identify_pdf = do_pdftk_cat_first_page(main_pdf)
-    pdf_dimensions = do_magick_identify_dimensions(identify_pdf)
-    image_dimensions = do_magick_identify_dimensions(image)
+    if image.extension == 'pdf':
+        insert_pdf = image
+    else:
+        identify_pdf = do_pdftk_cat_first_page(main_pdf)
+        pdf_dimensions = do_magick_identify_dimensions(identify_pdf)
+        image_dimensions = do_magick_identify_dimensions(image)
+        insert_pdf = convert_image_to_pdf_page(
+            image,
+            image_dimensions['width'],
+            pdf_dimensions['width'],
+            pdf_dimensions['x'],
+        )
+
     info = get_pdf_info(main_pdf)
-    insert_pdf = convert_image_to_pdf_page(
-        image,
-        image_dimensions['width'],
-        pdf_dimensions['width'],
-        pdf_dimensions['x'],
-    )
 
     if args.subcmd_args == 'add':
 
@@ -320,6 +325,8 @@ def main():
         print(message.format(image, position, number, main_pdf, joined_pdf))
 
     elif args.subcmd_args == 'convert':
+        if image.extension == 'pdf':
+            raise('Specify an image file, not a PDF file.')
         result_pdf = main_pdf.new(append='_insert')
         os.rename(str(insert_pdf), str(result_pdf))
         message = 'Successfully converted the image “{}” to the PDF file ' \
