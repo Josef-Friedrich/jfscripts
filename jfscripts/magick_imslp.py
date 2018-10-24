@@ -327,6 +327,7 @@ def do_magick_convert(input_file, output_file, threshold=None,
     """
 
     cmd_args = _do_magick_command('convert')
+    cmd_args += ['-units', 'PixelsPerInch']
 
     if enlighten_border:
         info_input_file = do_magick_identify(input_file)

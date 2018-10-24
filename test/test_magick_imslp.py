@@ -163,8 +163,8 @@ class TestUnit(TestCase):
             FilePath('test.tiff'),
         )
         run.assert_called_with(
-            ['convert', '-compress', 'Group4', '-monochrome', 'test.tif',
-             'test.tiff']
+            ['convert', '-units', 'PixelsPerInch', '-compress', 'Group4',
+             '-monochrome', 'test.tif', 'test.tiff']
         )
 
     @patch('jfscripts.magick_imslp._do_magick_command')
@@ -182,10 +182,10 @@ class TestUnit(TestCase):
             deskew=True,
         )
         run.assert_called_with(
-            ['convert', '-resize', '200%', '-deskew', '40%', '-threshold',
-             '60%', '-trim', '+repage', '-border', '5%', '-bordercolor',
-             '#FFFFFF', '-compress', 'Group4', '-monochrome', 'test.tif',
-             'test.pdf']
+            ['convert', '-units', 'PixelsPerInch', '-resize', '200%',
+             '-deskew', '40%', '-threshold', '60%', '-trim', '+repage',
+             '-border', '5%', '-bordercolor', '#FFFFFF', '-compress', 'Group4',
+             '-monochrome', 'test.tif', 'test.pdf']
         )
 
     @patch('jfscripts.magick_imslp.run.run')
