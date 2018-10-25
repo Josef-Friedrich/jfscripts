@@ -207,6 +207,16 @@ class TestIntegrationWithDependencies(TestCase):
                         self.tmp_pdf])
         self.assertExistsJoinedPdf()
 
+    def test_add_alias_a(self):
+        subprocess.run(['image-into-pdf.py', 'a', '--last', self.tmp_png,
+                        self.tmp_pdf])
+        self.assertExistsJoinedPdf()
+
+    def test_add_alias_ad(self):
+        subprocess.run(['image-into-pdf.py', 'ad', '--last', self.tmp_png,
+                        self.tmp_pdf])
+        self.assertExistsJoinedPdf()
+
     def test_add_last_exclusive_arguments(self):
         process = subprocess.run(['image-into-pdf.py', 'add', '--last',
                                   '--before', '2', self.tmp_png, self.tmp_pdf])

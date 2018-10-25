@@ -136,13 +136,14 @@ image-into-pdf.py
 
 .. code-block:: text
 
-    usage: image-into-pdf.py [-h] [-c] [-v] [-V] {add,convert,replace} ...
+    usage: image-into-pdf.py [-h] [-c] [-v] [-V]
+                             {add,ad,a,convert,cv,c,replace,re,r} ...
     
     Add or replace one page in a PDF file with an image file of the same page
     size.
     
     positional arguments:
-      {add,convert,replace}
+      {add,ad,a,convert,cv,c,replace,re,r}
                             Subcmd_args
     
     optional arguments:

@@ -205,6 +205,7 @@ def get_parser():
 
     add_parser = subcmd_args.add_parser(
         'add',
+        aliases=['ad', 'a'],
         description='Add one image to an PDF file.',
     )
 
@@ -250,6 +251,7 @@ def get_parser():
 
     convert_parser = subcmd_args.add_parser(
         'convert',
+        aliases=['cv', 'c'],
         description='Convert a image file into a PDF file with the same '
         'dimensions.',
     )
@@ -270,6 +272,7 @@ def get_parser():
 
     replace_parser = subcmd_args.add_parser(
         'replace',
+        aliases=['re', 'r'],
         description='Replace one page in a PDF file with an image (or an PDF) '
         'file.',
     )
@@ -320,7 +323,7 @@ def main():
 
     info = get_pdf_info(main_pdf)
 
-    if args.subcmd_args == 'add':
+    if args.subcmd_args in ['add', 'ad', 'a']:
 
         if args.after:
             number = int(args.after[0])
@@ -344,7 +347,7 @@ def main():
                   'file “{}”. Result: “{}”'
         print(message.format(image, position, number, main_pdf, joined_pdf))
 
-    elif args.subcmd_args == 'convert':
+    elif args.subcmd_args in ['convert', 'cv', 'c']:
         if image.extension == 'pdf':
             raise('Specify an image file, not a PDF file.')
         result_pdf = main_pdf.new(append='_insert')
@@ -353,7 +356,7 @@ def main():
                   '“{}” using the dimensions of the PDF “{}”.'
         print(message.format(image, result_pdf, main_pdf))
 
-    elif args.subcmd_args == 'replace':
+    elif args.subcmd_args in ['replace', 're', 'r']:
         joined_pdf = assemble_pdf(main_pdf, insert_pdf, info['page_count'],
                                   args.number, mode='replace')
         message = 'Successfully replaced page {} of the PDF file “{}” with ' \
