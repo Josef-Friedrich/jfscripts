@@ -207,6 +207,11 @@ class TestIntegrationWithDependencies(TestCase):
                         self.tmp_pdf])
         self.assertExistsJoinedPdf()
 
+    def test_add_last_exclusive_arguments(self):
+        process = subprocess.run(['image-into-pdf.py', 'add', '--last',
+                                  '--before', '2', self.tmp_png, self.tmp_pdf])
+        self.assertEqual(process.returncode, 2)
+
     def test_convert(self):
         subprocess.run(['image-into-pdf.py', 'convert', self.tmp_png,
                         self.tmp_pdf])

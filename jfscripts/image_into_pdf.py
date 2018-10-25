@@ -208,25 +208,27 @@ def get_parser():
         description='Add one image to an PDF file.',
     )
 
-    add_parser.add_argument(
+    add_group = add_parser.add_mutually_exclusive_group()
+
+    add_group.add_argument(
         '-a', '--after',
         nargs=1,
         help='Place image after page X.',
     )
 
-    add_parser.add_argument(
+    add_group.add_argument(
         '-b', '--before',
         nargs=1,
         help='Place image before page X.',
     )
 
-    add_parser.add_argument(
+    add_group.add_argument(
         '-f', '--first',
         action='store_true',
         help='Place the image to the first position.',
     )
 
-    add_parser.add_argument(
+    add_group.add_argument(
         '-l', '--last',
         action='store_true',
         help='Place the image to the last position.',
