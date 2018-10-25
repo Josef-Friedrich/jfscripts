@@ -111,6 +111,20 @@ def get_parser():
     )
 
     convert_parser.add_argument(
+        '-a',
+        '--auto-black-white',
+        action='store_true',
+        help='The same as --resize --ocr --join --pdf.',
+    )
+
+    convert_parser.add_argument(
+        '-C',
+        '--auto-color',
+        action='store_true',
+        help='The same as --color --resize --ocr --join --pdf.',
+    )
+
+    convert_parser.add_argument(
         '-b',
         '--backup',
         action='store_true',
@@ -122,6 +136,13 @@ def get_parser():
         '--border',
         action='store_true',
         help='Frame the images with a white border.',
+    )
+
+    convert_parser.add_argument(
+        '-c',
+        '--color',
+        action='store_true',
+        help='The input files are colored images.',
     )
 
     convert_parser.add_argument(
@@ -709,6 +730,17 @@ def main():
 
         if state.args.join and not state.args.pdf:
             state.args.pdf = True
+
+        if state.args.auto_black_white or state.args.auto_color:
+            state.args.join = True
+            state.args.pdf = True
+            state.args.ocr = True
+
+        if state.args.auto_black_white:
+            state.args.resize = True
+
+        if state.args.auto_color:
+            state.args.color = True
 
         if state.first_input_file.extension == 'pdf':
             if len(state.input_files) > 1:
