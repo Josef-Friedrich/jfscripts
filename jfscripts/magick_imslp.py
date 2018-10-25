@@ -217,7 +217,7 @@ def get_parser():
 
     join_parser = subcommand.add_parser(
         'join',
-        aliases=['j'],
+        aliases=['jn', 'j'],
         description='Join the input files into a single PDF file. If the '
         'input file is not PDF file, it is converted into a monochrome CCITT '
         'Group 4 compressed PDF file.',
@@ -250,7 +250,7 @@ def get_parser():
 
     threshold_parser = subcommand.add_parser(
         'threshold-series',
-        aliases=['threshold', 'thres', 't'],
+        aliases=['threshold', 'ts', 't'],
         description='Convert the samge image with different threshold values \
         to find the best threshold value.',
     )
@@ -705,7 +705,7 @@ def main():
     # convert
     ##
 
-    if args.subcommand == 'convert':
+    if args.subcommand in ['convert', 'cv', 'c']:
 
         if state.args.join and not state.args.pdf:
             state.args.pdf = True
@@ -743,7 +743,7 @@ def main():
     # extract
     ##
 
-    elif args.subcommand == 'extract':
+    elif args.subcommand in ['extract', 'ex', 'e']:
         if not state.input_is_pdf:
             raise ValueError('Specify a PDF file.')
         do_pdfimages(state.first_input_file, state, page_number=None,
@@ -753,7 +753,7 @@ def main():
     # join
     ##
 
-    elif args.subcommand == 'join':
+    elif args.subcommand in ['join', 'jn', 'j']:
         input_files = convert_file_paths(state.input_files)
         if state.args.multiprocessing:
             pool = multiprocessing.Pool()
@@ -773,7 +773,7 @@ def main():
     # threshold-series
     ##
 
-    elif args.subcommand == 'threshold-series':
+    elif args.subcommand in ['threshold-series', 'ts', 't']:
         subcommand_threshold_series(state.first_input_file, state)
         if not state.args.no_cleanup:
             cleanup(state)

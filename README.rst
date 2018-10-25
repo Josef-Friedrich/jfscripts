@@ -109,7 +109,7 @@ magick-imslp.py
 .. code-block:: text
 
     usage: magick-imslp.py [-h] [-c] [-m] [-N] [-v] [-V]
-                           {convert,con,c,extract,ex,e,join,j,threshold-series,threshold,thres,t}
+                           {convert,con,c,extract,ex,e,join,jn,j,threshold-series,threshold,ts,t}
                            ...
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
@@ -119,7 +119,7 @@ magick-imslp.py
     CCITT group 4.
     
     positional arguments:
-      {convert,con,c,extract,ex,e,join,j,threshold-series,threshold,thres,t}
+      {convert,con,c,extract,ex,e,join,jn,j,threshold-series,threshold,ts,t}
                             Subcommand
     
     optional arguments:

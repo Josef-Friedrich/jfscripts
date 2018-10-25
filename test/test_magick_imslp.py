@@ -497,6 +497,15 @@ class TestIntegrationWithDependencies(TestCase):
         self.assertExists(joined_pdf)
         os.remove(joined_pdf)
 
+    def test_subcommand_join_alias(self):
+        joined_pdf = '/tmp/jfscripts/magick_imslp/bach-busoni_300_magick.pdf'
+        check_output(['magick-imslp.py', 'jn', tmp_png1, tmp_png2])
+        self.assertExists(joined_pdf)
+        os.remove(joined_pdf)
+        check_output(['magick-imslp.py', 'j', tmp_png1, tmp_png2])
+        self.assertExists(joined_pdf)
+        os.remove(joined_pdf)
+
 
 if __name__ == '__main__':
     unittest.main()
