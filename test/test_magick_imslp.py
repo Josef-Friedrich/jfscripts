@@ -76,6 +76,13 @@ def patch_mulitple(args):
     }
 
 
+def convert_to_cli_list(run_args_list):
+    output = []
+    for args in run_args_list:
+        output.append(' '.join(args[0][0]))
+    return output
+
+
 dependencies = check_dependencies(*magick_imslp.dependencies,
                                   raise_error=False)
 internet = check_internet_connectifity()
@@ -271,6 +278,29 @@ class TestUnitOnMain(TestCase):
                             'xxx', 'zzz', '--', 'one.tif'))
         cmd_args = p['run_run'].call_args[0][0]
         self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+zzz'])
+
+    def test_convert_option_auto_color(self):
+
+        p = patch_mulitple(('convert', '--auto-color', 'test.pdf'))
+        call_args_list = p['run_run'].call_args_list
+        # 0: pdfimages
+        # 1: magick convert
+        # 2: tesseract
+        # 3: magick convert
+        # 4: tesseract
+        # 5: pdftk
+        cli_list = convert_to_cli_list(call_args_list)
+        self.assertIn('pdfimages -tiff', cli_list[0])
+
+        self.assertNotIn('-threshold', cli_list[1])
+        self.assertIn('-quality 40', cli_list[1])
+        self.assertIn('.jp2', cli_list[1])
+
+        self.assertIn('.jp2', cli_list[2])
+
+        self.assertIn('convert', cli_list[3])
+        self.assertIn('tesseract', cli_list[4])
+        self.assertIn('pdftk', cli_list[5])
 
 
 class TestClassTimer(TestCase):

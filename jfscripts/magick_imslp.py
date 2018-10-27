@@ -349,9 +349,7 @@ def _do_magick_convert_enlighten_border(width, height):
 
 def do_magick_convert(input_file, output_file, threshold=None,
                       enlighten_border=False, border=False, resize=False,
-                      deskew=False, trim=False
-
-                      ):
+                      deskew=False, trim=False, color=False):
     """
     Convert a input image file using the subcommand convert of the
     imagemagick suite.
@@ -376,7 +374,7 @@ def do_magick_convert(input_file, output_file, threshold=None,
     if deskew:
         cmd_args += ['-deskew', '40%']
 
-    if threshold:
+    if threshold and not color:
         cmd_args += ['-threshold', threshold]
 
     if trim:
@@ -385,7 +383,10 @@ def do_magick_convert(input_file, output_file, threshold=None,
     if border:
         cmd_args += ['-border', '5%', '-bordercolor', '#FFFFFF']
 
-    cmd_args += ['-compress', 'Group4', '-monochrome']
+    if not color:
+        cmd_args += ['-compress', 'Group4', '-monochrome']
+    else:
+        cmd_args += ['-quality', '40']
     cmd_args += [str(input_file), str(output_file)]
 
     return run.run(cmd_args)
@@ -533,13 +534,18 @@ def subcommand_convert_file(arguments):
     input_file = arguments[0]
     state = arguments[1]
 
+    if state.args.color:
+        intermediate_extension = 'jp2'
+    else:
+        intermediate_extension = 'tiff'
+
     if state.args.pdf:
         extension = 'pdf'
     else:
-        extension = 'tiff'
+        extension = intermediate_extension
 
     if state.args.ocr:
-        extension = 'tiff'
+        extension = intermediate_extension
 
     if not state.args.join:
         output_file = input_file.new(extension=extension,
@@ -566,14 +572,15 @@ def subcommand_convert_file(arguments):
         resize=state.args.resize,
         deskew=True,
         trim=True,
+        color=state.args.color,
     )
 
     if completed_process.returncode != 0:
         raise('magick convert failed.')
 
     if state.args.ocr:
-        if not output_file.extension == 'tiff':
-            raise('Tesseract needs a tiff file as input.')
+        if output_file.extension not in ['tiff', 'jp2']:
+            raise('Tesseract needs a tiff or a jp2 file as input.')
         completed_process = do_tesseract(output_file, state.args.ocr_language)
         if completed_process.returncode != 0:
             raise('tesseract failed.')
