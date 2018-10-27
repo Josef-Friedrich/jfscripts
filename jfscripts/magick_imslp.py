@@ -437,7 +437,7 @@ def do_pdfinfo_page_count(pdf_file):
     :return: Page count
     :rtype: int
     """
-    output = run.check_output(['pdfinfo', str(pdf_file)]).decode('utf-8')
+    output = run.check_output(['pdfinfo', str(pdf_file)], encoding='utf-8')
     page_count = re.search(r'Pages:\s*([0-9]*)', output)
     return int(page_count.group(1))
 

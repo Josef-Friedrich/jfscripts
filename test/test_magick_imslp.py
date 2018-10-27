@@ -30,6 +30,25 @@ def copy(path):
     return shutil.copy(path, tmp)
 
 
+def output_pdfinfo(pages=3):
+        return ''.join([
+            'Creator:        c42pdf v. 0.12 args:  -p 658.80x866.52\n',
+            'Producer:       PDFlib V0.6 (C) Thomas Merz 1997-98\n',
+            'CreationDate:   Sat Jan  2 21:11:06 2010 CET\n',
+            'Tagged:         no\n',
+            'UserProperties: no\nSuspects:       no\n',
+            'Form:           none\n',
+            'JavaScript:     no\n',
+            'Pages:          {}\n'.format(pages),
+            'Encrypted:      no\n',
+            'Page size:      658.8 x 866.52 pts\n',
+            'Page rot:       0\n',
+            'File size:      343027 bytes\n',
+            'Optimized:      no\n',
+            'PDF version:    1.1\n',
+        ])
+
+
 dependencies = check_dependencies(*magick_imslp.dependencies,
                                   raise_error=False)
 internet = check_internet_connectifity()
@@ -62,29 +81,10 @@ if dependencies and internet:
 class TestUnit(TestCase):
 
     @mock.patch('jfscripts.magick_imslp.run.check_output')
-    def test_get_pdf_info(self, mock):
-
-        return_values = [
-            b'Creator:        c42pdf v. 0.12 args:  -p 658.80x866.52\n',
-            b'Producer:       PDFlib V0.6 (C) Thomas Merz 1997-98\n',
-            b'CreationDate:   Sat Jan  2 21:11:06 2010 CET\n',
-            b'Tagged:         no\n',
-            b'UserProperties: no\nSuspects:       no\n',
-            b'Form:           none\n',
-            b'JavaScript:     no\n',
-            b'Pages:          3\n',
-            b'Encrypted:      no\n',
-            b'Page size:      658.8 x 866.52 pts\n',
-            b'Page rot:       0\n',
-            b'File size:      343027 bytes\n',
-            b'Optimized:      no\n',
-            b'PDF version:    1.1\n',
-        ]
-
-        mock.return_value = b''.join(return_values)
-
+    def test_get_pdf_info(self, check_output):
+        check_output.return_value = output_pdfinfo(5)
         result = magick_imslp.do_pdfinfo_page_count('test.pdf')
-        self.assertEqual(result, 3)
+        self.assertEqual(result, 5)
 
     @mock.patch('jfscripts.magick_imslp.run.check_output')
     def test_do_magick_identify(self, check_output):
