@@ -139,20 +139,20 @@ class TestUnit(TestCase):
             self.assertEqual(len(args[3]), 48)
             self.assertTrue(args[3].startswith('test_'))
 
-    @unittest.skip('skipped')
-    def test_collect_images(self):
+    @patch('os.path.getsize')
+    @patch('os.listdir')
+    def test_collect_images(self, listdir, getsize):
         state = get_state()
-
-        with mock.patch('os.listdir') as os_listdir:
-            files = ['2.tif', '1.tif']
-            return_files = []
-            for input_file in files:
-                return_files.append(os.path.join(magick_imslp.tmp_dir,
-                                    input_file))
-            return_files.sort()
-            os_listdir.return_value = files
-            out = magick_imslp.collect_images(state)
-            self.assertEqual(out, return_files)
+        tiff1 = '1_{}.tif'.format(state.tmp_identifier)
+        tiff2 = '2_{}.tif'.format(state.tmp_identifier)
+        files = [tiff2, tiff1, '3.tif']
+        listdir.return_value = files
+        getsize.return_value = 300
+        output = magick_imslp.collect_images(state)
+        self.assertEqual(output, [
+            os.path.join(state.common_path, tiff1),
+            os.path.join(state.common_path, tiff2),
+        ])
 
     @patch('jfscripts.magick_imslp._do_magick_command')
     @patch('jfscripts.magick_imslp.run.run')
