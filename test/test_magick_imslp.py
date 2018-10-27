@@ -49,6 +49,33 @@ def output_pdfinfo(pages=3):
         ])
 
 
+def patch_mulitple(args):
+    with patch('sys.argv',  ['cmd'] + list(args)), \
+         patch('jfscripts.magick_imslp.check_dependencies'), \
+         patch('jfscripts.magick_imslp.run.run') as run_run, \
+         patch('jfscripts.magick_imslp.run.check_output') as \
+         run_check_output, \
+         patch('os.path.getsize') as os_path_getsize, \
+         patch('os.listdir') as os_listdir, \
+         patch('os.remove') as os_remove:
+
+        tiff1 = '1_{}.tiff'.format(magick_imslp.tmp_identifier)
+        tiff2 = '2_{}.tiff'.format(magick_imslp.tmp_identifier)
+        files = [tiff2, tiff1, '3.tif']
+        os_listdir.return_value = files
+        os_path_getsize.return_value = 300
+        run_run.return_value.returncode = 0
+        magick_imslp.main()
+    return {
+        'run_run': run_run,
+        'run_check_output': run_check_output,
+        'os_path_getsize': os_path_getsize,
+        'os_listdir': os_listdir,
+        'os_remove': os_remove,
+        'state': magick_imslp.state,
+    }
+
+
 dependencies = check_dependencies(*magick_imslp.dependencies,
                                   raise_error=False)
 internet = check_internet_connectifity()
@@ -143,8 +170,8 @@ class TestUnit(TestCase):
     @patch('os.listdir')
     def test_collect_images(self, listdir, getsize):
         state = get_state()
-        tiff1 = '1_{}.tif'.format(state.tmp_identifier)
-        tiff2 = '2_{}.tif'.format(state.tmp_identifier)
+        tiff1 = '1_{}.tif'.format(magick_imslp.tmp_identifier)
+        tiff2 = '2_{}.tif'.format(magick_imslp.tmp_identifier)
         files = [tiff2, tiff1, '3.tif']
         listdir.return_value = files
         getsize.return_value = 300
@@ -215,12 +242,16 @@ class TestUnit(TestCase):
             self.assertIn('one.tif', ' '.join(run.call_args_list[0][0][0]))
             self.assertIn('two.tif', ' '.join(run.call_args_list[1][0][0]))
 
+    def test_input_pdf_join(self):
+        p = patch_mulitple(('convert', '--join', 'test.pdf'))
+        self.assertEqual(len(p['run_run'].call_args_list), 4)
+
     def test_global_state_object(self):
         with patch('sys.argv',  ['cmd', 'convert', '--join', 'test.pdf']), \
              patch('jfscripts.magick_imslp.check_dependencies'), \
              patch('jfscripts.magick_imslp.run.run'):
             magick_imslp.main()
-            self.assertEqual(magick_imslp.state.identifier, 'magick')
+            self.assertEqual(magick_imslp.identifier, 'magick')
 
     @patch('jfscripts.magick_imslp.os.remove')
     @patch('jfscripts.magick_imslp.run.run')
@@ -288,9 +319,15 @@ class TestClassState(TestCase):
     def test_args(self):
         self.assertTrue(self.state.args)
 
-    def test_uuid(self):
-        self.assertTrue(self.state.uuid)
-        self.assertEqual(len(self.state.uuid), 36)
+
+class TestModuleGlobals(TestCase):
+
+    def test_identifier(self):
+        self.assertEqual(magick_imslp.identifier, 'magick')
+
+    def test_tmp_identifier(self):
+        self.assertEqual(len(magick_imslp.tmp_identifier),
+                         len(magick_imslp.identifier) + 36 + 1)
 
 
 class TestIntegration(TestCase):

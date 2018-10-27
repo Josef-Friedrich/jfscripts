@@ -16,6 +16,12 @@ run = Run()
 state = None
 """The global :class:`State` object."""
 
+identifier = 'magick'
+"""To allow better assignment of the output files."""
+
+tmp_identifier = '{}_{}'.format(identifier, uuid.uuid1())
+"""Used for the identification of temporary files."""
+
 dependencies = (
     ('convert', 'imagemagick'),
     ('identify', 'imagemagick'),
@@ -405,7 +411,7 @@ def do_magick_identify(input_file):
     }
 
 
-def do_pdfimages(pdf_file, state, page_number=None, tmp_identifier=True):
+def do_pdfimages(pdf_file, state, page_number=None, use_tmp_identifier=True):
     """Convert a PDF file to images in the TIFF format.
 
     :param pdf_file: The input file.
@@ -417,8 +423,8 @@ def do_pdfimages(pdf_file, state, page_number=None, tmp_identifier=True):
     :return: The return value of `subprocess.run`.
     :rtype: subprocess.CompletedProcess
     """
-    if tmp_identifier:
-        image_root = '{}_{}'.format(pdf_file.basename, state.tmp_identifier)
+    if use_tmp_identifier:
+        image_root = '{}_{}'.format(pdf_file.basename, tmp_identifier)
     else:
         image_root = pdf_file.basename
 
@@ -493,7 +499,7 @@ def collect_images(state):
     prefix = state.common_path
     out = []
     for input_file in os.listdir(prefix):
-        if state.tmp_identifier in input_file and \
+        if tmp_identifier in input_file and \
            os.path.getsize(os.path.join(prefix, input_file)) > 200:
             out.append(os.path.join(prefix, input_file))
     out.sort()
@@ -509,7 +515,7 @@ def cleanup(state):
     :return: None"""
 
     for work_file in os.listdir(state.common_path):
-        if state.tmp_identifier in work_file:
+        if tmp_identifier in work_file:
             os.remove(os.path.join(state.common_path, work_file))
 
 
@@ -537,7 +543,7 @@ def subcommand_convert_file(arguments):
 
     if not state.args.join:
         output_file = input_file.new(extension=extension,
-                                     del_substring='_' + state.tmp_identifier)
+                                     del_substring='_' + tmp_identifier)
     else:
         output_file = input_file.new(extension=extension)
 
@@ -623,7 +629,7 @@ def subcommand_threshold_series(input_file, state):
     for threshold in range(40, 100, 5):
         appendix = '_threshold-{}'.format(threshold)
         output_file = input_file.new(extension='tiff', append=appendix,
-                                     del_substring=state.tmp_identifier)
+                                     del_substring=tmp_identifier)
         output_file = str(output_file).replace('_-000', '')
         do_magick_convert(input_file, output_file,
                           threshold='{}%'.format(threshold))
@@ -685,16 +691,6 @@ class State(object):
 
         if self.first_input_file.extension.lower() == 'pdf':
             self.input_is_pdf = True
-
-        self.identifier = 'magick'
-        """To allow better assignment of the output files."""
-
-        self.uuid = str(uuid.uuid1())
-        """A random string used for the identification of temporarily
-        generated files."""
-
-        self.tmp_identifier = '{}_{}'.format(self.identifier, self.uuid)
-        """Used for the identification of temporary files."""
 
 
 def convert_file_paths(files):
@@ -782,7 +778,7 @@ def main():
         if not state.input_is_pdf:
             raise ValueError('Specify a PDF file.')
         do_pdfimages(state.first_input_file, state, page_number=None,
-                     tmp_identifier=False)
+                     use_tmp_identifier=False)
 
     ##
     # join
