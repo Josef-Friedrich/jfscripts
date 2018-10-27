@@ -231,16 +231,15 @@ class TestUnit(TestCase):
             ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf'],
         )
 
-    def test_multiple_input_files(self):
-        with patch('sys.argv',  ['cmd', 'convert', 'one.tif', 'two.tif']), \
-             patch('jfscripts.magick_imslp.check_dependencies'), \
-             patch('jfscripts.magick_imslp.run.run') as run:
 
-            run.return_value.returncode = 0
-            magick_imslp.main()
-            self.assertEqual(len(run.call_args_list), 2)
-            self.assertIn('one.tif', ' '.join(run.call_args_list[0][0][0]))
-            self.assertIn('two.tif', ' '.join(run.call_args_list[1][0][0]))
+class TestUnitOnMain(TestCase):
+
+    def test_multiple_input_files(self):
+        p = patch_mulitple(('convert', 'one.tif', 'two.tif'))
+        call_args_list = p['run_run'].call_args_list
+        self.assertEqual(len(call_args_list), 2)
+        self.assertIn('one.tif', ' '.join(call_args_list[0][0][0]))
+        self.assertIn('two.tif', ' '.join(call_args_list[1][0][0]))
 
     def test_input_pdf_join(self):
         p = patch_mulitple(('convert', '--join', 'test.pdf'))
