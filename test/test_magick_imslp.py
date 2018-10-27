@@ -204,14 +204,16 @@ class TestUnit(TestCase):
             ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf'],
         )
 
-    @unittest.skip('skipped')
-    @patch('jfscripts.magick_imslp.check_dependencies')
-    def test_multiple_input_files(self, cb):
-        with patch('sys.argv',  ['cmd', 'convert', 'one.tif', 'two.tif']):
+    def test_multiple_input_files(self):
+        with patch('sys.argv',  ['cmd', 'convert', 'one.tif', 'two.tif']), \
+             patch('jfscripts.magick_imslp.check_dependencies'), \
+             patch('jfscripts.magick_imslp.run.run') as run:
+
+            run.return_value.returncode = 0
             magick_imslp.main()
-            # args = mp.call_args[0][0]
-            # self.assertIn('one.tif', str(args[0]))
-            # self.assertIn('two.tif', str(args[1]))
+            self.assertEqual(len(run.call_args_list), 2)
+            self.assertIn('one.tif', ' '.join(run.call_args_list[0][0][0]))
+            self.assertIn('two.tif', ' '.join(run.call_args_list[1][0][0]))
 
     @patch('jfscripts.magick_imslp.os.remove')
     @patch('jfscripts.magick_imslp.run.run')
