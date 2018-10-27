@@ -13,6 +13,8 @@ import time
 import uuid
 
 run = Run()
+state = None
+"""The global :class:`State` object."""
 
 dependencies = (
     ('convert', 'imagemagick'),
@@ -718,6 +720,7 @@ def main():
     args = get_parser().parse_args()
 
     run.setup(verbose=args.verbose, colorize=args.colorize)
+    global state
     state = State(args)
 
     check_dependencies(*dependencies)

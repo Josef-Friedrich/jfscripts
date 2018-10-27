@@ -215,6 +215,13 @@ class TestUnit(TestCase):
             self.assertIn('one.tif', ' '.join(run.call_args_list[0][0][0]))
             self.assertIn('two.tif', ' '.join(run.call_args_list[1][0][0]))
 
+    def test_global_state_object(self):
+        with patch('sys.argv',  ['cmd', 'convert', '--join', 'test.pdf']), \
+             patch('jfscripts.magick_imslp.check_dependencies'), \
+             patch('jfscripts.magick_imslp.run.run'):
+            magick_imslp.main()
+            self.assertEqual(magick_imslp.state.identifier, 'magick')
+
     @patch('jfscripts.magick_imslp.os.remove')
     @patch('jfscripts.magick_imslp.run.run')
     @patch('jfscripts.magick_imslp.check_dependencies')
