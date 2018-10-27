@@ -247,55 +247,30 @@ class TestUnit(TestCase):
         self.assertEqual(len(p['run_run'].call_args_list), 4)
 
     def test_global_state_object(self):
-        with patch('sys.argv',  ['cmd', 'convert', '--join', 'test.pdf']), \
-             patch('jfscripts.magick_imslp.check_dependencies'), \
-             patch('jfscripts.magick_imslp.run.run'):
-            magick_imslp.main()
-            self.assertEqual(magick_imslp.identifier, 'magick')
+        self.assertEqual(magick_imslp.identifier, 'magick')
 
-    @patch('jfscripts.magick_imslp.os.remove')
-    @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_dependencies')
-    def test_convert_ocr(self, check_dependencies, run, remove):
-        run.return_value.returncode = 0
-        with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif']):
-            magick_imslp.main()
-        cmd_args = run.call_args[0][0]
+    def test_convert_ocr(self):
+        p = patch_mulitple(('convert', '--ocr', 'one.tif'))
+        cmd_args = p['run_run'].call_args[0][0]
         self.assertNotEqual(cmd_args[1], '-l')
         self.assertEqual(cmd_args[3], 'pdf')
 
-    @patch('jfscripts.magick_imslp.os.remove')
-    @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_dependencies')
-    def test_convert_ocr_language(self, check_dependencies, run, remove):
-        run.return_value.returncode = 0
-        with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif',
-                   '--ocr-language', 'xxx']):
-            magick_imslp.main()
-        cmd_args = run.call_args[0][0]
+    def test_convert_ocr_language(self):
+        p = patch_mulitple(('convert', '--ocr', 'one.tif', '--ocr-language',
+                            'xxx'))
+        cmd_args = p['run_run'].call_args[0][0]
         self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx'])
 
-    @patch('jfscripts.magick_imslp.os.remove')
-    @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_dependencies')
-    def test_convert_ocr_language_multiple(self, check_dependencies, run,
-                                           remove):
-        run.return_value.returncode = 0
-        with patch('sys.argv',  ['cmd', 'convert', '--ocr', 'one.tif',
-                   '--ocr-language', 'xxx', 'yyy']):
-            magick_imslp.main()
-        cmd_args = run.call_args[0][0]
+    def test_convert_ocr_language_multiple(self):
+        p = patch_mulitple(('convert', '--ocr', 'one.tif', '--ocr-language',
+                            'xxx', 'yyy'))
+        cmd_args = p['run_run'].call_args[0][0]
         self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+yyy'])
 
-    @patch('jfscripts.magick_imslp.os.remove')
-    @patch('jfscripts.magick_imslp.run.run')
-    @patch('jfscripts.magick_imslp.check_dependencies')
-    def test_convert_ocr_languages_mid(self, check_dependencies, run, remove):
-        run.return_value.returncode = 0
-        with patch('sys.argv',  ['cmd', 'convert', '--ocr', '--ocr-language',
-                   'xxx', 'zzz', '--', 'one.tif']):
-            magick_imslp.main()
-        cmd_args = run.call_args[0][0]
+    def test_convert_ocr_languages_mid(self):
+        p = patch_mulitple(('convert', '--ocr', '--ocr-language',
+                            'xxx', 'zzz', '--', 'one.tif'))
+        cmd_args = p['run_run'].call_args[0][0]
         self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+zzz'])
 
 
