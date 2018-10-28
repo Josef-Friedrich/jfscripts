@@ -364,7 +364,7 @@ def _do_magick_convert_enlighten_border(width, height):
 
 def do_magick_convert(input_file, output_file, threshold=None,
                       enlighten_border=False, border=False, resize=False,
-                      deskew=False, trim=False, color=False):
+                      deskew=False, trim=False, color=False, quality=75):
     """
     Convert a input image file using the subcommand convert of the
     imagemagick suite.
@@ -401,7 +401,11 @@ def do_magick_convert(input_file, output_file, threshold=None,
     if not color:
         cmd_args += ['-compress', 'Group4', '-monochrome']
     else:
-        cmd_args += ['-quality', '40']
+        cmd_args += ['-quality', str(quality)]
+
+    if color and output_file.extension == 'pdf':
+        cmd_args += ['-compress', 'JPEG2000']
+
     cmd_args += [str(input_file), str(output_file)]
 
     return run.run(cmd_args)
@@ -638,6 +642,10 @@ def subcommand_samples(input_file, state):
 
     :return: None
     """
+    def fix_output_path(output_file):
+        output_file = str(output_file).replace('_-000', '')
+        return FilePath(output_file, absolute=True)
+
     if state.input_is_pdf:
         page_count = do_pdfinfo_page_count(input_file)
         page_number = random.randint(1, page_count)
@@ -654,9 +662,16 @@ def subcommand_samples(input_file, state):
             output_file = input_file.new(extension='tiff', append=appendix,
                                          del_substring=tmp_identifier)
             output_file = str(output_file).replace('_-000', '')
-            do_magick_convert(input_file, output_file,
+            do_magick_convert(input_file, fix_output_path(output_file),
                               threshold='{}%'.format(threshold))
 
+    if state.args.quality:
+        for quality in range(40, 100, 5):
+            appendix = '_quality-{}'.format(quality)
+            output_file = input_file.new(extension='pdf', append=appendix,
+                                         del_substring=tmp_identifier)
+            do_magick_convert(input_file, fix_output_path(output_file),
+                              color=True, quality=quality)
 
 ###############################################################################
 #
