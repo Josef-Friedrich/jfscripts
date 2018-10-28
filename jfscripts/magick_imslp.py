@@ -291,6 +291,21 @@ def get_parser():
         a multipaged PDF to build the series with differnt threshold values.',
     )
 
+    samples_parser.add_argument(
+        '-q',
+        '--quality',
+        action='store_true',
+        help='Compress to JPEG2000 images in different quality steps.',
+    )
+
+    samples_parser.add_argument(
+        '-t',
+        '--threshold',
+        action='store_true',
+        help='Convert images on different threshold values to monochrome \
+        black and white images.',
+    )
+
     return parser
 
 
@@ -633,13 +648,14 @@ def subcommand_samples(input_file, state):
         images = collect_images(state)
         input_file = FilePath(images[0], absolute=True)
 
-    for threshold in range(40, 100, 5):
-        appendix = '_threshold-{}'.format(threshold)
-        output_file = input_file.new(extension='tiff', append=appendix,
-                                     del_substring=tmp_identifier)
-        output_file = str(output_file).replace('_-000', '')
-        do_magick_convert(input_file, output_file,
-                          threshold='{}%'.format(threshold))
+    if state.args.threshold:
+        for threshold in range(40, 100, 5):
+            appendix = '_threshold-{}'.format(threshold)
+            output_file = input_file.new(extension='tiff', append=appendix,
+                                         del_substring=tmp_identifier)
+            output_file = str(output_file).replace('_-000', '')
+            do_magick_convert(input_file, output_file,
+                              threshold='{}%'.format(threshold))
 
 
 ###############################################################################
@@ -811,7 +827,11 @@ def main():
     # samples
     ##
 
-    elif args.subcommand in ['samples', 'ts', 't']:
+    elif args.subcommand in ['samples', 'sp', 's']:
+        if not state.args.threshold and not state.args.quality:
+            state.args.threshold = True
+            state.args.quality = True
+
         subcommand_samples(state.first_input_file, state)
         if not state.args.no_cleanup:
             cleanup(state)
