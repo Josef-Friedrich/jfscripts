@@ -49,12 +49,14 @@ def output_pdfinfo(pages=3):
         ])
 
 
-def patch_mulitple(args):
+def patch_mulitple(args, pdf_page_count=5):
     with patch('sys.argv',  ['cmd'] + list(args)), \
          patch('jfscripts.magick_imslp.check_dependencies'), \
          patch('jfscripts.magick_imslp.run.run') as run_run, \
          patch('jfscripts.magick_imslp.run.check_output') as \
          run_check_output, \
+         patch('jfscripts.magick_imslp.do_pdfinfo_page_count') as \
+         do_pdfinfo_page_count, \
          patch('os.path.getsize') as os_path_getsize, \
          patch('os.listdir') as os_listdir, \
          patch('os.remove') as os_remove:
@@ -65,6 +67,7 @@ def patch_mulitple(args):
         os_listdir.return_value = files
         os_path_getsize.return_value = 300
         run_run.return_value.returncode = 0
+        do_pdfinfo_page_count.return_value = 5
         magick_imslp.main()
     return {
         'run_run': run_run,
@@ -322,6 +325,41 @@ class TestUnitOnMain(TestCase):
         self.assertIn('convert', cli_list[3])
         self.assertIn('tesseract', cli_list[4])
         self.assertIn('pdftk', cli_list[5])
+
+    def test_samples_no_options_jpg(self):
+        p = patch_mulitple(('samples', 'test.jpg'))
+        call_args_list = p['run_run'].call_args_list
+        cli_list = convert_to_cli_list(call_args_list)
+        self.assertIn('test_threshold-40.tiff', cli_list[0])
+        self.assertIn('-threshold 40%', cli_list[0])
+        self.assertIn('test_quality-40.pdf', cli_list[12])
+        self.assertIn('-quality 40', cli_list[12])
+
+    def test_samples_option_threshold_jpg(self):
+        p = patch_mulitple(('samples',  '--threshold', 'test.jpg'))
+        call_args_list = p['run_run'].call_args_list
+        cli_list = convert_to_cli_list(call_args_list)
+        self.assertEqual(len(cli_list), 12)
+        self.assertIn('test_threshold-40.tiff', cli_list[0])
+        self.assertIn('-threshold 40%', cli_list[0])
+
+    def test_samples_option_quality_jpg(self):
+        p = patch_mulitple(('samples',  '--quality', 'test.jpg'))
+        call_args_list = p['run_run'].call_args_list
+        cli_list = convert_to_cli_list(call_args_list)
+        self.assertEqual(len(cli_list), 12)
+        self.assertIn('test_quality-40.pdf', cli_list[0])
+        self.assertIn('-quality 40', cli_list[0])
+
+    def test_samples_no_options_pdf(self):
+        p = patch_mulitple(('samples', 'test.pdf'))
+        call_args_list = p['run_run'].call_args_list
+        cli_list = convert_to_cli_list(call_args_list)
+        self.assertIn('pdfimages -tiff', cli_list[0])
+        self.assertIn('threshold-40.tiff', cli_list[1])
+        self.assertIn('-threshold 40%', cli_list[1])
+        self.assertIn('quality-40.pdf', cli_list[13])
+        self.assertIn('-quality 40', cli_list[13])
 
 
 class TestClassTimer(TestCase):
