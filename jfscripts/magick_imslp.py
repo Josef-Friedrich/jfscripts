@@ -274,17 +274,17 @@ def get_parser():
     )
 
     ##
-    # threshold
+    # samples
     ##
 
-    threshold_parser = subcommand.add_parser(
-        'threshold-series',
-        aliases=['threshold', 'ts', 't'],
+    samples_parser = subcommand.add_parser(
+        'samples',
+        aliases=['sp', 's'],
         description='Convert the samge image with different threshold values \
         to find the best threshold value.',
     )
 
-    threshold_parser.add_argument(
+    samples_parser.add_argument(
         'input_files',
         metavar='input_file',
         help='A image or a PDF file. The script selects randomly one page of \
@@ -613,7 +613,7 @@ def subcommand_join_convert_pdf(arguments):
     return output_file
 
 
-def subcommand_threshold_series(input_file, state):
+def subcommand_samples(input_file, state):
     """Generate a list of example files with different threshold values.
 
     :param input_file: The input file.
@@ -808,11 +808,11 @@ def main():
         do_pdftk_cat(files_converted, state)
 
     ##
-    # threshold-series
+    # samples
     ##
 
-    elif args.subcommand in ['threshold-series', 'ts', 't']:
-        subcommand_threshold_series(state.first_input_file, state)
+    elif args.subcommand in ['samples', 'ts', 't']:
+        subcommand_samples(state.first_input_file, state)
         if not state.args.no_cleanup:
             cleanup(state)
 

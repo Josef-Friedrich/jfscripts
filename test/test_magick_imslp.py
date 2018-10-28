@@ -140,9 +140,9 @@ class TestUnit(TestCase):
             '-region', '50x950+0+50', '-level', '0%,30%'])
 
     @patch('jfscripts.magick_imslp.do_magick_convert')
-    def test_subcommand_threshold_series(self, threshold):
+    def test_subcommand_samples(self, threshold):
         state = get_state()
-        magick_imslp.subcommand_threshold_series(FilePath('test.jpg'), state)
+        magick_imslp.subcommand_samples(FilePath('test.jpg'), state)
         self.assertEqual(threshold.call_count, 12)
 
     def test_check_threshold(self):
@@ -539,22 +539,22 @@ class TestIntegrationWithDependencies(TestCase):
         )
 
     ##
-    # threshold-series
+    # samples
     ##
 
-    def test_real_subcommand_threshold_series(self):
+    def test_real_subcommand_samples(self):
         tmp = copy(tmp_png1)
-        check_output(['magick-imslp.py', 'threshold-series', tmp])
+        check_output(['magick-imslp.py', 'samples', tmp])
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
         for threshold in result:
             suffix = '_threshold-{}.tiff'.format(threshold)
             path = tmp.replace('.tiff', suffix)
             self.assertExists(path, path)
 
-    def test_option_subcommand_threshold_series_on_pdf(self):
+    def test_option_subcommand_samples_on_pdf(self):
         pdf = copy(tmp_pdf)
         parent_dir = Path(pdf).parent
-        check_output(['magick-imslp.py', 'threshold-series', pdf])
+        check_output(['magick-imslp.py', 'samples', pdf])
         files = os.listdir(parent_dir)
         self.assertEqual(len(files), 13)
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
