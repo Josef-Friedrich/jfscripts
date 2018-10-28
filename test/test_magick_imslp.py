@@ -280,7 +280,6 @@ class TestUnitOnMain(TestCase):
         self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+zzz'])
 
     def test_convert_option_auto_color(self):
-
         p = patch_mulitple(('convert', '--auto-color', 'test.pdf'))
         call_args_list = p['run_run'].call_args_list
         # 0: pdfimages
@@ -297,6 +296,28 @@ class TestUnitOnMain(TestCase):
         self.assertIn('.jp2', cli_list[1])
 
         self.assertIn('.jp2', cli_list[2])
+
+        self.assertIn('convert', cli_list[3])
+        self.assertIn('tesseract', cli_list[4])
+        self.assertIn('pdftk', cli_list[5])
+
+    def test_convert_option_auto_black_white(self):
+        p = patch_mulitple(('convert', '--auto-black-white', 'test.pdf'))
+        call_args_list = p['run_run'].call_args_list
+        # 0: pdfimages
+        # 1: magick convert
+        # 2: tesseract
+        # 3: magick convert
+        # 4: tesseract
+        # 5: pdftk
+        cli_list = convert_to_cli_list(call_args_list)
+        self.assertIn('pdfimages -tiff', cli_list[0])
+
+        self.assertIn('-threshold', cli_list[1])
+        self.assertIn('-compress Group4 -monochrome', cli_list[1])
+        self.assertIn('.tiff', cli_list[1])
+
+        self.assertIn('.tiff', cli_list[2])
 
         self.assertIn('convert', cli_list[3])
         self.assertIn('tesseract', cli_list[4])
