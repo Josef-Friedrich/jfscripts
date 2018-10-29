@@ -196,7 +196,15 @@ def get_parser():
         '-p',
         '--pdf',
         action='store_true',
-        help='Generate a PDF file using CCITT Group 4 compression.',
+        help='Generate a PDF file.',
+    )
+
+    convert_parser.add_argument(
+        '-q',
+        '--quality',
+        default=False,
+        help='Compress the input images in a specific quality. The command '
+        'automatically turns into the color mode.',
     )
 
     convert_parser.add_argument(
@@ -592,6 +600,7 @@ def subcommand_convert_file(arguments):
         deskew=True,
         trim=True,
         color=state.args.color,
+        quality=state.args.quality,
     )
 
     if completed_process.returncode != 0:
@@ -778,6 +787,12 @@ def main():
 
         if state.args.auto_color:
             state.args.color = True
+
+        if state.args.quality and not state.args.color:
+            state.args.color = True
+
+        if state.args.color and not state.args.quality:
+            state.args.quality = 75
 
         if state.first_input_file.extension == 'pdf':
             if len(state.input_files) > 1:

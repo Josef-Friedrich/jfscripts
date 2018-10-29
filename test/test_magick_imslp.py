@@ -49,6 +49,13 @@ def output_pdfinfo(pages=3):
         ])
 
 
+def convert_to_cli_list(run_args_list):
+    output = []
+    for args in run_args_list:
+        output.append(' '.join(args[0][0]))
+    return output
+
+
 def patch_mulitple(args, pdf_page_count=5):
     with patch('sys.argv',  ['cmd'] + list(args)), \
          patch('jfscripts.magick_imslp.check_dependencies'), \
@@ -71,19 +78,13 @@ def patch_mulitple(args, pdf_page_count=5):
         magick_imslp.main()
     return {
         'run_run': run_run,
+        'run_run_cli_list': convert_to_cli_list(run_run.call_args_list),
         'run_check_output': run_check_output,
         'os_path_getsize': os_path_getsize,
         'os_listdir': os_listdir,
         'os_remove': os_remove,
         'state': magick_imslp.state,
     }
-
-
-def convert_to_cli_list(run_args_list):
-    output = []
-    for args in run_args_list:
-        output.append(' '.join(args[0][0]))
-    return output
 
 
 dependencies = check_dependencies(*magick_imslp.dependencies,
@@ -325,6 +326,11 @@ class TestUnitOnMain(TestCase):
         self.assertIn('convert', cli_list[3])
         self.assertIn('tesseract', cli_list[4])
         self.assertIn('pdftk', cli_list[5])
+
+    def test_convert_option_quality(self):
+        p = patch_mulitple(('convert', '--quality', '50', 'test.tiff'))
+        cli_list = p['run_run_cli_list']
+        self.assertIn('-quality 50', cli_list[0])
 
     def test_samples_no_options_jpg(self):
         p = patch_mulitple(('samples', 'test.jpg'))
