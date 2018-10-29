@@ -531,6 +531,16 @@ class TestIntegrationWithDependencies(TestCase):
         result = FilePath(jpg).new(extension='pdf')
         self.assertExists(str(result))
 
+    def test_mutually_exclusive_options_color(self):
+        process = run(['magick-imslp.py', 'convert', '--auto-color',
+                       '--auto-black-white', 'test.jpg'])
+        self.assertEqual(process.returncode, 2)
+
+    def test_mutually_exclusive_options_compress(self):
+        process = run(['magick-imslp.py', 'convert', '--threshold', '50',
+                       '--quality', '50', 'test.jpg'])
+        self.assertEqual(process.returncode, 2)
+
     ##
     # extract
     ##

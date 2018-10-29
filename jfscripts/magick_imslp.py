@@ -118,14 +118,17 @@ def get_parser():
         'resulting images are compressed using the CCITT group 4 compression.'
     )
 
-    convert_parser.add_argument(
+    convert_parser_color = convert_parser.add_mutually_exclusive_group()
+    convert_parser_compress = convert_parser.add_mutually_exclusive_group()
+
+    convert_parser_color.add_argument(
         '-a',
         '--auto-black-white',
         action='store_true',
         help='The same as --resize --ocr --join --pdf.',
     )
 
-    convert_parser.add_argument(
+    convert_parser_color.add_argument(
         '-C',
         '--auto-color',
         action='store_true',
@@ -199,7 +202,7 @@ def get_parser():
         help='Generate a PDF file.',
     )
 
-    convert_parser.add_argument(
+    convert_parser_compress.add_argument(
         '-q',
         '--quality',
         default=False,
@@ -214,7 +217,7 @@ def get_parser():
         help='Resize 200 percent.',
     )
 
-    convert_parser.add_argument(
+    convert_parser_compress.add_argument(
         '-t',
         '--threshold',
         default='50%',
