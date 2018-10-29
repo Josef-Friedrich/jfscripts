@@ -285,14 +285,13 @@ class TestUnitOnMain(TestCase):
 
     def test_convert_option_auto_color(self):
         p = patch_mulitple(('convert', '--auto-color', 'test.pdf'))
-        call_args_list = p['run_run'].call_args_list
         # 0: pdfimages
         # 1: magick convert
         # 2: tesseract
         # 3: magick convert
         # 4: tesseract
         # 5: pdftk
-        cli_list = convert_to_cli_list(call_args_list)
+        cli_list = p['run_run_cli_list']
         self.assertIn('pdfimages -tiff', cli_list[0])
 
         self.assertNotIn('-threshold', cli_list[1])
@@ -307,14 +306,13 @@ class TestUnitOnMain(TestCase):
 
     def test_convert_option_auto_black_white(self):
         p = patch_mulitple(('convert', '--auto-black-white', 'test.pdf'))
-        call_args_list = p['run_run'].call_args_list
         # 0: pdfimages
         # 1: magick convert
         # 2: tesseract
         # 3: magick convert
         # 4: tesseract
         # 5: pdftk
-        cli_list = convert_to_cli_list(call_args_list)
+        cli_list = p['run_run_cli_list']
         self.assertIn('pdfimages -tiff', cli_list[0])
 
         self.assertIn('-threshold', cli_list[1])
@@ -331,11 +329,11 @@ class TestUnitOnMain(TestCase):
         p = patch_mulitple(('convert', '--quality', '50', 'test.tiff'))
         cli_list = p['run_run_cli_list']
         self.assertIn('-quality 50', cli_list[0])
+        self.assertIn('.jp2', cli_list[0])
 
     def test_samples_no_options_jpg(self):
         p = patch_mulitple(('samples', 'test.jpg'))
-        call_args_list = p['run_run'].call_args_list
-        cli_list = convert_to_cli_list(call_args_list)
+        cli_list = p['run_run_cli_list']
         self.assertIn('test_threshold-40.tiff', cli_list[0])
         self.assertIn('-threshold 40%', cli_list[0])
         self.assertIn('test_quality-40.pdf', cli_list[12])
@@ -343,24 +341,21 @@ class TestUnitOnMain(TestCase):
 
     def test_samples_option_threshold_jpg(self):
         p = patch_mulitple(('samples',  '--threshold', 'test.jpg'))
-        call_args_list = p['run_run'].call_args_list
-        cli_list = convert_to_cli_list(call_args_list)
+        cli_list = p['run_run_cli_list']
         self.assertEqual(len(cli_list), 12)
         self.assertIn('test_threshold-40.tiff', cli_list[0])
         self.assertIn('-threshold 40%', cli_list[0])
 
     def test_samples_option_quality_jpg(self):
         p = patch_mulitple(('samples',  '--quality', 'test.jpg'))
-        call_args_list = p['run_run'].call_args_list
-        cli_list = convert_to_cli_list(call_args_list)
+        cli_list = p['run_run_cli_list']
         self.assertEqual(len(cli_list), 12)
         self.assertIn('test_quality-40.pdf', cli_list[0])
         self.assertIn('-quality 40', cli_list[0])
 
     def test_samples_no_options_pdf(self):
         p = patch_mulitple(('samples', 'test.pdf'))
-        call_args_list = p['run_run'].call_args_list
-        cli_list = convert_to_cli_list(call_args_list)
+        cli_list = p['run_run_cli_list']
         self.assertIn('pdfimages -tiff', cli_list[0])
         self.assertIn('threshold-40.tiff', cli_list[1])
         self.assertIn('-threshold 40%', cli_list[1])
