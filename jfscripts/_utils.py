@@ -48,6 +48,20 @@ class Run(object):
 
 
 def check_dependencies(*executables, raise_error=True):
+    """Check if the given executables are existing in $PATH.
+
+    :param tuple executables: A tuple of executables to check for their
+      existence in $PATH. Each element of the tuple can be either a string
+      (e. g. `pdfimages`) or a itself a tuple `('pdfimages', 'poppler')`.
+      The first entry of this tuple is the name of the executable the second
+      entry is a description text which is displayed in the raised exception.
+
+    :param bool raise_error: Raise an error if an executable doesn’t exist.
+
+    :return: True or False. True if all executables exist. False if one or
+      more executables not exist.
+    :rtype: bool
+    """
     errors = []
     for executable in executables:
         if isinstance(executable, tuple):
