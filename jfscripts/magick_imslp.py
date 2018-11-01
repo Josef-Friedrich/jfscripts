@@ -22,6 +22,9 @@ identifier = 'magick'
 tmp_identifier = '{}_{}'.format(identifier, uuid.uuid1())
 """Used for the identification of temporary files."""
 
+args = None
+"""The argparse object."""
+
 dependencies = (
     ('convert', 'imagemagick'),
     ('identify', 'imagemagick'),
@@ -627,22 +630,21 @@ def subcommand_convert_file(arguments):
       is the input_file file object and the second element is the state object.
     """
     input_file = arguments[0]
-    state = arguments[1]
 
-    if state.args.color:
+    if args.color:
         intermediate_extension = 'jp2'
     else:
         intermediate_extension = 'tiff'
 
-    if state.args.pdf:
+    if args.pdf:
         extension = 'pdf'
     else:
         extension = intermediate_extension
 
-    if state.args.ocr:
+    if args.ocr:
         extension = intermediate_extension
 
-    if not state.args.join:
+    if not args.join:
         output_file = input_file.new(extension=extension,
                                      del_substring='_' + tmp_identifier)
     else:
@@ -650,36 +652,36 @@ def subcommand_convert_file(arguments):
 
     if input_file == output_file:
         info_output_file = do_magick_identify(output_file)
-        if info_output_file['colors'] == 2 and not state.args.force:
+        if info_output_file['colors'] == 2 and not args.force:
             print('The output file seems to be already converted.')
             return output_file
 
-        if state.args.backup:
+        if args.backup:
             backup = input_file.new(append='_backup')
             shutil.copy2(str(input_file), str(backup))
 
     completed_process = do_magick_convert(
         input_file,
         output_file,
-        threshold=state.args.threshold,
-        enlighten_border=state.args.enlighten_border,
-        border=state.args.border,
-        resize=state.args.resize,
-        deskew=state.args.deskew,
-        trim=state.args.trim,
-        color=state.args.color,
-        quality=state.args.quality,
-        blur=state.args.blur,
+        threshold=args.threshold,
+        enlighten_border=args.enlighten_border,
+        border=args.border,
+        resize=args.resize,
+        deskew=args.deskew,
+        trim=args.trim,
+        color=args.color,
+        quality=args.quality,
+        blur=args.blur,
     )
 
     if completed_process.returncode != 0:
         raise RuntimeError('magick convert failed.')
 
-    if state.args.ocr:
+    if args.ocr:
         if output_file.extension not in ['tiff', 'jp2']:
             raise RuntimeError('Tesseract needs a tiff or a jp2 file as '
                                'input.')
-        completed_process = do_tesseract(output_file, state.args.ocr_language)
+        completed_process = do_tesseract(output_file, args.ocr_language)
         if completed_process.returncode != 0:
             raise RuntimeError('tesseract failed.')
         os.remove(str(output_file))
@@ -690,8 +692,7 @@ def subcommand_convert_file(arguments):
 
 def subcommand_join_convert_pdf(arguments):
     input_file = arguments[0]
-    state = arguments[1]
-    if state.args.ocr:
+    if args.ocr:
         extension = 'tiff'
     else:
         extension = 'pdf'
@@ -701,7 +702,7 @@ def subcommand_join_convert_pdf(arguments):
     if process.returncode != 0:
         raise RuntimeError('join: convert to pdf failed.')
 
-    if state.args.ocr:
+    if args.ocr:
         process = do_tesseract(output_file)
         if process.returncode != 0:
             raise RuntimeError('join: ocr failed.')
@@ -721,6 +722,9 @@ def subcommand_samples(input_file, state):
 
     :return: None
     """
+
+    args = state.args
+
     def fix_output_path(output_file):
         output_file = str(output_file).replace('_-000', '')
         return FilePath(output_file, absolute=True)
@@ -735,7 +739,7 @@ def subcommand_samples(input_file, state):
         images = collect_images(state)
         input_file = FilePath(images[0], absolute=True)
 
-    if state.args.threshold:
+    if args.threshold:
         for threshold in range(40, 100, 5):
             appendix = '_threshold-{}'.format(threshold)
             output_file = input_file.new(extension='tiff', append=appendix,
@@ -744,7 +748,7 @@ def subcommand_samples(input_file, state):
             do_magick_convert(input_file, fix_output_path(output_file),
                               threshold='{}%'.format(threshold))
 
-    if state.args.quality:
+    if args.quality:
         for quality in range(40, 100, 5):
             appendix = '_quality-{}'.format(quality)
             output_file = input_file.new(extension='pdf', append=appendix,
@@ -752,7 +756,7 @@ def subcommand_samples(input_file, state):
             do_magick_convert(input_file, fix_output_path(output_file),
                               color=True, quality=quality)
 
-    if state.args.blur:
+    if args.blur:
         for blur in (1, 2, 3, 4, 5):
             appendix = '_blur-{}'.format(blur)
             output_file = input_file.new(extension='pdf', append=appendix,
@@ -838,6 +842,7 @@ def main():
     :return: None
     """
     timer = Timer()
+    global args
     args = get_parser().parse_args()
 
     run.setup(verbose=args.verbose, colorize=args.colorize)
@@ -852,30 +857,30 @@ def main():
 
     if args.subcommand in ['convert', 'cv', 'c']:
 
-        if state.args.join and not state.args.pdf:
-            state.args.pdf = True
+        if args.join and not args.pdf:
+            args.pdf = True
 
-        if state.args.auto_black_white or state.args.auto_color:
-            state.args.deskew = True
-            state.args.join = True
-            state.args.ocr = True
-            state.args.pdf = True
-            state.args.trim = True
+        if args.auto_black_white or args.auto_color:
+            args.deskew = True
+            args.join = True
+            args.ocr = True
+            args.pdf = True
+            args.trim = True
 
-        if state.args.auto_black_white:
-            state.args.resize = True
+        if args.auto_black_white:
+            args.resize = True
 
-        if state.args.auto_color:
-            state.args.color = True
+        if args.auto_color:
+            args.color = True
 
-        if state.args.quality and not state.args.color:
-            state.args.color = True
+        if args.quality and not args.color:
+            args.color = True
 
-        if state.args.color and not state.args.quality:
-            state.args.quality = 75
+        if args.color and not args.quality:
+            args.quality = 75
 
-        if state.args.blur:
-            state.args.blur = state.args.blur[0]
+        if args.blur:
+            args.blur = args.blur[0]
 
         if state.first_input_file.extension == 'pdf':
             if len(state.input_files) > 1:
@@ -887,7 +892,7 @@ def main():
 
         input_files = convert_file_paths(input_files)
 
-        if state.args.multiprocessing:
+        if args.multiprocessing:
             pool = multiprocessing.Pool()
             data = []
             for input_file in input_files:
@@ -900,10 +905,10 @@ def main():
                     subcommand_convert_file((input_file, state))
                 )
 
-        if state.args.join:
+        if args.join:
             do_pdftk_cat(output_files, state)
 
-        if not state.args.no_cleanup:
+        if not args.no_cleanup:
             cleanup(state)
 
     ##
@@ -922,7 +927,7 @@ def main():
 
     elif args.subcommand in ['join', 'jn', 'j']:
         input_files = convert_file_paths(state.input_files)
-        if state.args.multiprocessing:
+        if args.multiprocessing:
             pool = multiprocessing.Pool()
             data = []
             for input_file in input_files:
@@ -941,14 +946,14 @@ def main():
     ##
 
     elif args.subcommand in ['samples', 'sp', 's']:
-        if state.args.blur == state.args.quality == \
-           state.args.threshold is False:
-            state.args.blur = True
-            state.args.quality = True
-            state.args.threshold = True
+        if args.blur == args.quality == \
+           args.threshold is False:
+            args.blur = True
+            args.quality = True
+            args.threshold = True
 
         subcommand_samples(state.first_input_file, state)
-        if not state.args.no_cleanup:
+        if not args.no_cleanup:
             cleanup(state)
 
     print('Execution time: {}'.format(timer.stop()))
