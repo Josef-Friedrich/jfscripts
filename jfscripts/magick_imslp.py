@@ -357,6 +357,13 @@ def get_parser():
     )
 
     samples_parser.add_argument(
+        '-b',
+        '--blur',
+        action='store_true',
+        help='Convert images on different blur values.',
+    )
+
+    samples_parser.add_argument(
         '-q',
         '--quality',
         action='store_true',
@@ -745,6 +752,14 @@ def subcommand_samples(input_file, state):
             do_magick_convert(input_file, fix_output_path(output_file),
                               color=True, quality=quality)
 
+    if state.args.blur:
+        for blur in (1, 2, 3, 4, 5):
+            appendix = '_blur-{}'.format(blur)
+            output_file = input_file.new(extension='pdf', append=appendix,
+                                         del_substring=tmp_identifier)
+            do_magick_convert(input_file, fix_output_path(output_file),
+                              color=True, blur=blur, quality=100)
+
 ###############################################################################
 #
 ###############################################################################
@@ -926,9 +941,11 @@ def main():
     ##
 
     elif args.subcommand in ['samples', 'sp', 's']:
-        if not state.args.threshold and not state.args.quality:
-            state.args.threshold = True
+        if state.args.blur == state.args.quality == \
+           state.args.threshold is False:
+            state.args.blur = True
             state.args.quality = True
+            state.args.threshold = True
 
         subcommand_samples(state.first_input_file, state)
         if not state.args.no_cleanup:

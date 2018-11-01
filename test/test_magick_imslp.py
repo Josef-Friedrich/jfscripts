@@ -147,7 +147,7 @@ class TestUnit(TestCase):
     def test_subcommand_samples(self, do_magick_convert):
         state = get_state()
         magick_imslp.subcommand_samples(FilePath('test.jpg'), state)
-        self.assertEqual(do_magick_convert.call_count, 24)
+        self.assertEqual(do_magick_convert.call_count, 29)
 
     def test_check_threshold(self):
         check = magick_imslp.check_threshold
@@ -245,6 +245,10 @@ class TestUnit(TestCase):
 
 class TestUnitOnMain(TestCase):
 
+    ###########################################################################
+    # convert
+    ###########################################################################
+
     def test_multiple_input_files(self):
         p = patch_mulitple(('convert', 'one.tif', 'two.tif'))
         call_args_list = p['run_run'].call_args_list
@@ -254,23 +258,6 @@ class TestUnitOnMain(TestCase):
 
     def test_global_state_object(self):
         self.assertEqual(magick_imslp.identifier, 'magick')
-
-    def test_samples_no_options_jpg(self):
-        p = patch_mulitple(('samples', 'test.jpg'))
-        cli_list = p['run_run_cli_list']
-        self.assertIn('test_threshold-40.tiff', cli_list[0])
-        self.assertIn('-threshold 40%', cli_list[0])
-        self.assertIn('test_quality-40.pdf', cli_list[12])
-        self.assertIn('-quality 40', cli_list[12])
-
-    def test_samples_no_options_pdf(self):
-        p = patch_mulitple(('samples', 'test.pdf'))
-        cli_list = p['run_run_cli_list']
-        self.assertIn('pdfimages -tiff', cli_list[0])
-        self.assertIn('threshold-40.tiff', cli_list[1])
-        self.assertIn('-threshold 40%', cli_list[1])
-        self.assertIn('quality-40.pdf', cli_list[13])
-        self.assertIn('-quality 40', cli_list[13])
 
     ##
     # Options
@@ -381,6 +368,29 @@ class TestUnitOnMain(TestCase):
         self.assertIn('-quality 50', cli_list[0])
         self.assertIn('.jp2', cli_list[0])
 
+    ###########################################################################
+    # samples
+    ###########################################################################
+
+    def test_samples_no_options_jpg(self):
+        p = patch_mulitple(('samples', 'test.jpg'))
+        cli_list = p['run_run_cli_list']
+        self.assertIn('test_threshold-40.tiff', cli_list[0])
+        self.assertIn('-threshold 40%', cli_list[0])
+        self.assertIn('test_quality-40.pdf', cli_list[12])
+        self.assertIn('-quality 40', cli_list[12])
+        self.assertIn('-blur 1', cli_list[24])
+
+    def test_samples_no_options_pdf(self):
+        p = patch_mulitple(('samples', 'test.pdf'))
+        cli_list = p['run_run_cli_list']
+        self.assertIn('pdfimages -tiff', cli_list[0])
+        self.assertIn('threshold-40.tiff', cli_list[1])
+        self.assertIn('-threshold 40%', cli_list[1])
+        self.assertIn('quality-40.pdf', cli_list[13])
+        self.assertIn('-quality 40', cli_list[13])
+
+    # quality
     def test_samples_option_quality_jpg(self):
         p = patch_mulitple(('samples',  '--quality', 'test.jpg'))
         cli_list = p['run_run_cli_list']
@@ -659,7 +669,7 @@ class TestIntegrationWithDependencies(TestCase):
         parent_dir = Path(pdf).parent
         check_output(['magick-imslp.py', 'samples', pdf])
         files = os.listdir(parent_dir)
-        self.assertEqual(len(files), 25)
+        self.assertEqual(len(files), 30)
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
         for threshold in result:
             filename = 'test_threshold-{}.tiff'.format(threshold)
