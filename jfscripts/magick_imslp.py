@@ -121,6 +121,7 @@ def get_parser():
     convert_parser_color = convert_parser.add_mutually_exclusive_group()
     convert_parser_compress = convert_parser.add_mutually_exclusive_group()
 
+    # auto_black_white
     convert_parser_color.add_argument(
         '-a',
         '--auto-black-white',
@@ -135,6 +136,7 @@ def get_parser():
         '.',
     )
 
+    # auto_color
     convert_parser_color.add_argument(
         '-C',
         '--auto-color',
@@ -150,6 +152,7 @@ def get_parser():
         '.',
     )
 
+    # backup
     convert_parser.add_argument(
         '-b',
         '--backup',
@@ -157,6 +160,7 @@ def get_parser():
         help='Backup original images (add _backup.ext to filename).',
     )
 
+    # border
     convert_parser.add_argument(
         '-B',
         '--border',
@@ -164,6 +168,7 @@ def get_parser():
         help='Frame the images with a white border.',
     )
 
+    # color
     convert_parser.add_argument(
         '-c',
         '--color',
@@ -171,6 +176,7 @@ def get_parser():
         help='The input files are colored images.',
     )
 
+    # deskew
     convert_parser.add_argument(
         '-d',
         '--deskew',
@@ -178,6 +184,33 @@ def get_parser():
         help='Straighten the images.',
     )
 
+    # enlighten_border
+    convert_parser.add_argument(
+        '-e',
+        '--enlighten-border',
+        action='store_true',
+        help='Enlighten the border.',
+    )
+
+    # force
+    convert_parser.add_argument(
+        '-f',
+        '--force',
+        action='store_true',
+        help='Overwrite the output file even if it exists and it seems to be '
+        'already converted.',
+    )
+
+    # join
+    convert_parser.add_argument(
+        '-j',
+        '--join',
+        action='store_true',
+        help='Join single paged PDF files to one PDF file. This option takes '
+        'only effect with the option --pdf.',
+    )
+
+    # ocr
     convert_parser.add_argument(
         '-o',
         '--ocr',
@@ -187,29 +220,7 @@ def get_parser():
         'The output format must be PDF.',
     )
 
-    convert_parser.add_argument(
-        '-e',
-        '--enlighten-border',
-        action='store_true',
-        help='Enlighten the border.',
-    )
-
-    convert_parser.add_argument(
-        '-f',
-        '--force',
-        action='store_true',
-        help='Overwrite the output file even if it exists and it seems to be '
-        'already converted.',
-    )
-
-    convert_parser.add_argument(
-        '-j',
-        '--join',
-        action='store_true',
-        help='Join single paged PDF files to one PDF file. This option takes '
-        'only effect with the option --pdf.',
-    )
-
+    # ocr_lanuage
     convert_parser.add_argument(
         '-l',
         '--ocr-language',
@@ -217,6 +228,7 @@ def get_parser():
         help='Run tesseract --list-langs to get your installed languages.',
     )
 
+    # pdf
     convert_parser.add_argument(
         '-p',
         '--pdf',
@@ -224,6 +236,7 @@ def get_parser():
         help='Generate a PDF file.',
     )
 
+    # quality
     convert_parser_compress.add_argument(
         '-q',
         '--quality',
@@ -232,6 +245,7 @@ def get_parser():
         'automatically turns into the color mode.',
     )
 
+    # resize
     convert_parser.add_argument(
         '-r',
         '--resize',
@@ -239,6 +253,7 @@ def get_parser():
         help='Resize 200 percent.',
     )
 
+    # threshold
     convert_parser_compress.add_argument(
         '-t',
         '--threshold',
@@ -249,6 +264,7 @@ def get_parser():
         black.',
     )
 
+    # trim
     convert_parser.add_argument(
         '-T',
         '--trim',

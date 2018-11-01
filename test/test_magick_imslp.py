@@ -252,74 +252,31 @@ class TestUnitOnMain(TestCase):
         self.assertIn('one.tif', ' '.join(call_args_list[0][0][0]))
         self.assertIn('two.tif', ' '.join(call_args_list[1][0][0]))
 
-    def test_input_pdf_join(self):
-        p = patch_mulitple(('convert', '--join', 'test.pdf'))
-        self.assertEqual(len(p['run_run'].call_args_list), 4)
-
     def test_global_state_object(self):
         self.assertEqual(magick_imslp.identifier, 'magick')
 
-    def test_convert_ocr(self):
-        p = patch_mulitple(('convert', '--ocr', 'one.tif'))
-        cmd_args = p['run_run'].call_args[0][0]
-        self.assertNotEqual(cmd_args[1], '-l')
-        self.assertEqual(cmd_args[3], 'pdf')
+    def test_samples_no_options_jpg(self):
+        p = patch_mulitple(('samples', 'test.jpg'))
+        cli_list = p['run_run_cli_list']
+        self.assertIn('test_threshold-40.tiff', cli_list[0])
+        self.assertIn('-threshold 40%', cli_list[0])
+        self.assertIn('test_quality-40.pdf', cli_list[12])
+        self.assertIn('-quality 40', cli_list[12])
 
-    def test_convert_ocr_language(self):
-        p = patch_mulitple(('convert', '--ocr', 'one.tif', '--ocr-language',
-                            'xxx'))
-        cmd_args = p['run_run'].call_args[0][0]
-        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx'])
-
-    def test_convert_ocr_language_multiple(self):
-        p = patch_mulitple(('convert', '--ocr', 'one.tif', '--ocr-language',
-                            'xxx', 'yyy'))
-        cmd_args = p['run_run'].call_args[0][0]
-        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+yyy'])
-
-    def test_convert_ocr_languages_mid(self):
-        p = patch_mulitple(('convert', '--ocr', '--ocr-language',
-                            'xxx', 'zzz', '--', 'one.tif'))
-        cmd_args = p['run_run'].call_args[0][0]
-        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+zzz'])
-
-    def test_convert_option_auto_color(self):
-        p = patch_mulitple(('convert', '--auto-color', 'test.pdf'))
-        # 0: pdfimages
-        # 1: magick convert
-        # 2: tesseract
-        # 3: magick convert
-        # 4: tesseract
-        # 5: pdftk
+    def test_samples_no_options_pdf(self):
+        p = patch_mulitple(('samples', 'test.pdf'))
         cli_list = p['run_run_cli_list']
         self.assertIn('pdfimages -tiff', cli_list[0])
+        self.assertIn('threshold-40.tiff', cli_list[1])
+        self.assertIn('-threshold 40%', cli_list[1])
+        self.assertIn('quality-40.pdf', cli_list[13])
+        self.assertIn('-quality 40', cli_list[13])
 
-        self.assertNotIn('-threshold', cli_list[1])
-        self.assertIn('-quality 75', cli_list[1])
-        self.assertIn('.jp2', cli_list[1])
+    ##
+    # Options
+    ##
 
-        self.assertIn('.jp2', cli_list[2])
-
-        self.assertIn('convert', cli_list[3])
-        self.assertIn('tesseract', cli_list[4])
-        self.assertIn('pdftk', cli_list[5])
-
-    def test_convert_option_deskew_true(self):
-        p = patch_mulitple(('convert', '--deskew', 'test.tiff'))
-        self.assertIn('-deskew 40%', p['run_run_cli_list'][0])
-
-    def test_convert_option_deskew_false(self):
-        p = patch_mulitple(('convert', 'test.tiff'))
-        self.assertNotIn('-deskew 40%', p['run_run_cli_list'][0])
-
-    def test_convert_option_trim_true(self):
-        p = patch_mulitple(('convert', '--trim', 'test.tiff'))
-        self.assertIn('-trim +repage', p['run_run_cli_list'][0])
-
-    def test_convert_option_trim_false(self):
-        p = patch_mulitple(('convert', 'test.tiff'))
-        self.assertNotIn('-trim +repage', p['run_run_cli_list'][0])
-
+    # auto_black_white
     def test_convert_option_auto_black_white(self):
         p = patch_mulitple(('convert', '--auto-black-white', 'test.pdf'))
         # 0: pdfimages
@@ -341,26 +298,83 @@ class TestUnitOnMain(TestCase):
         self.assertIn('tesseract', cli_list[4])
         self.assertIn('pdftk', cli_list[5])
 
+    # auto_color
+    def test_convert_option_auto_color(self):
+        p = patch_mulitple(('convert', '--auto-color', 'test.pdf'))
+        # 0: pdfimages
+        # 1: magick convert
+        # 2: tesseract
+        # 3: magick convert
+        # 4: tesseract
+        # 5: pdftk
+        cli_list = p['run_run_cli_list']
+        self.assertIn('pdfimages -tiff', cli_list[0])
+
+        self.assertNotIn('-threshold', cli_list[1])
+        self.assertIn('-quality 75', cli_list[1])
+        self.assertIn('.jp2', cli_list[1])
+
+        self.assertIn('.jp2', cli_list[2])
+
+        self.assertIn('convert', cli_list[3])
+        self.assertIn('tesseract', cli_list[4])
+        self.assertIn('pdftk', cli_list[5])
+
+    # deskew
+    def test_convert_option_deskew_true(self):
+        p = patch_mulitple(('convert', '--deskew', 'test.tiff'))
+        self.assertIn('-deskew 40%', p['run_run_cli_list'][0])
+
+    def test_convert_option_deskew_false(self):
+        p = patch_mulitple(('convert', 'test.tiff'))
+        self.assertNotIn('-deskew 40%', p['run_run_cli_list'][0])
+
+    # join
+    def test_input_pdf_join(self):
+        p = patch_mulitple(('convert', '--join', 'test.pdf'))
+        self.assertEqual(len(p['run_run'].call_args_list), 4)
+
+    # ocr
+    def test_convert_ocr(self):
+        p = patch_mulitple(('convert', '--ocr', 'one.tif'))
+        cmd_args = p['run_run'].call_args[0][0]
+        self.assertNotEqual(cmd_args[1], '-l')
+        self.assertEqual(cmd_args[3], 'pdf')
+
+    # ocr_language
+    def test_convert_ocr_language(self):
+        p = patch_mulitple(('convert', '--ocr', 'one.tif', '--ocr-language',
+                            'xxx'))
+        cmd_args = p['run_run'].call_args[0][0]
+        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx'])
+
+    def test_convert_ocr_language_multiple(self):
+        p = patch_mulitple(('convert', '--ocr', 'one.tif', '--ocr-language',
+                            'xxx', 'yyy'))
+        cmd_args = p['run_run'].call_args[0][0]
+        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+yyy'])
+
+    def test_convert_ocr_languages_mid(self):
+        p = patch_mulitple(('convert', '--ocr', '--ocr-language',
+                            'xxx', 'zzz', '--', 'one.tif'))
+        cmd_args = p['run_run'].call_args[0][0]
+        self.assertEqual(cmd_args[:3], ['tesseract', '-l', 'xxx+zzz'])
+
+    # trim
+    def test_convert_option_trim_true(self):
+        p = patch_mulitple(('convert', '--trim', 'test.tiff'))
+        self.assertIn('-trim +repage', p['run_run_cli_list'][0])
+
+    def test_convert_option_trim_false(self):
+        p = patch_mulitple(('convert', 'test.tiff'))
+        self.assertNotIn('-trim +repage', p['run_run_cli_list'][0])
+
+    # quality
     def test_convert_option_quality(self):
         p = patch_mulitple(('convert', '--quality', '50', 'test.tiff'))
         cli_list = p['run_run_cli_list']
         self.assertIn('-quality 50', cli_list[0])
         self.assertIn('.jp2', cli_list[0])
-
-    def test_samples_no_options_jpg(self):
-        p = patch_mulitple(('samples', 'test.jpg'))
-        cli_list = p['run_run_cli_list']
-        self.assertIn('test_threshold-40.tiff', cli_list[0])
-        self.assertIn('-threshold 40%', cli_list[0])
-        self.assertIn('test_quality-40.pdf', cli_list[12])
-        self.assertIn('-quality 40', cli_list[12])
-
-    def test_samples_option_threshold_jpg(self):
-        p = patch_mulitple(('samples',  '--threshold', 'test.jpg'))
-        cli_list = p['run_run_cli_list']
-        self.assertEqual(len(cli_list), 12)
-        self.assertIn('test_threshold-40.tiff', cli_list[0])
-        self.assertIn('-threshold 40%', cli_list[0])
 
     def test_samples_option_quality_jpg(self):
         p = patch_mulitple(('samples',  '--quality', 'test.jpg'))
@@ -369,14 +383,13 @@ class TestUnitOnMain(TestCase):
         self.assertIn('test_quality-40.pdf', cli_list[0])
         self.assertIn('-quality 40', cli_list[0])
 
-    def test_samples_no_options_pdf(self):
-        p = patch_mulitple(('samples', 'test.pdf'))
+    # threshold
+    def test_samples_option_threshold_jpg(self):
+        p = patch_mulitple(('samples',  '--threshold', 'test.jpg'))
         cli_list = p['run_run_cli_list']
-        self.assertIn('pdfimages -tiff', cli_list[0])
-        self.assertIn('threshold-40.tiff', cli_list[1])
-        self.assertIn('-threshold 40%', cli_list[1])
-        self.assertIn('quality-40.pdf', cli_list[13])
-        self.assertIn('-quality 40', cli_list[13])
+        self.assertEqual(len(cli_list), 12)
+        self.assertIn('test_threshold-40.tiff', cli_list[0])
+        self.assertIn('-threshold 40%', cli_list[0])
 
 
 class TestClassTimer(TestCase):
