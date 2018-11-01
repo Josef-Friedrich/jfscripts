@@ -160,6 +160,14 @@ def get_parser():
         help='Backup original images (add _backup.ext to filename).',
     )
 
+    # blur
+    convert_parser.add_argument(
+        '--blur',
+        nargs=1,
+        default=False,
+        help='Blur images for better jpeg2000 compression rate.',
+    )
+
     # border
     convert_parser.add_argument(
         '-B',
@@ -421,7 +429,8 @@ def _do_magick_convert_enlighten_border(width, height):
 
 def do_magick_convert(input_file, output_file, threshold=None,
                       enlighten_border=False, border=False, resize=False,
-                      deskew=False, trim=False, color=False, quality=75):
+                      deskew=False, trim=False, color=False, quality=75,
+                      blur=False):
     """
     Convert a input image file using the subcommand convert of the
     imagemagick suite.
@@ -454,6 +463,9 @@ def do_magick_convert(input_file, output_file, threshold=None,
 
     if border:
         cmd_args += ['-border', '5%', '-bordercolor', '#FFFFFF']
+
+    if blur:
+        cmd_args += ['-blur', str(blur)]
 
     if not color:
         cmd_args += ['-compress', 'Group4', '-monochrome']
@@ -650,6 +662,7 @@ def subcommand_convert_file(arguments):
         trim=state.args.trim,
         color=state.args.color,
         quality=state.args.quality,
+        blur=state.args.blur,
     )
 
     if completed_process.returncode != 0:
@@ -845,6 +858,9 @@ def main():
 
         if state.args.color and not state.args.quality:
             state.args.quality = 75
+
+        if state.args.blur:
+            state.args.blur = state.args.blur[0]
 
         if state.first_input_file.extension == 'pdf':
             if len(state.input_files) > 1:

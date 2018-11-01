@@ -320,6 +320,11 @@ class TestUnitOnMain(TestCase):
         self.assertIn('tesseract', cli_list[4])
         self.assertIn('pdftk', cli_list[5])
 
+    # blur
+    def test_convert_option_blur(self):
+        p = patch_mulitple(('convert', '--blur', '3', 'test.tiff'))
+        self.assertIn('-blur 3', p['run_run_cli_list'][0])
+
     # deskew
     def test_convert_option_deskew_true(self):
         p = patch_mulitple(('convert', '--deskew', 'test.tiff'))
