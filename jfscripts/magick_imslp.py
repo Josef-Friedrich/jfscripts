@@ -125,14 +125,29 @@ def get_parser():
         '-a',
         '--auto-black-white',
         action='store_true',
-        help='The same as --resize --ocr --join --pdf.',
+        help='The same as '
+        '--deskew '
+        '--join '
+        '--ocr '
+        '--pdf '
+        '--resize '
+        '--trim '
+        '.',
     )
 
     convert_parser_color.add_argument(
         '-C',
         '--auto-color',
         action='store_true',
-        help='The same as --color --resize --ocr --join --pdf.',
+        help='The same as '
+        '--color '
+        '--deskew '
+        '--join '
+        '--ocr '
+        '--pdf '
+        '--resize '
+        '--trim '
+        '.',
     )
 
     convert_parser.add_argument(
@@ -154,6 +169,13 @@ def get_parser():
         '--color',
         action='store_true',
         help='The input files are colored images.',
+    )
+
+    convert_parser.add_argument(
+        '-d',
+        '--deskew',
+        action='store_true',
+        help='Straighten the images.',
     )
 
     convert_parser.add_argument(
@@ -225,6 +247,14 @@ def get_parser():
         help='Threshold for monochrome, black and white images, default 50 \
         percent. Colors above the threshold will be white and below will be \
         black.',
+    )
+
+    convert_parser.add_argument(
+        '-T',
+        '--trim',
+        action='store_true',
+        help='This option removes any edges that are exactly the same color \
+        as the corner pixels.',
     )
 
     convert_parser.add_argument(
@@ -600,21 +630,22 @@ def subcommand_convert_file(arguments):
         enlighten_border=state.args.enlighten_border,
         border=state.args.border,
         resize=state.args.resize,
-        deskew=True,
-        trim=True,
+        deskew=state.args.deskew,
+        trim=state.args.trim,
         color=state.args.color,
         quality=state.args.quality,
     )
 
     if completed_process.returncode != 0:
-        raise('magick convert failed.')
+        raise RuntimeError('magick convert failed.')
 
     if state.args.ocr:
         if output_file.extension not in ['tiff', 'jp2']:
-            raise('Tesseract needs a tiff or a jp2 file as input.')
+            raise RuntimeError('Tesseract needs a tiff or a jp2 file as '
+                               'input.')
         completed_process = do_tesseract(output_file, state.args.ocr_language)
         if completed_process.returncode != 0:
-            raise('tesseract failed.')
+            raise RuntimeError('tesseract failed.')
         os.remove(str(output_file))
         output_file = output_file.new(extension='pdf')
 
@@ -632,12 +663,12 @@ def subcommand_join_convert_pdf(arguments):
     output_file = input_file.new(extension=extension)
     process = do_magick_convert(input_file, output_file)
     if process.returncode != 0:
-        raise('join: convert to pdf failed.')
+        raise RuntimeError('join: convert to pdf failed.')
 
     if state.args.ocr:
         process = do_tesseract(output_file)
         if process.returncode != 0:
-            raise('join: ocr failed.')
+            raise RuntimeError('join: ocr failed.')
         os.remove(str(output_file))
         output_file = output_file.new(extension='pdf')
 
@@ -781,9 +812,11 @@ def main():
             state.args.pdf = True
 
         if state.args.auto_black_white or state.args.auto_color:
+            state.args.deskew = True
             state.args.join = True
-            state.args.pdf = True
             state.args.ocr = True
+            state.args.pdf = True
+            state.args.trim = True
 
         if state.args.auto_black_white:
             state.args.resize = True

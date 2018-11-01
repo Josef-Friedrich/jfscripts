@@ -304,6 +304,22 @@ class TestUnitOnMain(TestCase):
         self.assertIn('tesseract', cli_list[4])
         self.assertIn('pdftk', cli_list[5])
 
+    def test_convert_option_deskew_true(self):
+        p = patch_mulitple(('convert', '--deskew', 'test.tiff'))
+        self.assertIn('-deskew 40%', p['run_run_cli_list'][0])
+
+    def test_convert_option_deskew_false(self):
+        p = patch_mulitple(('convert', 'test.tiff'))
+        self.assertNotIn('-deskew 40%', p['run_run_cli_list'][0])
+
+    def test_convert_option_trim_true(self):
+        p = patch_mulitple(('convert', '--trim', 'test.tiff'))
+        self.assertIn('-trim +repage', p['run_run_cli_list'][0])
+
+    def test_convert_option_trim_false(self):
+        p = patch_mulitple(('convert', 'test.tiff'))
+        self.assertNotIn('-trim +repage', p['run_run_cli_list'][0])
+
     def test_convert_option_auto_black_white(self):
         p = patch_mulitple(('convert', '--auto-black-white', 'test.pdf'))
         # 0: pdfimages
@@ -483,7 +499,8 @@ class TestIntegrationWithDependencies(TestCase):
         tiff = copy(tmp_tiff1)
 
         info_before = magick_imslp.do_magick_identify(FilePath(tiff))
-        check_output(['magick-imslp.py', 'convert', '--border', tiff])
+        check_output(['magick-imslp.py', 'convert', '--deskew', '--trim',
+                      '--border', tiff])
         info_after = magick_imslp.do_magick_identify(FilePath(tiff))
 
         self.assertEqual(info_before['width'], 300)
@@ -502,7 +519,7 @@ class TestIntegrationWithDependencies(TestCase):
             .decode('utf-8')
         self.assertIn('convert', out)
         self.assertIn('.png', out)
-        self.assertIn('-deskew', out)
+        self.assertIn('PixelsPerInch', out)
 
     def test_option_no_cleanup(self):
 
