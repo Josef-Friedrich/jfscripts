@@ -6,6 +6,7 @@ from jfscripts._utils import check_dependencies, Run, FilePath
 import argparse
 import multiprocessing
 import os
+import PyPDF2
 import random
 import re
 import shutil
@@ -616,6 +617,38 @@ def cleanup(state):
     for work_file in os.listdir(state.common_path):
         if tmp_identifier in work_file:
             os.remove(os.path.join(state.common_path, work_file))
+
+
+def adjust_pdf_page_size(input_file, output_file, margin):
+    input_file = open(str(input_file), 'rb')
+    input_pdf = PyPDF2.PdfFileReader(input_file)
+
+    output_file = PyPDF2.PdfFileWriter()
+
+    max_width = 0
+    max_height = 0
+    for page in input_pdf.pages:
+        width = page.mediaBox.getWidth()
+        height = page.mediaBox.getHeight()
+
+        if width > max_width:
+            max_width = width
+
+        if height > max_height:
+            max_height = height
+
+    for page in input_pdf.pages:
+
+        blank = PyPDF2.pdfPageObject.createBlankPage(
+            None,
+            max_width + 2 * margin,
+            max_height + 2 * margin,
+        )
+        blank.mergeScaledTranslatedPage(page, 1, margin, margin)
+        output_file.addPage(blank)
+
+    output_file = open(str(output_file), 'wb')
+    output.write(output_file)
 
 
 ###############################################################################
