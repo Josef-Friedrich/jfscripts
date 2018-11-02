@@ -242,6 +242,18 @@ class TestUnit(TestCase):
             ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf'],
         )
 
+    #
+    def test_unify_page_size(self):
+        with patch('PyPDF2.PdfFileReader'), \
+             patch('PyPDF2.PdfFileWriter'), \
+             patch('PyPDF2.pdf.PageObject.createBlankPage'), \
+             patch('jfscripts.magick_imslp.open'):
+            magick_imslp.unify_page_size(
+                FilePath('test.pdf'),
+                FilePath('out.pdf'),
+                20
+            )
+
 
 class TestUnitOnMain(TestCase):
 

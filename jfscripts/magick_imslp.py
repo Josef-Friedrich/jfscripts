@@ -13,6 +13,7 @@ import shutil
 import time
 import uuid
 
+
 run = Run()
 state = None
 """The global :class:`State` object."""
@@ -619,11 +620,11 @@ def cleanup(state):
             os.remove(os.path.join(state.common_path, work_file))
 
 
-def adjust_pdf_page_size(input_file, output_file, margin):
+def unify_page_size(input_file, output_file, margin):
     input_file = open(str(input_file), 'rb')
     input_pdf = PyPDF2.PdfFileReader(input_file)
 
-    output_file = PyPDF2.PdfFileWriter()
+    output_pdf = PyPDF2.PdfFileWriter()
 
     max_width = 0
     max_height = 0
@@ -639,16 +640,16 @@ def adjust_pdf_page_size(input_file, output_file, margin):
 
     for page in input_pdf.pages:
 
-        blank = PyPDF2.pdfPageObject.createBlankPage(
+        blank = PyPDF2.pdf.PageObject.createBlankPage(
             None,
             max_width + 2 * margin,
             max_height + 2 * margin,
         )
         blank.mergeScaledTranslatedPage(page, 1, margin, margin)
-        output_file.addPage(blank)
+        output_pdf.addPage(blank)
 
     output_file = open(str(output_file), 'wb')
-    output.write(output_file)
+    output_file.write(output_pdf)
 
 
 ###############################################################################
