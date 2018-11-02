@@ -116,6 +116,18 @@ if dependencies and internet:
     )
 
 
+def mock_pdf2_pages(*page_dimensions):
+    output = []
+    for dimension in page_dimensions:
+        mock = Mock()
+        mediaBox = Mock()
+        mediaBox.getWidth.return_value = dimension[0]
+        mediaBox.getHeight.return_value = dimension[1]
+        mock.mediaBox = mediaBox
+        output.append(mock)
+    return output
+
+
 class TestUnit(TestCase):
 
     @mock.patch('jfscripts.magick_imslp.run.check_output')
@@ -242,17 +254,22 @@ class TestUnit(TestCase):
             ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf'],
         )
 
-    #
     def test_unify_page_size(self):
-        with patch('PyPDF2.PdfFileReader'), \
+        with patch('PyPDF2.PdfFileReader') as reader, \
              patch('PyPDF2.PdfFileWriter'), \
-             patch('PyPDF2.pdf.PageObject.createBlankPage'), \
+             patch('PyPDF2.pdf.PageObject.createBlankPage') as blank, \
              patch('jfscripts.magick_imslp.open'):
+            reader.return_value.pages = mock_pdf2_pages((1, 2))
             magick_imslp.unify_page_size(
                 FilePath('test.pdf'),
                 FilePath('out.pdf'),
-                20
+                3
             )
+            blank.assert_called_with(None, 7, 8)
+            args = blank.return_value.mergeScaledTranslatedPage.call_args[0]
+            self.assertEqual(args[1], 1)
+            self.assertEqual(args[2], 3)
+            self.assertEqual(args[3], 3)
 
 
 class TestUnitOnMain(TestCase):
