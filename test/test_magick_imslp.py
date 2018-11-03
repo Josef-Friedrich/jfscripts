@@ -730,6 +730,24 @@ class TestIntegrationWithDependencies(TestCase):
             filename = 'test_threshold-{}.tiff'.format(threshold)
             self.assertIn(filename, files)
 
+    ##
+    # unify
+    ##
+
+    def test_unify_none_pdf(self):
+        process = run(['magick-imslp.py', 'unify', 'test.jpg'])
+        self.assertEqual(process.returncode, 1)
+
+    def test_unify_multiple_pdfs(self):
+        process = run(['magick-imslp.py', 'unify', 'test.pdf', 'test2.pdf'])
+        self.assertEqual(process.returncode, 2)
+
+    def test_unify_real(self):
+        pdf = copy(tmp_pdf)
+        run(['magick-imslp.py', 'unify', pdf])
+        result = FilePath(pdf).new(append='_unifed')
+        self.assertExists(str(result))
+
 
 if __name__ == '__main__':
     unittest.main()

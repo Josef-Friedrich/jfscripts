@@ -109,7 +109,8 @@ magick-imslp.py
 .. code-block:: text
 
     usage: magick-imslp.py [-h] [-c] [-m] [-N] [-v] [-V]
-                           {convert,con,c,extract,ex,e,join,jn,j,samples,sp,s} ...
+                           {convert,con,c,extract,ex,e,join,jn,j,samples,sp,s,unify,un,u}
+                           ...
     
     A wrapper script for imagemagick to process image files suitable for imslp.org
     (International Music Score Library Project). See also
@@ -118,7 +119,7 @@ magick-imslp.py
     CCITT group 4.
     
     positional arguments:
-      {convert,con,c,extract,ex,e,join,jn,j,samples,sp,s}
+      {convert,con,c,extract,ex,e,join,jn,j,samples,sp,s,unify,un,u}
                             Subcommand
     
     optional arguments:

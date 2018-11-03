@@ -383,6 +383,22 @@ def get_parser():
         black and white images.',
     )
 
+    ##
+    # samples
+    ##
+
+    unify_parser = subcommand.add_parser(
+        'unify',
+        aliases=['un', 'u'],
+        description='Unify the page size of all pages in a PDF File.',
+    )
+
+    unify_parser.add_argument(
+        'input_files',
+        metavar='input_file',
+        help='A PDF file',
+    )
+
     return parser
 
 
@@ -649,7 +665,7 @@ def unify_page_size(input_file, output_file, margin):
         output_pdf.addPage(blank)
 
     output_file = open(str(output_file), 'wb')
-    output_file.write(output_pdf)
+    output_pdf.write(output_file)
 
 
 ###############################################################################
@@ -989,6 +1005,23 @@ def main():
         subcommand_samples(state.first_input_file, state)
         if not args.no_cleanup:
             cleanup(state)
+
+    ##
+    # unify
+    ##
+
+    elif args.subcommand in ['unify', 'un', 'u']:
+        if state.first_input_file.extension != 'pdf':
+                raise ValueError('Specify a PDF file.')
+
+        if len(state.input_files) > 1:
+            raise ValueError('Specify only one PDF file.')
+
+        unify_page_size(
+            state.first_input_file,
+            state.first_input_file.new(append='_unifed'),
+            10
+        )
 
     print('Execution time: {}'.format(timer.stop()))
 
