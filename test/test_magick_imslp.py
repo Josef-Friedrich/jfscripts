@@ -116,18 +116,6 @@ if dependencies and internet:
     )
 
 
-def mock_pdf2_pages(*page_dimensions):
-    output = []
-    for dimension in page_dimensions:
-        mock = Mock()
-        mediaBox = Mock()
-        mediaBox.getWidth.return_value = dimension[0]
-        mediaBox.getHeight.return_value = dimension[1]
-        mock.mediaBox = mediaBox
-        output.append(mock)
-    return output
-
-
 class TestUnit(TestCase):
 
     @mock.patch('jfscripts.magick_imslp.run.check_output')
@@ -254,22 +242,60 @@ class TestUnit(TestCase):
             ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf'],
         )
 
-    def test_unify_page_size(self):
+
+class TestUnitUnifyPageSize(TestCase):
+
+    def mock_pdf2_pages(self, *page_dimensions):
+        output = []
+        for dimension in page_dimensions:
+            mock = Mock()
+            mediaBox = Mock()
+            mediaBox.getWidth.return_value = dimension[0]
+            mediaBox.getHeight.return_value = dimension[1]
+            mock.mediaBox = mediaBox
+            output.append(mock)
+        return output
+
+    def run(self, margin, *dimensions):
         with patch('PyPDF2.PdfFileReader') as reader, \
              patch('PyPDF2.PdfFileWriter'), \
              patch('PyPDF2.pdf.PageObject.createBlankPage') as blank, \
              patch('jfscripts.magick_imslp.open'):
-            reader.return_value.pages = mock_pdf2_pages((1, 2))
+            reader.return_value.pages = self.mock_pdf2_pages(*dimensions)
             magick_imslp.unify_page_size(
                 FilePath('test.pdf'),
                 FilePath('out.pdf'),
-                3
+                margin
             )
-            blank.assert_called_with(None, 7, 8)
-            args = blank.return_value.mergeScaledTranslatedPage.call_args[0]
-            self.assertEqual(args[1], 1)
-            self.assertEqual(args[2], 3)
-            self.assertEqual(args[3], 3)
+        return {
+            'reader': reader,
+            'blank': blank,
+        }
+
+    def test_single_page(self):
+        result = self.run(3, (1, 2))
+        blank = result['blank']
+        blank.assert_called_with(None, 7, 8)
+        args = blank.return_value.mergeScaledTranslatedPage.call_args[0]
+        self.assertEqual(args[1], 1)
+        self.assertEqual(args[2], 3)
+        self.assertEqual(args[3], 3)
+
+    def test_multiple_page(self):
+        result = self.run(3, (1, 2), (3, 4))
+        blank = result['blank']
+        blank.assert_called_with(None, 9, 10)
+        args = blank.return_value.mergeScaledTranslatedPage.call_args[0]
+        self.assertEqual(args[1], 1)
+        self.assertEqual(args[2], 3)
+        self.assertEqual(args[3], 3)
+
+    def test_margin(self):
+        result = self.run(4, (1, 2))
+        blank = result['blank']
+        args = blank.return_value.mergeScaledTranslatedPage.call_args[0]
+        self.assertEqual(args[2], 4)
+        self.assertEqual(args[3], 4)
 
 
 class TestUnitOnMain(TestCase):
