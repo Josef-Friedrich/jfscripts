@@ -24,3 +24,6 @@ class Capturing(list):
             sys.stdout = self._pipe
         elif self.channel == 'stderr':
             sys.stderr = self._pipe
+
+    def tostring(self):
+        return '\n'.join(self)
