@@ -1,6 +1,7 @@
 from io import StringIO
 from termcolor import colored
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -142,10 +143,19 @@ class FilePath(object):
 
 
 class Capturing(list):
-    """see https://stackoverflow.com/a/16571630"""
+    """
+    .. seealso::
 
-    def __init__(self, channel='stdout'):
+        `Answer on Stackoverflow <https://stackoverflow.com/a/16571630>`_
+    """
+
+    def __init__(self, channel='stdout', clean_ansi=False):
+        """
+        :param str channel: `stdout` or `stderr`.
+        :param bool clean_ansi: Clean out ANSI colors from the captured output.
+        """
         self.channel = channel
+        self.clean_ansi = clean_ansi
 
     def __enter__(self):
         if self.channel == 'stdout':
@@ -157,7 +167,11 @@ class Capturing(list):
         return self
 
     def __exit__(self, *args):
-        self.extend(self._stringio.getvalue().splitlines())
+        if self.clean_ansi:
+            output = self._clean_ansi(self._stringio.getvalue())
+        else:
+            output = self._stringio.getvalue()
+        self.extend(output.splitlines())
         del self._stringio
         if self.channel == 'stdout':
             sys.stdout = self._pipe
@@ -165,4 +179,10 @@ class Capturing(list):
             sys.stderr = self._pipe
 
     def tostring(self):
+        """Convert the output into an string. By default a list of output
+        lines is returned."""
         return '\n'.join(self)
+
+    @staticmethod
+    def _clean_ansi(text):
+        return re.sub(r'\x1b.*?m', '', text)

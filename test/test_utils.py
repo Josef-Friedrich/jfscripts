@@ -2,10 +2,11 @@ from _helper import Capturing
 from _helper import TestCase
 from jfscripts import _utils
 from jfscripts._utils import FilePath
+from termcolor import colored
 from unittest import mock
 import os
-import unittest
 import tempfile
+import unittest
 
 
 class TestClassRun(TestCase):
@@ -137,11 +138,25 @@ class TestCapturing(TestCase):
             print('test')
         self.assertEqual(output, ['test'])
 
+    def test_argument_clean_ansi_not_colored(self):
+        with _utils.Capturing(clean_ansi=True) as output:
+            print('test')
+        self.assertEqual(output, ['test'])
+
+    def test_argument_clean_ansi_colored(self):
+        with _utils.Capturing(clean_ansi=True) as output:
+            print(colored('test', color='red'))
+        self.assertEqual(output, ['test'])
+
     def test_method_tostring(self):
         with _utils.Capturing() as output:
             print('test1')
             print('test2')
         self.assertEqual(output.tostring(), 'test1\ntest2')
+
+    def test_method_clean_ansi(self):
+        result = _utils.Capturing._clean_ansi('ls \x1b[34m-l\x1b[0m')
+        self.assertEqual(result, 'ls -l')
 
 
 if __name__ == '__main__':
