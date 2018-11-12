@@ -103,3 +103,5 @@ ENV/
 export.txt
 
 doc/html/
+tags
+*.swp

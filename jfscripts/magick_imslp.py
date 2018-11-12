@@ -655,13 +655,20 @@ def unify_page_size(input_file, output_file, margin):
             max_height = height
 
     for page in input_pdf.pages:
+        width = page.mediaBox.getWidth()
+        height = page.mediaBox.getHeight()
 
         blank = PyPDF2.pdf.PageObject.createBlankPage(
             None,
             max_width + 2 * margin,
             max_height + 2 * margin,
         )
-        blank.mergeScaledTranslatedPage(page, 1, margin, margin)
+        blank.mergeScaledTranslatedPage(
+                page,
+                1,
+                margin + (max_width - width) / 2,
+                margin + (max_height - height) / 2,
+        )
         output_pdf.addPage(blank)
 
     output_file = open(str(output_file), 'wb')
