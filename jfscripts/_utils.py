@@ -143,17 +143,20 @@ class FilePath(object):
 
 
 class Capturing(list):
-    """
+    """Capture the stdout or stdeer output. This class is designed for unit
+    tests.
+
+    :param str channel: `stdout` or `stderr`.
+    :param bool clean_ansi: Clean out ANSI colors from the captured output.
+
     .. seealso::
 
         `Answer on Stackoverflow <https://stackoverflow.com/a/16571630>`_
     """
 
     def __init__(self, channel='stdout', clean_ansi=False):
-        """
-        :param str channel: `stdout` or `stderr`.
-        :param bool clean_ansi: Clean out ANSI colors from the captured output.
-        """
+        if channel not in ['stdout', 'stderr']:
+            raise(ValueError('“channel” must be either “stdout” or “stderr”'))
         self.channel = channel
         self.clean_ansi = clean_ansi
 
