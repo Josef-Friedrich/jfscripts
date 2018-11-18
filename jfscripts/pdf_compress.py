@@ -384,7 +384,7 @@ def get_parser():
     )
 
     ##
-    # samples
+    # unify
     ##
 
     unify_parser = subcommand.add_parser(
@@ -397,6 +397,14 @@ def get_parser():
         'input_files',
         metavar='input_file',
         help='A PDF file',
+    )
+
+    # margin
+    unify_parser.add_argument(
+        '-m',
+        '--margin',
+        nargs=1,
+        help='Add a margin around each page in the PDF file.',
     )
 
     return parser
@@ -636,7 +644,7 @@ def cleanup(state):
             os.remove(os.path.join(state.common_path, work_file))
 
 
-def unify_page_size(input_file, output_file, margin):
+def unify_page_size(input_file, output_file, margin=0):
     input_file = open(str(input_file), 'rb')
     input_pdf = PyPDF2.PdfFileReader(input_file)
 
@@ -1024,10 +1032,15 @@ def main():
         if len(state.input_files) > 1:
             raise ValueError('Specify only one PDF file.')
 
+        if args.margin:
+            margin = int(args.margin[0])
+        else:
+            margin = 0
+
         unify_page_size(
             state.first_input_file,
             state.first_input_file.new(append='_unifed'),
-            10
+            margin,
         )
 
     print('Execution time: {}'.format(timer.stop()))

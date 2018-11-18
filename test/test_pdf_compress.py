@@ -748,6 +748,12 @@ class TestIntegrationWithDependencies(TestCase):
         result = FilePath(pdf).new(append='_unifed')
         self.assertExists(str(result))
 
+    def test_unify_margin(self):
+        pdf = copy(tmp_pdf)
+        run(['pdf-compress.py', 'unify', '--margin', '10', pdf])
+        result = FilePath(pdf).new(append='_unifed')
+        self.assertExists(str(result))
+
 
 if __name__ == '__main__':
     unittest.main()
