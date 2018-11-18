@@ -34,10 +34,10 @@ jfscripts.mac_to_eui64 module
 
 .. automodule:: jfscripts.mac_to_eui64
 
-jfscripts.magick_imslp module
+jfscripts.pdf_compress module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: jfscripts.magick_imslp
+.. automodule:: jfscripts.pdf_compress
 
 jfscripts.image_into_pdf module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

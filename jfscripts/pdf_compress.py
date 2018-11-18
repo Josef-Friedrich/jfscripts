@@ -534,7 +534,7 @@ def do_pdfimages(pdf_file, state, page_number=None, use_tmp_identifier=True):
     :param pdf_file: The input file.
     :type pdf_file: jfscripts._utils.FilePath
     :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
+    :type state: jfscripts.pdf_compress.State
     :param int page_number: Extract only the page with a specific page number.
 
     :return: The return value of `subprocess.run`.
@@ -572,7 +572,7 @@ def do_pdftk_cat(pdf_files, state):
 
     :param list pdf_files: a list of PDF files
     :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
+    :type state: jfscripts.pdf_compress.State
 
     :return: None
     """
@@ -608,7 +608,7 @@ def collect_images(state):
     """Collection all images using the temporary identifier in a common path.
 
     :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
+    :type state: jfscripts.pdf_compress.State
 
     :return: A sorted list of image paths.
     :rtype: list
@@ -627,7 +627,7 @@ def cleanup(state):
     """Delete all images using the temporary identifier in a common path.
 
     :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
+    :type state: jfscripts.pdf_compress.State
 
     :return: None"""
 
@@ -775,7 +775,7 @@ def subcommand_samples(input_file, state):
     :param input_file: The input file.
     :type input_file: jfscripts._utils.FilePath
     :param state: The state object.
-    :type state: jfscripts.magick_imslp.State
+    :type state: jfscripts.pdf_compress.State
 
     :return: None
     """

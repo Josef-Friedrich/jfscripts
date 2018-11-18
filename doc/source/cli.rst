@@ -46,13 +46,13 @@ mac-to-eui64.py
    :prog: mac-to-eui64.py
 
 
-magick-imslp.py
+pdf-compress.py
 ---------------
 
 .. argparse::
-   :module: jfscripts.magick_imslp
+   :module: jfscripts.pdf_compress
    :func: get_parser
-   :prog: magick-imslp.py
+   :prog: pdf-compress.py
 
 
 image-into-pdf.py

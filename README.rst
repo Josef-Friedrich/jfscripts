@@ -103,12 +103,12 @@ mac-to-eui64.py
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
-magick-imslp.py
+pdf-compress.py
 ---------------
 
 .. code-block:: text
 
-    usage: magick-imslp.py [-h] [-c] [-m] [-N] [-v] [-V]
+    usage: pdf-compress.py [-h] [-c] [-m] [-N] [-v] [-V]
                            {convert,con,c,extract,ex,e,join,jn,j,samples,sp,s,unify,un,u}
                            ...
     

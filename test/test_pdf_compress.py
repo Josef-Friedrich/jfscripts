@@ -1,8 +1,8 @@
 from _helper import TestCase, download, check_internet_connectifity
 from jfscripts import list_files
-from jfscripts import magick_imslp
+from jfscripts import pdf_compress
 from jfscripts._utils import check_dependencies
-from jfscripts.magick_imslp import FilePath, State, Timer
+from jfscripts.pdf_compress import FilePath, State, Timer
 from pathlib import Path
 from subprocess import check_output, run
 from unittest import mock
@@ -58,24 +58,24 @@ def convert_to_cli_list(run_args_list):
 
 def patch_mulitple(args, pdf_page_count=5):
     with patch('sys.argv',  ['cmd'] + list(args)), \
-         patch('jfscripts.magick_imslp.check_dependencies'), \
-         patch('jfscripts.magick_imslp.run.run') as run_run, \
-         patch('jfscripts.magick_imslp.run.check_output') as \
+         patch('jfscripts.pdf_compress.check_dependencies'), \
+         patch('jfscripts.pdf_compress.run.run') as run_run, \
+         patch('jfscripts.pdf_compress.run.check_output') as \
          run_check_output, \
-         patch('jfscripts.magick_imslp.do_pdfinfo_page_count') as \
+         patch('jfscripts.pdf_compress.do_pdfinfo_page_count') as \
          do_pdfinfo_page_count, \
          patch('os.path.getsize') as os_path_getsize, \
          patch('os.listdir') as os_listdir, \
          patch('os.remove') as os_remove:
 
-        tiff1 = '1_{}.tiff'.format(magick_imslp.tmp_identifier)
-        tiff2 = '2_{}.tiff'.format(magick_imslp.tmp_identifier)
+        tiff1 = '1_{}.tiff'.format(pdf_compress.tmp_identifier)
+        tiff2 = '2_{}.tiff'.format(pdf_compress.tmp_identifier)
         files = [tiff2, tiff1, '3.tif']
         os_listdir.return_value = files
         os_path_getsize.return_value = 300
         run_run.return_value.returncode = 0
         do_pdfinfo_page_count.return_value = 5
-        magick_imslp.main()
+        pdf_compress.main()
     return {
         'run_run': run_run,
         'run_run_cli_list': convert_to_cli_list(run_run.call_args_list),
@@ -83,74 +83,74 @@ def patch_mulitple(args, pdf_page_count=5):
         'os_path_getsize': os_path_getsize,
         'os_listdir': os_listdir,
         'os_remove': os_remove,
-        'state': magick_imslp.state,
+        'state': pdf_compress.state,
     }
 
 
-dependencies = check_dependencies(*magick_imslp.dependencies,
+dependencies = check_dependencies(*pdf_compress.dependencies,
                                   raise_error=False)
 internet = check_internet_connectifity()
 
 if dependencies and internet:
     tmp_pdf = download('pdf/scans.pdf',
-                       local_path='/tmp/jfs-magick_imslp/test.pdf')
+                       local_path='/tmp/jfs-pdf_compress/test.pdf')
     tmp_png1 = download(
         'png/bach-busoni_300.png',
-        local_path='/tmp/jfscripts/magick_imslp/bach-busoni_300.png'
+        local_path='/tmp/jfscripts/pdf_compress/bach-busoni_300.png'
     )
     tmp_png2 = download(
         'png/liszt-weinen_300.png',
-        local_path='/tmp/jfscripts/magick_imslp/liszt-weinen_300.png'
+        local_path='/tmp/jfscripts/pdf_compress/liszt-weinen_300.png'
     )
     tmp_tiff1 = download(
         'tiff/bach-busoni_300.tiff',
-        local_path='/tmp/jfscripts/magick_imslp/bach-busoni_300.tiff'
+        local_path='/tmp/jfscripts/pdf_compress/bach-busoni_300.tiff'
     )
     tmp_tiff2 = download(
         'tiff/liszt-weinen_300.tiff',
-        local_path='/tmp/jfscripts/magick_imslp/liszt-weinen_300.tiff'
+        local_path='/tmp/jfscripts/pdf_compress/liszt-weinen_300.tiff'
     )
     tmp_ocr = download(
         'ocr/Walter-Benjamin_Einbahnstrasse.jpg',
-        local_path='/tmp/jfscripts/magick_imslp/ocr.jpg'
+        local_path='/tmp/jfscripts/pdf_compress/ocr.jpg'
     )
 
 
 class TestUnit(TestCase):
 
-    @mock.patch('jfscripts.magick_imslp.run.check_output')
+    @mock.patch('jfscripts.pdf_compress.run.check_output')
     def test_get_pdf_info(self, check_output):
         check_output.return_value = output_pdfinfo(5)
-        result = magick_imslp.do_pdfinfo_page_count('test.pdf')
+        result = pdf_compress.do_pdfinfo_page_count('test.pdf')
         self.assertEqual(result, 5)
 
-    @mock.patch('jfscripts.magick_imslp.run.check_output')
+    @mock.patch('jfscripts.pdf_compress.run.check_output')
     def test_do_magick_identify(self, check_output):
         check_output.side_effect = [
             bytes('2552'.encode('utf-8')),
             bytes('3656'.encode('utf-8')),
             bytes('256'.encode('utf-8')),
         ]
-        result = magick_imslp.do_magick_identify(FilePath('test.pdf'))
+        result = pdf_compress.do_magick_identify(FilePath('test.pdf'))
         self.assertEqual(result, {'width': 2552, 'height': 3656,
                                   'colors': 256})
 
     def test_enlighten_border(self):
-        result = magick_imslp._do_magick_convert_enlighten_border(1000, 1000)
+        result = pdf_compress._do_magick_convert_enlighten_border(1000, 1000)
         self.assertEqual(result, [
             '-region', '950x50', '-level', '0%,30%',
             '-region', '50x950+950', '-level', '0%,30%',
             '-region', '950x50+50+950', '-level', '0%,30%',
             '-region', '50x950+0+50', '-level', '0%,30%'])
 
-    @patch('jfscripts.magick_imslp.do_magick_convert')
+    @patch('jfscripts.pdf_compress.do_magick_convert')
     def test_subcommand_samples(self, do_magick_convert):
         state = get_state()
-        magick_imslp.subcommand_samples(FilePath('test.jpg'), state)
+        pdf_compress.subcommand_samples(FilePath('test.jpg'), state)
         self.assertEqual(do_magick_convert.call_count, 29)
 
     def test_check_threshold(self):
-        check = magick_imslp.check_threshold
+        check = pdf_compress.check_threshold
         self.assertEqual(check(1), '1%')
         self.assertEqual(check('2'), '2%')
         self.assertEqual(check('3%'), '3%')
@@ -167,7 +167,7 @@ class TestUnit(TestCase):
     def test_do_pdfimages(self):
         state = get_state()
         with mock.patch('subprocess.run') as mock_run:
-            magick_imslp.do_pdfimages(FilePath('test.pdf'), state)
+            pdf_compress.do_pdfimages(FilePath('test.pdf'), state)
             args = mock_run.call_args[0][0]
             self.assertEqual(args[0], 'pdfimages')
             self.assertEqual(args[1], '-tiff')
@@ -181,22 +181,22 @@ class TestUnit(TestCase):
     @patch('os.listdir')
     def test_collect_images(self, listdir, getsize):
         state = get_state()
-        tiff1 = '1_{}.tif'.format(magick_imslp.tmp_identifier)
-        tiff2 = '2_{}.tif'.format(magick_imslp.tmp_identifier)
+        tiff1 = '1_{}.tif'.format(pdf_compress.tmp_identifier)
+        tiff2 = '2_{}.tif'.format(pdf_compress.tmp_identifier)
         files = [tiff2, tiff1, '3.tif']
         listdir.return_value = files
         getsize.return_value = 300
-        output = magick_imslp.collect_images(state)
+        output = pdf_compress.collect_images(state)
         self.assertEqual(output, [
             os.path.join(state.common_path, tiff1),
             os.path.join(state.common_path, tiff2),
         ])
 
-    @patch('jfscripts.magick_imslp._do_magick_command')
-    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.pdf_compress._do_magick_command')
+    @patch('jfscripts.pdf_compress.run.run')
     def test_do_magick_convert_without_kwargs(self, run, _do_magick_command):
         _do_magick_command.return_value = ['convert']
-        magick_imslp.do_magick_convert(
+        pdf_compress.do_magick_convert(
             FilePath('test.tif'),
             FilePath('test.tiff'),
         )
@@ -205,11 +205,11 @@ class TestUnit(TestCase):
              '-monochrome', 'test.tif', 'test.tiff']
         )
 
-    @patch('jfscripts.magick_imslp._do_magick_command')
-    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.pdf_compress._do_magick_command')
+    @patch('jfscripts.pdf_compress.run.run')
     def test_do_magick_convert_kwargs(self, run, _do_magick_command):
         _do_magick_command.return_value = ['convert']
-        magick_imslp.do_magick_convert(
+        pdf_compress.do_magick_convert(
             FilePath('test.tif'),
             FilePath('test.pdf'),
             threshold='60%',
@@ -226,17 +226,17 @@ class TestUnit(TestCase):
              '-monochrome', 'test.tif', 'test.pdf']
         )
 
-    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.pdf_compress.run.run')
     def test_do_tesseract(self, run):
-        magick_imslp.do_tesseract(FilePath('test.tiff'))
+        pdf_compress.do_tesseract(FilePath('test.tiff'))
         self.assertEqual(
             run.call_args[0][0],
             ['tesseract', '-l', 'deu+eng', 'test.tiff', 'test', 'pdf'],
         )
 
-    @patch('jfscripts.magick_imslp.run.run')
+    @patch('jfscripts.pdf_compress.run.run')
     def test_do_tesseract_one_language(self, run):
-        magick_imslp.do_tesseract(FilePath('test.tiff'), languages=['deu'])
+        pdf_compress.do_tesseract(FilePath('test.tiff'), languages=['deu'])
         self.assertEqual(
             run.call_args[0][0],
             ['tesseract', '-l', 'deu', 'test.tiff', 'test', 'pdf'],
@@ -260,9 +260,9 @@ class TestUnitUnifyPageSize(TestCase):
         with patch('PyPDF2.PdfFileReader') as reader, \
              patch('PyPDF2.PdfFileWriter'), \
              patch('PyPDF2.pdf.PageObject.createBlankPage') as blank, \
-             patch('jfscripts.magick_imslp.open'):
+             patch('jfscripts.pdf_compress.open'):
             reader.return_value.pages = self.mock_pdf2_pages(*dimensions)
-            magick_imslp.unify_page_size(
+            pdf_compress.unify_page_size(
                 FilePath('test.pdf'),
                 FilePath('out.pdf'),
                 margin
@@ -312,7 +312,7 @@ class TestUnitOnMain(TestCase):
         self.assertIn('two.tif', ' '.join(call_args_list[1][0][0]))
 
     def test_global_state_object(self):
-        self.assertEqual(magick_imslp.identifier, 'magick')
+        self.assertEqual(pdf_compress.identifier, 'magick')
 
     ##
     # Options
@@ -486,22 +486,22 @@ class TestClassState(TestCase):
 class TestModuleGlobals(TestCase):
 
     def test_identifier(self):
-        self.assertEqual(magick_imslp.identifier, 'magick')
+        self.assertEqual(pdf_compress.identifier, 'magick')
 
     def test_tmp_identifier(self):
-        self.assertEqual(len(magick_imslp.tmp_identifier),
-                         len(magick_imslp.identifier) + 36 + 1)
+        self.assertEqual(len(pdf_compress.tmp_identifier),
+                         len(pdf_compress.identifier) + 36 + 1)
 
 
 class TestIntegration(TestCase):
 
     def test_command_line_interface(self):
-        self.assertIsExecutable('magick_imslp')
+        self.assertIsExecutable('pdf_compress')
 
     def test_option_version(self):
-        output = subprocess.check_output(['magick-imslp.py', '--version'])
+        output = subprocess.check_output(['pdf-compress.py', '--version'])
         self.assertTrue(output)
-        self.assertIn('magick-imslp.py', str(output))
+        self.assertIn('pdf-compress.py', str(output))
 
 
 @unittest.skipIf(not dependencies or not internet,
@@ -513,7 +513,7 @@ class TestIntegrationWithDependencies(TestCase):
     ##
 
     def test_input_file_pdf_exception(self):
-        out = run(['magick-imslp.py', 'convert', 'test1.pdf', 'test2.pdf'],
+        out = run(['pdf-compress.py', 'convert', 'test1.pdf', 'test2.pdf'],
                   encoding='utf-8', stderr=subprocess.PIPE)
         self.assertEqual(out.returncode, 1)
         self.assertIn('Specify only one PDF file.', out.stderr)
@@ -522,7 +522,7 @@ class TestIntegrationWithDependencies(TestCase):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
         path = FilePath(tmp)
-        check_output(['magick-imslp.py', 'convert', tmp])
+        check_output(['pdf-compress.py', 'convert', tmp])
         result = ('0.tiff', '1.tiff', '2.tiff')
         for test_file in result:
             self.assertExists(path.base + '-00' + test_file, test_file)
@@ -530,27 +530,27 @@ class TestIntegrationWithDependencies(TestCase):
     def test_with_real_pdf_join(self):
         tmp = copy(tmp_pdf)
         self.assertExists(tmp)
-        check_output(['magick-imslp.py', 'convert', '--pdf', '--join', tmp])
+        check_output(['pdf-compress.py', 'convert', '--pdf', '--join', tmp])
         self.assertExists(os.path.join(str(Path(tmp).parent),
                           'test_magick.pdf'))
 
     def test_option_join_without_pdf(self):
         pdf = copy(tmp_pdf)
         self.assertExists(pdf)
-        check_output(['magick-imslp.py', 'convert', '--join', pdf])
+        check_output(['pdf-compress.py', 'convert', '--join', pdf])
         self.assertExists(os.path.join(str(Path(pdf).parent),
                                        'test_magick.pdf'))
 
     def test_option_join_pdf_source_png(self):
         self.assertExists(tmp_png1)
         self.assertExists(tmp_png2)
-        check_output(['magick-imslp.py', 'convert', '--pdf', '--join',
+        check_output(['pdf-compress.py', 'convert', '--pdf', '--join',
                       tmp_png1, tmp_png2])
         self.assertExists(os.path.join(str(Path(tmp_png1).parent),
                                        'bach-busoni_300_magick.pdf'))
 
     def test_real_invalid_threshold(self):
-        out = run(['magick-imslp.py', 'convert', '--threshold', '1000',
+        out = run(['pdf-compress.py', 'convert', '--threshold', '1000',
                    'test.pdf'],
                   encoding='utf-8', stderr=subprocess.PIPE)
         self.assertEqual(out.returncode, 2)
@@ -559,32 +559,32 @@ class TestIntegrationWithDependencies(TestCase):
 
     def test_real_backup_no_backup(self):
         tmp = copy(tmp_tiff1)
-        check_output(['magick-imslp.py', 'convert', tmp])
+        check_output(['pdf-compress.py', 'convert', tmp])
         backup = FilePath(tmp).new(append='_backup', extension='tiff')
         self.assertExistsNot(str(backup))
 
     def test_real_backup_do_backup(self):
         tmp = copy(tmp_tiff1)
-        check_output(['magick-imslp.py', 'convert', '--backup', tmp])
+        check_output(['pdf-compress.py', 'convert', '--backup', tmp])
         backup = FilePath(tmp).new(append='_backup', extension='tiff')
         self.assertExists(str(backup))
 
     def test_already_converted(self):
         tmp = copy(tmp_tiff1)
-        check_output(['magick-imslp.py', 'convert', tmp])
+        check_output(['pdf-compress.py', 'convert', tmp])
         # The test fails sometimes. Maybe we should wait a little bit.
         time.sleep(2)
-        out = check_output(['magick-imslp.py', 'convert', tmp])
+        out = check_output(['pdf-compress.py', 'convert', tmp])
         self.assertIn('The output file seems to be already converted.',
                       out.decode('utf-8'))
 
     def test_option_border(self):
         tiff = copy(tmp_tiff1)
 
-        info_before = magick_imslp.do_magick_identify(FilePath(tiff))
-        check_output(['magick-imslp.py', 'convert', '--deskew', '--trim',
+        info_before = pdf_compress.do_magick_identify(FilePath(tiff))
+        check_output(['pdf-compress.py', 'convert', '--deskew', '--trim',
                       '--border', tiff])
-        info_after = magick_imslp.do_magick_identify(FilePath(tiff))
+        info_after = pdf_compress.do_magick_identify(FilePath(tiff))
 
         self.assertEqual(info_before['width'], 300)
         self.assertEqual(info_after['width'], 311)
@@ -594,11 +594,11 @@ class TestIntegrationWithDependencies(TestCase):
 
     def test_option_enlighten_border(self):
         png = copy(tmp_png1)
-        check_output(['magick-imslp.py', 'convert', '--enlighten-border', png])
+        check_output(['pdf-compress.py', 'convert', '--enlighten-border', png])
 
     def test_option_verbose(self):
         png = copy(tmp_png1)
-        out = check_output(['magick-imslp.py', '--verbose', 'convert', png]) \
+        out = check_output(['pdf-compress.py', '--verbose', 'convert', png]) \
             .decode('utf-8')
         self.assertIn('convert', out)
         self.assertIn('.png', out)
@@ -613,13 +613,13 @@ class TestIntegrationWithDependencies(TestCase):
             files = os.listdir(parent_dir)
             self.assertEqual(count, len(files))
 
-        assert_no_cleanup(['magick-imslp.py', 'convert'], 4)
-        assert_no_cleanup(['magick-imslp.py', '--no-cleanup', 'convert'], 7)
+        assert_no_cleanup(['pdf-compress.py', 'convert'], 4)
+        assert_no_cleanup(['pdf-compress.py', '--no-cleanup', 'convert'], 7)
 
     def test_option_ocr_input_pdf(self):
         pdf = copy(tmp_pdf)
         parent_dir = Path(pdf).parent
-        check_output(['magick-imslp.py', 'convert', '--ocr', pdf])
+        check_output(['pdf-compress.py', 'convert', '--ocr', pdf])
         files = os.listdir(parent_dir)
         for num in [0, 1, 2]:
             self.assertIn('test-00{}.pdf'.format(num), files)
@@ -627,17 +627,17 @@ class TestIntegrationWithDependencies(TestCase):
 
     def test_option_ocr_input_jpg(self):
         jpg = copy(tmp_ocr)
-        check_output(['magick-imslp.py', 'convert', '--ocr', jpg])
+        check_output(['pdf-compress.py', 'convert', '--ocr', jpg])
         result = FilePath(jpg).new(extension='pdf')
         self.assertExists(str(result))
 
     def test_mutually_exclusive_options_color(self):
-        process = run(['magick-imslp.py', 'convert', '--auto-color',
+        process = run(['pdf-compress.py', 'convert', '--auto-color',
                        '--auto-black-white', 'test.jpg'])
         self.assertEqual(process.returncode, 2)
 
     def test_mutually_exclusive_options_compress(self):
-        process = run(['magick-imslp.py', 'convert', '--threshold', '50',
+        process = run(['pdf-compress.py', 'convert', '--threshold', '50',
                        '--quality', '50', 'test.jpg'])
         self.assertEqual(process.returncode, 2)
 
@@ -648,7 +648,7 @@ class TestIntegrationWithDependencies(TestCase):
     def test_extract(self):
         pdf = copy(tmp_pdf)
         parent_dir = Path(pdf).parent
-        check_output(['magick-imslp.py', 'extract', pdf])
+        check_output(['pdf-compress.py', 'extract', pdf])
         files = os.listdir(parent_dir)
         for num in [0, 1, 2]:
             self.assertIn('test-00{}.tif'.format(num), files)
@@ -656,7 +656,7 @@ class TestIntegrationWithDependencies(TestCase):
 
     def test_extract_no_pdf(self):
         png = copy(tmp_png1)
-        process = run(['magick-imslp.py', 'extract', png],
+        process = run(['pdf-compress.py', 'extract', png],
                       encoding='utf-8', stderr=subprocess.PIPE)
         self.assertEqual(process.returncode, 1)
         self.assertIn('Specify a PDF file.', process.stderr)
@@ -668,7 +668,7 @@ class TestIntegrationWithDependencies(TestCase):
     def test_join(self):
         png1 = copy(tmp_png1)
         png2 = copy(tmp_png2)
-        check_output(['magick-imslp.py', 'join', png1, png2])
+        check_output(['pdf-compress.py', 'join', png1, png2])
         self.assertExists(
             os.path.join(
                 list_files.common_path((png1, png2)),
@@ -679,7 +679,7 @@ class TestIntegrationWithDependencies(TestCase):
     def test_join_ocr(self):
         png1 = copy(tmp_png1)
         png2 = copy(tmp_png2)
-        check_output(['magick-imslp.py', 'join', '--ocr', png1, png2])
+        check_output(['pdf-compress.py', 'join', '--ocr', png1, png2])
         self.assertExists(
             os.path.join(
                 list_files.common_path((png1, png2)),
@@ -688,17 +688,17 @@ class TestIntegrationWithDependencies(TestCase):
         )
 
     def test_subcommand_join_convert_pdf(self):
-        joined_pdf = '/tmp/jfscripts/magick_imslp/bach-busoni_300_magick.pdf'
-        check_output(['magick-imslp.py', 'join', tmp_png1, tmp_png2])
+        joined_pdf = '/tmp/jfscripts/pdf_compress/bach-busoni_300_magick.pdf'
+        check_output(['pdf-compress.py', 'join', tmp_png1, tmp_png2])
         self.assertExists(joined_pdf)
         os.remove(joined_pdf)
 
     def test_subcommand_join_alias(self):
-        joined_pdf = '/tmp/jfscripts/magick_imslp/bach-busoni_300_magick.pdf'
-        check_output(['magick-imslp.py', 'jn', tmp_png1, tmp_png2])
+        joined_pdf = '/tmp/jfscripts/pdf_compress/bach-busoni_300_magick.pdf'
+        check_output(['pdf-compress.py', 'jn', tmp_png1, tmp_png2])
         self.assertExists(joined_pdf)
         os.remove(joined_pdf)
-        check_output(['magick-imslp.py', 'j', tmp_png1, tmp_png2])
+        check_output(['pdf-compress.py', 'j', tmp_png1, tmp_png2])
         self.assertExists(joined_pdf)
         os.remove(joined_pdf)
 
@@ -708,7 +708,7 @@ class TestIntegrationWithDependencies(TestCase):
 
     def test_real_subcommand_samples(self):
         tmp = copy(tmp_png1)
-        check_output(['magick-imslp.py', 'samples', tmp])
+        check_output(['pdf-compress.py', 'samples', tmp])
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
         for threshold in result:
             suffix = '_threshold-{}.tiff'.format(threshold)
@@ -722,7 +722,7 @@ class TestIntegrationWithDependencies(TestCase):
     def test_option_subcommand_samples_on_pdf(self):
         pdf = copy(tmp_pdf)
         parent_dir = Path(pdf).parent
-        check_output(['magick-imslp.py', 'samples', pdf])
+        check_output(['pdf-compress.py', 'samples', pdf])
         files = os.listdir(parent_dir)
         self.assertEqual(len(files), 30)
         result = (40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95)
@@ -735,16 +735,16 @@ class TestIntegrationWithDependencies(TestCase):
     ##
 
     def test_unify_none_pdf(self):
-        process = run(['magick-imslp.py', 'unify', 'test.jpg'])
+        process = run(['pdf-compress.py', 'unify', 'test.jpg'])
         self.assertEqual(process.returncode, 1)
 
     def test_unify_multiple_pdfs(self):
-        process = run(['magick-imslp.py', 'unify', 'test.pdf', 'test2.pdf'])
+        process = run(['pdf-compress.py', 'unify', 'test.pdf', 'test2.pdf'])
         self.assertEqual(process.returncode, 2)
 
     def test_unify_real(self):
         pdf = copy(tmp_pdf)
-        run(['magick-imslp.py', 'unify', pdf])
+        run(['pdf-compress.py', 'unify', pdf])
         result = FilePath(pdf).new(append='_unifed')
         self.assertExists(str(result))
 

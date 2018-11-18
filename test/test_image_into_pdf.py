@@ -23,7 +23,7 @@ if dependencies and internet:
                        local_path='/tmp/jfs-image_into_pdf/test.pdf')
     tmp_png = download(
         'png/bach-busoni_300.png',
-        local_path='/tmp/jfscripts/magick_imslp/bach-busoni_300.png'
+        local_path='/tmp/jfscripts/pdf_compress/bach-busoni_300.png'
     )
 
 
