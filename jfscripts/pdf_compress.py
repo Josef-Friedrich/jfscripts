@@ -138,6 +138,7 @@ def get_parser():
         '--pdf '
         '--resize '
         '--trim '
+        '--unify '
         '.',
     )
 
@@ -154,6 +155,7 @@ def get_parser():
         '--pdf '
         '--resize '
         '--trim '
+        '--unify '
         '.',
     )
 
