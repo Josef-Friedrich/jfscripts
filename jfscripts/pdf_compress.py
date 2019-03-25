@@ -1046,7 +1046,7 @@ def main():
 
     elif args.subcommand in ['unify', 'un', 'u']:
         if state.first_input_file.extension != 'pdf':
-                raise ValueError('Specify a PDF file.')
+            raise ValueError('Specify a PDF file.')
 
         if len(state.input_files) > 1:
             raise ValueError('Specify only one PDF file.')

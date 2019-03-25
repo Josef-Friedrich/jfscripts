@@ -31,22 +31,22 @@ def copy(path):
 
 
 def output_pdfinfo(pages=3):
-        return ''.join([
-            'Creator:        c42pdf v. 0.12 args:  -p 658.80x866.52\n',
-            'Producer:       PDFlib V0.6 (C) Thomas Merz 1997-98\n',
-            'CreationDate:   Sat Jan  2 21:11:06 2010 CET\n',
-            'Tagged:         no\n',
-            'UserProperties: no\nSuspects:       no\n',
-            'Form:           none\n',
-            'JavaScript:     no\n',
-            'Pages:          {}\n'.format(pages),
-            'Encrypted:      no\n',
-            'Page size:      658.8 x 866.52 pts\n',
-            'Page rot:       0\n',
-            'File size:      343027 bytes\n',
-            'Optimized:      no\n',
-            'PDF version:    1.1\n',
-        ])
+    return ''.join([
+        'Creator:        c42pdf v. 0.12 args:  -p 658.80x866.52\n',
+        'Producer:       PDFlib V0.6 (C) Thomas Merz 1997-98\n',
+        'CreationDate:   Sat Jan  2 21:11:06 2010 CET\n',
+        'Tagged:         no\n',
+        'UserProperties: no\nSuspects:       no\n',
+        'Form:           none\n',
+        'JavaScript:     no\n',
+        'Pages:          {}\n'.format(pages),
+        'Encrypted:      no\n',
+        'Page size:      658.8 x 866.52 pts\n',
+        'Page rot:       0\n',
+        'File size:      343027 bytes\n',
+        'Optimized:      no\n',
+        'PDF version:    1.1\n',
+    ])
 
 
 def convert_to_cli_list(run_args_list):
