@@ -62,8 +62,8 @@ def get_parser():
     :rtype: argparse.ArgumentParser
     """
     parser = argparse.ArgumentParser(
-        description='A wrapper script for imagemagick to process image \
-        files suitable for imslp.org (International Music Score Library \
+        description='Convert and compress PDF scans. \
+        Make scans suitable for imslp.org (International Music Score Library \
         Project). See also http://imslp.org/wiki/IMSLP:Musiknoten_beisteuern. \
         The output files are monochrome bitmap images at a resolution of \
         600 dpi and the compression format CCITT group 4.',
@@ -138,6 +138,7 @@ def get_parser():
         '--pdf '
         '--resize '
         '--trim '
+        '--unify '
         '.',
     )
 
@@ -154,6 +155,7 @@ def get_parser():
         '--pdf '
         '--resize '
         '--trim '
+        '--unify '
         '.',
     )
 
@@ -284,6 +286,15 @@ def get_parser():
         action='store_true',
         help='This option removes any edges that are exactly the same color \
         as the corner pixels.',
+    )
+
+    # unify
+    convert_parser.add_argument(
+        '-u',
+        '--unify',
+        action='store_true',
+        help='Unify the page size of all pages in a PDF File. The output must \
+        be a joined PDF.',
     )
 
     convert_parser.add_argument(
@@ -931,6 +942,7 @@ def main():
             args.ocr = True
             args.pdf = True
             args.trim = True
+            args.unify = True
 
         if args.auto_black_white:
             args.resize = True
@@ -972,6 +984,13 @@ def main():
 
         if args.join:
             do_pdftk_cat(output_files, state)
+
+        if args.unify and len(state.input_files) > 1:
+            unify_page_size(
+                state.first_input_file.new(append='_magick'),
+                state.first_input_file.new(append='_unifed'),
+                margin=0,
+            )
 
         if not args.no_cleanup:
             cleanup(state)
