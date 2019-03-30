@@ -1,10 +1,22 @@
-from setuptools import setup
 import os
+
+from setuptools import setup, find_packages
 import versioneer
 
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+def read(file_name):
+    """
+    Read the contents of a text file and return its content.
+
+    :param str file_name: The name of the file to read.
+
+    :return: The content of the text file.
+    :rtype: str
+    """
+    return open(
+        os.path.join(os.path.dirname(__file__), file_name),
+        encoding='utf-8'
+    ).read()
 
 
 setup(
@@ -20,14 +32,14 @@ setup(
         'Source': 'https://github.com/Josef-Friedrich/python-scripts',
         'Tracker': 'https://github.com/Josef-Friedrich/python-scripts/issues',
     },
-    packages=['jfscripts'],
+    packages=find_packages(),
     url='https://github.com/Josef-Friedrich/python-scripts',
     install_requires=[
         'PyPDF2',
         'sphinx-argparse',
-        'termcolor', 
+        'termcolor',
     ],
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'dns-ipv6-prefix.py = jfscripts.dns_ipv6_prefix:main',
             'extract-pdftext.py = jfscripts.extract_pdftext:main',
