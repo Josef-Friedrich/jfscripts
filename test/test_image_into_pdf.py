@@ -1,6 +1,7 @@
 from _helper import TestCase, download, check_internet_connectifity
 from jfscripts import image_into_pdf as replace
-from jfscripts._utils import check_dependencies, FilePath, Capturing
+from jfscripts._utils import check_dependencies, FilePath
+from jflib import Capturing
 from unittest import mock
 import os
 import shutil
@@ -79,7 +80,7 @@ class TestUnits(unittest.TestCase):
 
     @mock.patch('jfscripts.image_into_pdf.check_dependencies')
     def test_main(self, check_executable):
-        with Capturing(channel='stderr'):
+        with Capturing(stream='stderr'):
             with unittest.mock.patch('sys.argv',  ['cmd']):
                 with self.assertRaises(SystemExit):
                     replace.main()

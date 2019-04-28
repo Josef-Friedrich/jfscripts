@@ -1,10 +1,9 @@
 from _helper import TestCase
 from jfscripts import _utils
-from jfscripts._utils import FilePath, Capturing
-from termcolor import colored
+from jfscripts._utils import FilePath
+from jflib import Capturing
 from unittest import mock
 import os
-import sys
 import tempfile
 import unittest
 
@@ -129,48 +128,6 @@ class TestClassFilePath(TestCase):
         a = FilePath('test.jpg')
         b = FilePath('test.jpg')
         self.assertTrue(a == b)
-
-
-class TestCapturing(TestCase):
-
-    def test_output_list(self):
-        with Capturing() as output:
-            print('test')
-        self.assertEqual(output, ['test'])
-
-    def test_stderr_on_stdout(self):
-        with Capturing(channel='stderr') as output:
-            print('test')
-        self.assertEqual(output, [])
-
-    def test_stderr_on_stderr(self):
-        with Capturing(channel='stderr') as output:
-            print('test', file=sys.stderr)
-        self.assertEqual(output, ['test'])
-
-    def test_argument_clean_ansi_not_colored(self):
-        with Capturing(clean_ansi=True) as output:
-            print('test')
-        self.assertEqual(output, ['test'])
-
-    def test_argument_channel_error(self):
-        with self.assertRaises(ValueError):
-            Capturing(channel='lol')
-
-    def test_argument_clean_ansi_colored(self):
-        with Capturing(clean_ansi=True) as output:
-            print(colored('test', color='red'))
-        self.assertEqual(output, ['test'])
-
-    def test_method_tostring(self):
-        with Capturing() as output:
-            print('test1')
-            print('test2')
-        self.assertEqual(output.tostring(), 'test1\ntest2')
-
-    def test_method_clean_ansi(self):
-        result = Capturing._clean_ansi('ls \x1b[34m-l\x1b[0m')
-        self.assertEqual(result, 'ls -l')
 
 
 if __name__ == '__main__':
