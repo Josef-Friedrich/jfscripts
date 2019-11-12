@@ -575,7 +575,7 @@ class TestIntegrationWithDependencies(TestCase):
         # The test fails sometimes. Maybe we should wait a little bit.
         time.sleep(2)
         out = check_output(['pdf-compress.py', 'convert', tmp])
-        self.assertIn('The output file seems to be already converted.',
+        self.assertIn('The output file has already been converted.',
                       out.decode('utf-8'))
 
     def test_option_border(self):

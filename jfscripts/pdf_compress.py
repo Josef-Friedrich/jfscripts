@@ -131,15 +131,14 @@ def get_parser():
         '-a',
         '--auto-black-white',
         action='store_true',
-        help='The same as '
+        help='The same as “'
         '--deskew '
         '--join '
         '--ocr '
         '--pdf '
         '--resize '
         '--trim '
-        '--unify '
-        '.',
+        '--unify”',
     )
 
     # auto_color
@@ -147,7 +146,7 @@ def get_parser():
         '-C',
         '--auto-color',
         action='store_true',
-        help='The same as '
+        help='The same as “'
         '--color '
         '--deskew '
         '--join '
@@ -155,8 +154,18 @@ def get_parser():
         '--pdf '
         '--resize '
         '--trim '
-        '--unify '
-        '.',
+        '--unify”',
+    )
+
+    # auto_png
+    convert_parser_color.add_argument(
+        '-P',
+        '--auto-png',
+        action='store_true',
+        help='The same as “'
+        '--deskew '
+        '--resize '
+        '--trim”',
     )
 
     # backup
@@ -714,6 +723,8 @@ def subcommand_convert_file(arguments):
 
     if args.pdf:
         extension = 'pdf'
+    elif args.auto_png:
+        extension = 'png'
     else:
         extension = intermediate_extension
 
@@ -729,7 +740,7 @@ def subcommand_convert_file(arguments):
     if input_file == output_file:
         info_output_file = do_magick_identify(output_file)
         if info_output_file['colors'] == 2 and not args.force:
-            print('The output file seems to be already converted.')
+            print('The output file has already been converted.')
             return output_file
 
         if args.backup:
@@ -945,6 +956,11 @@ def main():
             args.unify = True
 
         if args.auto_black_white:
+            args.resize = True
+
+        if args.auto_png:
+            args.deskew = True
+            args.trim = True
             args.resize = True
 
         if args.auto_color:
