@@ -143,7 +143,8 @@ def argparser_to_readme(argparser, template='README-template.md',
                         destination='README.md', indentation=0,
                         placeholder='{{ argparse }}'):
     """Add the formatted help output of a command line utility using the
-    Python module `argparse` to a README file.
+    Python module `argparse` to a README file. Make sure to set the name
+    of the program (`prop`) or you get strange program names.
 
     :param object argparser: The argparse parser object.
     :param str template: The path of a template text file containing the
