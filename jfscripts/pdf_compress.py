@@ -260,6 +260,14 @@ def get_parser():
         help='Generate a PDF file.',
     )
 
+    # png
+    convert_parser.add_argument(
+        '-n',
+        '--png',
+        action='store_true',
+        help='Generate a PNG file.',
+    )
+
     # quality
     convert_parser_compress.add_argument(
         '-q',
@@ -723,7 +731,7 @@ def subcommand_convert_file(arguments):
 
     if args.pdf:
         extension = 'pdf'
-    elif args.auto_png:
+    elif args.auto_png or args.png:
         extension = 'png'
     else:
         extension = intermediate_extension
