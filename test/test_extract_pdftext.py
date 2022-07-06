@@ -1,10 +1,11 @@
-from _helper import TestCase, download, check_internet_connectifity
-import unittest
-from jfscripts import extract_pdftext
-from jfscripts._utils import check_dependencies, FilePath
-import subprocess
 import os
+import subprocess
+import unittest
 
+from _helper import TestCase, check_internet_connectifity, download
+
+from jfscripts import extract_pdftext
+from jfscripts._utils import FilePath, check_dependencies
 
 dependencies = check_dependencies(*extract_pdftext.dependencies,
                                   raise_error=False)

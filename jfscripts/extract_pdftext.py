@@ -1,12 +1,13 @@
 #! /usr/bin/env python3
 
-from jfscripts import __version__
-from jfscripts._utils import check_dependencies, FilePath, Run
 import argparse
 import os
 import re
 import tempfile
 import textwrap
+
+from jfscripts import __version__
+from jfscripts._utils import FilePath, Run, check_dependencies
 
 run = Run()
 

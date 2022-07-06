@@ -1,8 +1,9 @@
 #! /usr/bin/env python3
 
-import csv
-import yaml
 import argparse
+import csv
+
+import yaml
 
 parser = argparse.ArgumentParser(description='Convert each row of an CSV '
                                  'file to an YAML file.')

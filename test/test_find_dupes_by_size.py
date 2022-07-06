@@ -1,6 +1,7 @@
-from _helper import TestCase
-import unittest
 import subprocess
+import unittest
+
+from _helper import TestCase
 
 
 class TestIntetration(TestCase):

@@ -1,9 +1,9 @@
-from urllib.request import urlretrieve
 import os
 import socket
 import subprocess
-import unittest
 import tempfile
+import unittest
+from urllib.request import urlretrieve
 
 
 def check_internet_connectifity(host="8.8.8.8", port=53, timeout=3):

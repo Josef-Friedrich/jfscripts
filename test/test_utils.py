@@ -1,11 +1,13 @@
-from _helper import TestCase
-from jfscripts import _utils
-from jfscripts._utils import FilePath
-from jflib import Capturing
-from unittest import mock
 import os
 import tempfile
 import unittest
+from unittest import mock
+
+from _helper import TestCase
+from jflib import Capturing
+
+from jfscripts import _utils
+from jfscripts._utils import FilePath
 
 
 class TestClassRun(TestCase):

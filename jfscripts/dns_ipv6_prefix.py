@@ -1,9 +1,10 @@
 #! /usr/bin/env python3
 
-from jfscripts import __version__
 import argparse
 import ipaddress
 import socket
+
+from jfscripts import __version__
 
 
 def get_ipv6(dns_name):

@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 
-from jfscripts import __version__
-from pathlib import Path
 import argparse
 import fnmatch
 import os
 import re
+from pathlib import Path
+
+from jfscripts import __version__
 
 
 def is_glob(string):

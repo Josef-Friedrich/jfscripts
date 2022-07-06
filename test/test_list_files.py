@@ -1,15 +1,12 @@
-from _helper import TestCase
-from jfscripts.list_files import \
-                                 _list_files_all, \
-                                 _list_files_filter, \
-                                 _split_glob, \
-                                 common_path, \
-                                 doc_examples, \
-                                 is_glob, \
-                                 list_files
-from unittest import mock
-import unittest
 import subprocess
+import unittest
+from unittest import mock
+
+from _helper import TestCase
+
+from jfscripts.list_files import (_list_files_all, _list_files_filter,
+                                  _split_glob, common_path, doc_examples,
+                                  is_glob, list_files)
 
 
 class TestFunctionCommonPrefix(TestCase):

@@ -1,12 +1,3 @@
-from _helper import TestCase, download, check_internet_connectifity
-from jfscripts import list_files
-from jfscripts import pdf_compress
-from jfscripts._utils import check_dependencies
-from jfscripts.pdf_compress import FilePath, State, Timer
-from pathlib import Path
-from subprocess import check_output, run
-from unittest import mock
-from unittest.mock import patch, Mock
 import argparse
 import os
 import shutil
@@ -14,6 +5,16 @@ import subprocess
 import tempfile
 import time
 import unittest
+from pathlib import Path
+from subprocess import check_output, run
+from unittest import mock
+from unittest.mock import Mock, patch
+
+from _helper import TestCase, check_internet_connectifity, download
+
+from jfscripts import list_files, pdf_compress
+from jfscripts._utils import check_dependencies
+from jfscripts.pdf_compress import FilePath, State, Timer
 
 
 def get_state():

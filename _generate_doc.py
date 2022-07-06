@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
+import os
 import re
 import subprocess
-import os
 
 
 def path(*path_segments):

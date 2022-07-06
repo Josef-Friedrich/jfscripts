@@ -1,8 +1,9 @@
 #! /usr/bin/env python3
 
-from jfscripts import __version__
 import argparse
 import os
+
+from jfscripts import __version__
 
 
 def check_for_duplicates(path):

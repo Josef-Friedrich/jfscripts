@@ -1,9 +1,10 @@
 #! /usr/bin/env python3
 
-from jfscripts import __version__
 import argparse
 import ipaddress
 import re
+
+from jfscripts import __version__
 
 
 def mac_to_eui64(mac, prefix=None):

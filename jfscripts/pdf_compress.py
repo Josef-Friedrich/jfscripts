@@ -1,18 +1,18 @@
 #! /usr/bin/env python3
 
-from jfscripts import __version__
-from jfscripts import list_files
-from jfscripts._utils import check_dependencies, Run, FilePath
 import argparse
 import multiprocessing
 import os
-import PyPDF2
 import random
 import re
 import shutil
 import time
 import uuid
 
+import PyPDF2
+
+from jfscripts import __version__, list_files
+from jfscripts._utils import FilePath, Run, check_dependencies
 
 run = Run()
 state = None

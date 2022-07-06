@@ -1,13 +1,15 @@
-from _helper import TestCase, download, check_internet_connectifity
-from jfscripts import image_into_pdf as replace
-from jfscripts._utils import check_dependencies, FilePath
-from jflib import Capturing
-from unittest import mock
 import os
 import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
+
+from _helper import TestCase, check_internet_connectifity, download
+from jflib import Capturing
+
+from jfscripts import image_into_pdf as replace
+from jfscripts._utils import FilePath, check_dependencies
 
 
 def copy(path):
