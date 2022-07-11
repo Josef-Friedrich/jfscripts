@@ -1,6 +1,5 @@
 import os
 
-import versioneer
 from setuptools import find_packages, setup
 
 
@@ -24,8 +23,7 @@ setup(
     author='Josef Friedrich',
     author_email='josef@friedrich.rocks',
     description=('A collection of my Python scripts. Maybe they are useful for someone else.'),
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version='0.0.0',
     license='MIT',
     project_urls={
         'Documentation': 'http://jfscripts.readthedocs.io/en/latest/',
