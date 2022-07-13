@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "jfscripts"
+version = "0.5.1"
+description = "A collection of my Python scripts. Maybe they are useful for someone else."
+authors = ["Josef Friedrich <josef@friedrich.rocks>"]
+license = "MIT"
+readme = "README.rst"
+repository = "https://github.com/Josef-Friedrich/python-scripts"
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 3.8',
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+PyPDF2 = "^2.5.0"
+sphinx-argparse = "^0.3.1"
+termcolor = "^1.1.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+"dns-ipv6-prefix.py" = "jfscripts.dns_ipv6_prefix:main"
+"extract-pdftext.py" = "jfscripts.extract_pdftext:main"
+"find-dupes-by-size.py" = "jfscripts.find_dupes_by_size:main"
+"list-files.py" = "jfscripts.list_files:main"
+"mac-to-eui64.py" = "jfscripts.mac_to_eui64:main"
+"pdf-compress.py" = "jfscripts.pdf_compress:main"
+"image-into-pdf.py" = "jfscripts.image_into_pdf:main"
