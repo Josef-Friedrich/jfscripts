@@ -16,9 +16,9 @@ source_suffix = '.rst'
 
 master_doc = 'index'
 
-project = u'jfscripts'
-copyright = u'2018, Josef Friedrich'
-author = u'Josef Friedrich'
+project = 'jfscripts'
+copyright = '2018, Josef Friedrich'
+author = 'Josef Friedrich'
 version = jfscripts.__version__
 release = jfscripts.__version__
 language = None

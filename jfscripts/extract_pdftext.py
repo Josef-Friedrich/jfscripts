@@ -58,7 +58,7 @@ def get_text_per_page(pdf, page, txt_file):
             full_lines.append(line)
 
     text_of_page = ' '.join(full_lines)
-    text_of_page = text_of_page.replace("'", u'’')
+    text_of_page = text_of_page.replace("'", '’')
     text_of_page = re.sub(r'[^a-zäöüA-ZÄÖÜß0-9 ]', '', text_of_page)
     text_of_page = re.sub(r'\s+', ' ', text_of_page)
 
