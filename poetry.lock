@@ -306,7 +306,7 @@ python-versions = "*"
 
 [[package]]
 name = "readme-patcher"
-version = "0.5.0"
+version = "0.6.0"
 description = "Generate README files from templates. Allow input from functions calls and cli output."
 category = "dev"
 optional = false
@@ -549,7 +549,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "03dfbb3f199f4d45c3a78dc36cf8f596af449faf6315f4fc4d0f4fb2560ea48b"
+content-hash = "df7cc839cad02795ff19d40a316bb47371096df02524c511e71d4e3d7cf2522a"
 
 [metadata.files]
 alabaster = []

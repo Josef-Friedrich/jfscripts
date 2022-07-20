@@ -10,13 +10,13 @@
     :target: https://jfscripts.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-*********
 jfscripts
-*********
+=========
 
-A collection of my personal Python scripts.
+My python scripts.
 
-``dns-ipv6-prefix.py``
+dns-ipv6-prefix.py
+------------------
 
 :: 
 
@@ -31,7 +31,8 @@ A collection of my personal Python scripts.
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
-``extract-pdftext.py``
+extract-pdftext.py
+------------------
 
 :: 
 
@@ -46,7 +47,8 @@ A collection of my personal Python scripts.
       -v, --verbose   Make the command line output more verbose.
       -V, --version   show program's version number and exit
 
-``find-dupes-by-size.py``
+find-dupes-by-size.py
+---------------------
 
 :: 
 
@@ -61,7 +63,8 @@ A collection of my personal Python scripts.
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
-``list-files.py``
+list-files.py
+-------------
 
 :: 
 
@@ -85,7 +88,8 @@ A collection of my personal Python scripts.
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
-``mac-to-eui64.py``
+mac-to-eui64.py
+---------------
 
 :: 
 
@@ -101,7 +105,8 @@ A collection of my personal Python scripts.
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
-``pdf-compress.py``
+pdf-compress.py
+---------------
 
 :: 
 
@@ -128,7 +133,8 @@ A collection of my personal Python scripts.
       -v, --verbose         Make the command line output more verbose.
       -V, --version         show program's version number and exit
 
-``image-into-pdf.py``
+image-into-pdf.py
+-----------------
 
 :: 
 

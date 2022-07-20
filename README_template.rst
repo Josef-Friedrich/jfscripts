@@ -4,11 +4,10 @@
 
 {{ badge.readthedocs }}
 
-*********
 jfscripts
-*********
+=========
 
-A collection of my personal Python scripts.
+{{ github.description }}
 
 {% for command in [
                    'dns-ipv6-prefix.py',
@@ -21,7 +20,7 @@ A collection of my personal Python scripts.
                   ]
 %}
 
-``{{ command }}``
+{{ command | heading(2) }}
 
 {{ cli('{} --help'.format(command)) | literal }}
 {% endfor %}
