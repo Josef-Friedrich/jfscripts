@@ -5,18 +5,19 @@ import fnmatch
 import os
 import re
 from pathlib import Path
+from typing import List, Tuple
 
 from . import __version__
 
 
-def is_glob(string):
-    if re.search(r'[\*\?]', string) or re.search(r'\[\!?.*\]', string):
+def is_glob(path_spec: str) -> bool:
+    if re.search(r"[\*\?]", path_spec) or re.search(r"\[\!?.*\]", path_spec):
         return True
     else:
         return False
 
 
-def common_path(paths):
+def common_path(paths: List[str]) -> str:
     common_path = os.path.commonpath(paths)
     if os.path.isdir(common_path):
         return common_path
@@ -24,54 +25,54 @@ def common_path(paths):
         return str(Path(common_path).parent.resolve())
 
 
-def _split_glob(glob_path):
+def _split_glob(glob_path: str) -> Tuple[str, str]:
     """Split a file path (e. g.: /data/(asterisk).txt) containing glob wildcard
     characters in a glob free path prefix (e. g.: /data) and a glob
     pattern (e. g. (asterisk).txt).
 
-    :param str glob_path: A file path containing glob wildcard characters.
+    :param glob_path: A file path containing glob wildcard characters.
     """
     globs = glob_path.split(os.path.sep)
-    no_globs = []
+    no_globs: List[str] = []
     for g in globs:
         if not is_glob(g):
             no_globs.append(g)
         else:
             break
     if not no_globs:
-        dir_path = '.'
+        dir_path = "."
     else:
         dir_path = os.path.sep.join(no_globs)
     return (
         dir_path,
-        os.path.sep.join(globs[len(no_globs):]),
+        os.path.sep.join(globs[len(no_globs) :]),
     )
 
 
-def _list_files_all(dir_path):
-    out = []
+def _list_files_all(dir_path: str) -> List[str]:
+    output: List[str] = []
     for root, dirs, files in os.walk(dir_path):
         for d in dirs:
-            out.append(os.path.join(root, d))
+            output.append(os.path.join(root, d))
         for f in files:
-            out.append(os.path.join(root, f))
-    out.sort()
-    return out
+            output.append(os.path.join(root, f))
+    output.sort()
+    return output
 
 
-def _list_files_filter(dir_path, glob_pattern):
-    out = []
-    for root, dirs, files in os.walk(dir_path):
-        relroot = root[len(dir_path):]
+def _list_files_filter(dir_path: str, glob_pattern: str) -> List[str]:
+    output: List[str] = []
+    for root, _, files in os.walk(dir_path):
+        relroot = root[len(dir_path) :]
         for f in files:
             relfiles = os.path.join(relroot, f)
             if fnmatch.fnmatch(relfiles, glob_pattern):
-                out.append(os.path.join(root, f))
-    out.sort()
-    return out
+                output.append(os.path.join(root, f))
+    output.sort()
+    return output
 
 
-def list_files(files, default_glob=None):
+def list_files(files: List[str], default_glob: str | None = None):
     """
     :param list files: A list of file paths or a single element list containing
       a glob string.
@@ -98,36 +99,40 @@ def list_files(files, default_glob=None):
         glob_prefix, glob_pattern = _split_glob(file_path)
         return _list_files_filter(glob_prefix, glob_pattern)
 
-    raise ValueError('Something went wrong.')
+    raise ValueError("Something went wrong.")
 
 
-def doc_examples(command_name='', extension='txt', indent_spaces=0,
-                 inline=False):
+def doc_examples(
+    command_name: str = "",
+    extension: str = "txt",
+    indent_spaces: int = 0,
+    inline: bool = False,
+):
     examples = (
-        'a.{}'.format(extension),
-        'a.{0} b.{0} c.{0}'.format(extension),
-        '(asterisk).{}'.format(extension),
+        "a.{}".format(extension),
+        "a.{0} b.{0} c.{0}".format(extension),
+        "(asterisk).{}".format(extension),
         '"(asterisk).{}"'.format(extension),
-        'dir/',
+        "dir/",
         '"dir/(asterisk).{}"'.format(extension),
     )
 
     if command_name or indent_spaces:
-        prefix = '{}{} '.format(' ' * indent_spaces, command_name)
+        prefix = "{}{} ".format(" " * indent_spaces, command_name)
     else:
-        prefix = ''
+        prefix = ""
 
-    out = []
+    out: List[str] = []
     for example in examples:
-        command = '{}{}'.format(prefix, example)
+        command = "{}{}".format(prefix, example)
         if inline:
-            command = '“{}”'.format(command)
+            command = "“{}”".format(command)
         out.append(command)
 
     if inline:
-        join_phrase = ', '
+        join_phrase = ", "
     else:
-        join_phrase = '\n'
+        join_phrase = "\n"
 
     return join_phrase.join(out)
 
@@ -140,21 +145,21 @@ def get_parser():
     """
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description='This is a script to demonstrate the list_files() '
-        'function in this file.\n\n' + doc_examples('list-files.py', 'txt')
+        description="This is a script to demonstrate the list_files() "
+        "function in this file.\n\n" + doc_examples("list-files.py", "txt"),
     )
 
     parser.add_argument(
-        'input_files',
-        help='Examples for this arguments are: ' + doc_examples(inline=True),
-        nargs='+',
+        "input_files",
+        help="Examples for this arguments are: " + doc_examples(inline=True),
+        nargs="+",
     )
 
     parser.add_argument(
-        '-V',
-        '--version',
-        action='version',
-        version='%(prog)s {version}'.format(version=__version__),
+        "-V",
+        "--version",
+        action="version",
+        version="%(prog)s {version}".format(version=__version__),
     )
 
     return parser
@@ -167,8 +172,8 @@ def main():
         for f in files:
             print(f)
     else:
-        print('Nothing found to list. :-(')
+        print("Nothing found to list. :-(")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

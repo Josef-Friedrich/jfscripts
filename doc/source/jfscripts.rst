@@ -4,10 +4,10 @@ jfscripts package
 Submodules
 ----------
 
-jfscripts._utils module
-^^^^^^^^^^^^^^^^^^^^^^^
+jfscripts.utils module
+^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: jfscripts._utils
+.. automodule:: jfscripts.utils
 
 jfscripts.dns_ipv6_prefix module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -33,11 +33,6 @@ jfscripts.mac_to_eui64 module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: jfscripts.mac_to_eui64
-
-jfscripts.pdf_compress module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: jfscripts.pdf_compress
 
 jfscripts.image_into_pdf module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

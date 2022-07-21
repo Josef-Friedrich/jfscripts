@@ -6,7 +6,7 @@ import re
 import tempfile
 
 from . import __version__
-from ._utils import FilePath, Run, check_dependencies
+from .utils import FilePath, Run, check_dependencies
 
 run = Run()
 

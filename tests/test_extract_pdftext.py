@@ -5,7 +5,7 @@ import unittest
 from _helper import TestCase, check_internet_connectifity, download
 
 from jfscripts import extract_pdftext
-from jfscripts._utils import FilePath, check_dependencies
+from jfscripts.utils import FilePath, check_dependencies
 
 dependencies = check_dependencies(*extract_pdftext.dependencies,
                                   raise_error=False)

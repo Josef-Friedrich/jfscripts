@@ -6,28 +6,28 @@ from unittest import mock
 from _helper import TestCase
 from jflib import Capturing
 
-from jfscripts import _utils
-from jfscripts._utils import FilePath
+from jfscripts import utils
+from jfscripts.utils import FilePath
 
 
 class TestClassRun(TestCase):
 
     def test_argument_verbose(self):
-        run = _utils.Run(verbose=True)
+        run = utils.Run(verbose=True)
         self.assertEqual(run.verbose, True)
         with Capturing() as output:
             run.run(['ls', '-l'], stdout=run.PIPE)
         self.assertEqual(output, ['ls -l'])
 
     def test_argument_colorize(self):
-        run = _utils.Run(verbose=True, colorize=True)
+        run = utils.Run(verbose=True, colorize=True)
         self.assertEqual(run.colorize, True)
         with Capturing() as output:
             run.run(['ls', '-l'], stdout=run.PIPE)
         self.assertEqual(output[0], 'ls \x1b[34m-l\x1b[0m')
 
     def test_argument_colorize_path(self):
-        run = _utils.Run(verbose=True, colorize=True)
+        run = utils.Run(verbose=True, colorize=True)
         tmp = tempfile.mkstemp()[1]
         with Capturing() as output:
             run.run(['ls', tmp], stdout=run.PIPE)
@@ -35,12 +35,12 @@ class TestClassRun(TestCase):
         self.assertIn('\x1b[0m', output[0])
 
     def test_method_check_output(self):
-        run = _utils.Run()
+        run = utils.Run()
         out = run.check_output(['ls', '-l'])
         self.assertIn('jfscripts', out.decode('utf-8'))
 
     def test_method_run(self):
-        run = _utils.Run()
+        run = utils.Run()
         ls = run.run(['ls', '-l'], stdout=run.PIPE)
         self.assertEqual(ls.args, ['ls', '-l'])
         self.assertEqual(ls.returncode, 0)
@@ -52,13 +52,13 @@ class TestCheckBin(TestCase):
     def test_check_dependencies(self):
         with mock.patch('shutil.which') as mock_which:
             mock_which.return_value = '/bin/lol'
-            _utils.check_dependencies('lol')
+            utils.check_dependencies('lol')
 
     def test_check_dependencies_nonexistent(self):
         with mock.patch('shutil.which') as mock_which:
             mock_which.return_value = None
             with self.assertRaises(SystemError) as error:
-                _utils.check_dependencies('lol')
+                utils.check_dependencies('lol')
 
             self.assertEqual(str(error.exception),
                              'Some commands are not installed: lol')
@@ -67,7 +67,7 @@ class TestCheckBin(TestCase):
         with mock.patch('shutil.which') as mock_which:
             mock_which.return_value = None
             with self.assertRaises(SystemError) as error:
-                _utils.check_dependencies('lol', 'troll')
+                utils.check_dependencies('lol', 'troll')
 
             self.assertEqual(str(error.exception),
                              'Some commands are not installed: lol, troll')
@@ -76,7 +76,7 @@ class TestCheckBin(TestCase):
         with mock.patch('shutil.which') as mock_which:
             mock_which.return_value = None
             with self.assertRaises(SystemError) as error:
-                _utils.check_dependencies(
+                utils.check_dependencies(
                     ('lol', 'apt install lol'),
                     'troll',
                 )

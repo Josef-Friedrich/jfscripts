@@ -7,7 +7,7 @@ import tempfile
 import textwrap
 
 from . import __version__
-from ._utils import FilePath, Run, check_dependencies
+from .utils import FilePath, Run, check_dependencies
 
 run = Run()
 
@@ -21,7 +21,7 @@ dependencies = (
 )
 
 
-class Txt(object):
+class Txt:
 
     def __init__(self, path):
         self.path = path

@@ -9,7 +9,7 @@ from _helper import TestCase, check_internet_connectifity, download
 from jflib import Capturing
 
 from jfscripts import image_into_pdf as replace
-from jfscripts._utils import FilePath, check_dependencies
+from jfscripts.utils import FilePath, check_dependencies
 
 
 def copy(path):
