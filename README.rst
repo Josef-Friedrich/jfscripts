@@ -13,7 +13,8 @@
 jfscripts
 =========
 
-My python scripts.
+A collection of my Python scripts. They all end with the file extension “py”.
+Maybe they are useful for someone else.
 
 dns-ipv6-prefix.py
 ------------------
@@ -104,16 +105,6 @@ mac-to-eui64.py
     optional arguments:
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
-
-pdf-compress.py
----------------
-
-:: 
-
-    Traceback (most recent call last):
-      File "/home/jf/repos/python/jfscripts/.tox/docs/bin/pdf-compress.py", line 5, in <module>
-        from jfscripts.pdf_compress import main
-    ModuleNotFoundError: No module named 'jfscripts.pdf_compress'
 
 image-into-pdf.py
 -----------------

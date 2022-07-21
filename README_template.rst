@@ -7,7 +7,7 @@
 jfscripts
 =========
 
-{{ github.description }}
+{{ github.description | wordwrap }}
 
 {% for command in [
                    'dns-ipv6-prefix.py',
@@ -15,7 +15,6 @@ jfscripts
                    'find-dupes-by-size.py',
                    'list-files.py',
                    'mac-to-eui64.py',
-                   'pdf-compress.py',
                    'image-into-pdf.py'
                   ]
 %}
