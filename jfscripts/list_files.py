@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from typing import List, Tuple
 
-from . import __version__
+from jfscripts import __version__
 
 
 def is_glob(path_spec: str) -> bool:

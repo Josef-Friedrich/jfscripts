@@ -5,8 +5,8 @@ import os
 import re
 import tempfile
 
-from . import __version__
-from .utils import FilePath, Run, check_dependencies
+from jfscripts import __version__
+from jfscripts.utils import FilePath, Run, check_dependencies
 
 run = Run()
 

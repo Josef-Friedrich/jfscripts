@@ -4,7 +4,7 @@ import argparse
 import ipaddress
 import socket
 
-from . import __version__
+from jfscripts import __version__
 
 
 def get_ipv6(dns_name):

@@ -3,7 +3,7 @@
 import argparse
 import os
 
-from . import __version__
+from jfscripts import __version__
 
 
 def check_for_duplicates(path):

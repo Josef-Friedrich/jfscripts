@@ -4,7 +4,7 @@ import argparse
 import ipaddress
 import re
 
-from . import __version__
+from jfscripts import __version__
 
 
 def mac_to_eui64(mac, prefix=None):

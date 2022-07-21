@@ -55,7 +55,7 @@ class TestCase(unittest.TestCase):
             encoding="utf-8",
             stderr=subprocess.PIPE,
         )
-        self.assertEqual(run.returncode, 2)
+        self.assertEqual(run.returncode, 2, run.stderr)
         self.assertTrue(usage.replace("-", "_") in run.stderr)
 
         run = subprocess.run([command, "-h"], encoding="utf-8", stdout=subprocess.PIPE)
