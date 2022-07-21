@@ -4,25 +4,32 @@ import os
 import shutil
 import subprocess
 from argparse import ArgumentParser
+from subprocess import CompletedProcess
 from typing import Callable, List, Tuple
 
 from termcolor import colored
+from typing_extensions import TypedDict, Unpack
+
+
+class SubprocessKwarg(TypedDict, total=False):
+    encoding: str
+    stdout: int
 
 
 class Run:
 
     PIPE = subprocess.PIPE
 
-    def __init__(self, *args, **kwargs):
-        self.setup(*args, **kwargs)
+    def __init__(self, verbose: bool = False, colorize: bool = False):
+        self.setup(verbose, colorize)
 
-    def setup(self, verbose=False, colorize=False):
+    def setup(self, verbose: bool = False, colorize: bool = False):
         self.verbose = verbose
         self.colorize = colorize
 
-    def _print_cmd(self, cmd):
+    def _print_cmd(self, cmd: List[str]) -> None:
         if self.colorize:
-            output = []
+            output: List[str] = []
             for arg in cmd:
                 if arg.startswith("--"):
                     output.append(colored(arg, color="yellow"))
@@ -36,19 +43,21 @@ class Run:
         else:
             print(" ".join(cmd))
 
-    def run(self, *args, **kwargs):
+    def run(
+        self, cmd: List[str], **kwargs: Unpack[SubprocessKwarg]
+    ) -> CompletedProcess[str]:
         """
         :return: A `CompletedProcess` object.
         :rtype: subprocess.CompletedProcess
         """
         if self.verbose:
-            self._print_cmd(args[0])
-        return subprocess.run(*args, **kwargs)
+            self._print_cmd(cmd)
+        return subprocess.run(cmd, **kwargs)
 
-    def check_output(self, *args, **kwargs):
+    def check_output(self, cmd: List[str], **kwargs: SubprocessKwarg) -> bytes:
         if self.verbose:
-            self._print_cmd(args[0])
-        return subprocess.check_output(*args, **kwargs)
+            self._print_cmd(cmd)
+        return subprocess.check_output(cmd, **kwargs)
 
 
 def check_dependencies(

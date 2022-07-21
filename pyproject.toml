@@ -15,6 +15,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.8"
 termcolor = "^1.1.0"
+typing-extensions = "^4.3.0"
 
 [tool.poetry.group.dev.dependencies]
 readme-patcher = "^0.6.0"
