@@ -11,12 +11,12 @@ def main(path):
     names = []
     for dirpath, dirnames, filenames in os.walk(path):
         for filename in filenames:
-            names.append(filename.decode('utf8'))
+            names.append(filename.decode("utf8"))
 
     names = tuple(names)
 
     for name in names:
-        print('')
+        print("")
         print(name)
         result = process.extract(name, names)
         for match in result:

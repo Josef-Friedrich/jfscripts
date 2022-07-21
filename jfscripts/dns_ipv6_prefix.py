@@ -33,20 +33,18 @@ def get_parser():
     :return: A ArgumentParser object.
     :rtype: argparse.ArgumentParser
     """
-    parser = argparse.ArgumentParser(
-        description='Get the ipv6 prefix from a DNS name.'
+    parser = argparse.ArgumentParser(description="Get the ipv6 prefix from a DNS name.")
+
+    parser.add_argument(
+        "dnsname",
+        help="The DNS name, e. g. josef-friedrich.de",
     )
 
     parser.add_argument(
-        'dnsname',
-        help='The DNS name, e. g. josef-friedrich.de',
-    )
-
-    parser.add_argument(
-        '-V',
-        '--version',
-        action='version',
-        version='%(prog)s {version}'.format(version=__version__),
+        "-V",
+        "--version",
+        action="version",
+        version="%(prog)s {version}".format(version=__version__),
     )
 
     return parser
@@ -57,10 +55,10 @@ def main():
 
     ipv6 = get_ipv6(args.dnsname)
 
-    prefix = ipaddress.ip_network(ipv6 + '/64', strict=False)
+    prefix = ipaddress.ip_network(ipv6 + "/64", strict=False)
 
     print(prefix)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

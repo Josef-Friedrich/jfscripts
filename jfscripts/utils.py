@@ -1,9 +1,9 @@
 from __future__ import annotations
-from argparse import ArgumentParser
 
 import os
 import shutil
 import subprocess
+from argparse import ArgumentParser
 from typing import Callable, List, Tuple
 
 from termcolor import colored

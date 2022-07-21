@@ -27,11 +27,11 @@ def check_for_duplicates(path):
             duplicate_paths[full_paths[0]] = full_paths
 
     for key, full_paths in sorted(duplicate_paths.items()):
-        print('-----------------------------------------')
+        print("-----------------------------------------")
         for full_path in full_paths:
             print('rm -f "' + full_path + '"')
 
-    print('Duplicates found: ' + str(count))
+    print("Duplicates found: " + str(count))
 
 
 def get_parser():
@@ -41,19 +41,19 @@ def get_parser():
     :rtype: argparse.ArgumentParser
     """
     parser = argparse.ArgumentParser(
-        description='Find duplicate files by size.',
+        description="Find duplicate files by size.",
     )
 
     parser.add_argument(
-        'path',
-        help='A directory to recursively search for duplicate files.',
+        "path",
+        help="A directory to recursively search for duplicate files.",
     )
 
     parser.add_argument(
-        '-V',
-        '--version',
-        action='version',
-        version='%(prog)s {version}'.format(version=__version__),
+        "-V",
+        "--version",
+        action="version",
+        version="%(prog)s {version}".format(version=__version__),
     )
 
     return parser
@@ -65,5 +65,5 @@ def main():
     check_for_duplicates(args.path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

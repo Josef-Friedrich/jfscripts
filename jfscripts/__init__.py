@@ -1,3 +1,3 @@
 from importlib import metadata
 
-__version__: str = metadata.version('jfscripts')
+__version__: str = metadata.version("jfscripts")

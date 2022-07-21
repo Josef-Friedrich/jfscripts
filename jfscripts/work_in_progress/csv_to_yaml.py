@@ -5,12 +5,13 @@ import csv
 
 import yaml
 
-parser = argparse.ArgumentParser(description='Convert each row of an CSV '
-                                 'file to an YAML file.')
-parser.add_argument('csv', metavar='CSVFILE', help='A CSV file')
+parser = argparse.ArgumentParser(
+    description="Convert each row of an CSV " "file to an YAML file."
+)
+parser.add_argument("csv", metavar="CSVFILE", help="A CSV file")
 args = parser.parse_args()
 
-in_file = open(args.csv, 'r')
+in_file = open(args.csv, "r")
 
 
 def convert_to_yaml(header, line, counter):
@@ -18,10 +19,10 @@ def convert_to_yaml(header, line, counter):
     for index, key in enumerate(header):
         values[key.lower()] = line[index]
 
-    out = open('{}.yml'.format(counter), 'w')
-    out.write('---\n')
+    out = open("{}.yml".format(counter), "w")
+    out.write("---\n")
     out.write(yaml.dump(values, default_flow_style=False))
-    out.write('---\n')
+    out.write("---\n")
     out.close()
 
 
