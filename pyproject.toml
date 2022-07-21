@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jfscripts"
-version = "1.0.0"
+version = "1.1.0"
 description = "A collection of my Python scripts. Maybe they are useful for someone else."
 authors = ["Josef Friedrich <josef@friedrich.rocks>"]
 license = "MIT"
