@@ -5,8 +5,8 @@ import os
 import re
 import tempfile
 
-from jfscripts import __version__
-from jfscripts._utils import FilePath, Run, check_dependencies
+from . import __version__
+from ._utils import FilePath, Run, check_dependencies
 
 run = Run()
 
@@ -31,7 +31,7 @@ def do_magick_identify_dimensions(pdf_file):
     def to_int(number):
         return int(round(float(number)))
 
-    cmd_args = ['magick', 'identify', '-format', 'w: %w h: %h x: %x y: %y\n',
+    cmd_args = ['identify', '-format', 'w: %w h: %h x: %x y: %y\n',
                 str(pdf_file)]
     output = run.check_output(cmd_args, encoding='utf-8')
     dimensions = re.search(r'w: ([\d.]*) h: ([\d.]*) x: ([\d.]*) y: ([\d.]*)',

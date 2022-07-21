@@ -6,8 +6,8 @@ import re
 import tempfile
 import textwrap
 
-from jfscripts import __version__
-from jfscripts._utils import FilePath, Run, check_dependencies
+from . import __version__
+from ._utils import FilePath, Run, check_dependencies
 
 run = Run()
 

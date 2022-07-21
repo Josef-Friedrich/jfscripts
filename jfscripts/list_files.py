@@ -6,7 +6,7 @@ import os
 import re
 from pathlib import Path
 
-from jfscripts import __version__
+from . import __version__
 
 
 def is_glob(string):
