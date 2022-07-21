@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 
 from _helper import TestCase, check_internet_connectifity, download
-from jflib import Capturing
+from stdout_stderr_capturing import Capturing
 
 from jfscripts import image_into_pdf as replace
 from jfscripts.utils import FilePath, check_dependencies

@@ -4,7 +4,7 @@ import unittest
 from unittest import mock
 
 from _helper import TestCase
-from jflib import Capturing
+from stdout_stderr_capturing import Capturing
 
 from jfscripts import utils
 from jfscripts.utils import FilePath

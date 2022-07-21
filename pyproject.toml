@@ -18,6 +18,7 @@ termcolor = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 readme-patcher = "^0.6.0"
+stdout-stderr-capturing = "^0.2.0"
 
 [build-system]
 requires = ["poetry>=1.2.0b2"]
