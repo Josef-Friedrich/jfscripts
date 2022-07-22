@@ -316,6 +316,14 @@ python-versions = "*"
 types-urllib3 = "<1.27"
 
 [[package]]
+name = "types-termcolor"
+version = "1.1.5"
+description = "Typing stubs for termcolor"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "types-urllib3"
 version = "1.26.16"
 description = "Typing stubs for urllib3"
@@ -359,7 +367,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "d6b1e456de9ceb3086ae28396d1981ce65deec7b336ab370de3753b8b8ab1b4e"
+content-hash = "5a735d4bbfb72186f43e9b6e456495b7f203b7e5eef14f18af71d22b1a13fc73"
 
 [metadata.files]
 apeye = []
@@ -387,6 +395,7 @@ stdout-stderr-capturing = []
 termcolor = []
 toml = []
 types-requests = []
+types-termcolor = []
 types-urllib3 = []
 typing-extensions = []
 urllib3 = []

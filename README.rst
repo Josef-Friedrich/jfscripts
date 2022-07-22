@@ -28,7 +28,7 @@ dns-ipv6-prefix.py
     positional arguments:
       dnsname        The DNS name, e. g. josef-friedrich.de
 
-    optional arguments:
+    options:
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
@@ -42,7 +42,7 @@ extract-pdftext.py
     positional arguments:
       file            A PDF file containing text
 
-    optional arguments:
+    options:
       -h, --help      show this help message and exit
       -c, --colorize  Colorize the terminal output.
       -v, --verbose   Make the command line output more verbose.
@@ -60,7 +60,7 @@ find-dupes-by-size.py
     positional arguments:
       path           A directory to recursively search for duplicate files.
 
-    optional arguments:
+    options:
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
@@ -85,7 +85,7 @@ list-files.py
                      c.txt”, “(asterisk).txt”, “"(asterisk).txt"”, “dir/”,
                      “"dir/(asterisk).txt"”
 
-    optional arguments:
+    options:
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
@@ -102,7 +102,7 @@ mac-to-eui64.py
       mac            The mac address.
       prefix         The ipv6 /64 prefix.
 
-    optional arguments:
+    options:
       -h, --help     show this help message and exit
       -V, --version  show program's version number and exit
 
@@ -121,7 +121,7 @@ image-into-pdf.py
       {add,ad,a,convert,cv,c,replace,re,r}
                             Subcmd_args
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       -c, --colorize        Colorize the terminal output.
       -v, --verbose         Make the cmd_args line output more verbose.

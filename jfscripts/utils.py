@@ -14,6 +14,8 @@ from typing_extensions import TypedDict, Unpack
 class SubprocessKwarg(TypedDict, total=False):
     encoding: str
     stdout: int
+    stderr: int
+    cwd: str
 
 
 class Run:
@@ -54,7 +56,7 @@ class Run:
             self._print_cmd(cmd)
         return subprocess.run(cmd, **kwargs)
 
-    def check_output(self, cmd: List[str], **kwargs: SubprocessKwarg) -> bytes:
+    def check_output(self, cmd: List[str], **kwargs: Unpack[SubprocessKwarg]) -> bytes:
         if self.verbose:
             self._print_cmd(cmd)
         return subprocess.check_output(cmd, **kwargs)
