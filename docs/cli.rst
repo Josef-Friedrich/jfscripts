@@ -28,6 +28,15 @@ find-dupes-by-size.py
    :prog: find-dupes-by-size.py
 
 
+image-into-pdf.py
+------------------
+
+.. argparse::
+   :module: jfscripts.image_into_pdf
+   :func: get_parser
+   :prog: image-into-pdf.py
+
+
 list-files.py
 -------------
 
@@ -44,21 +53,3 @@ mac-to-eui64.py
    :module: jfscripts.mac_to_eui64
    :func: get_parser
    :prog: mac-to-eui64.py
-
-
-pdf-compress.py
----------------
-
-.. argparse::
-   :module: jfscripts.pdf_compress
-   :func: get_parser
-   :prog: pdf-compress.py
-
-
-image-into-pdf.py
-------------------
-
-.. argparse::
-   :module: jfscripts.image_into_pdf
-   :func: get_parser
-   :prog: image-into-pdf.py

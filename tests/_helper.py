@@ -2,6 +2,7 @@ import os
 import socket
 import subprocess
 import tempfile
+from typing import Optional
 from urllib.request import urlretrieve
 
 
@@ -22,11 +23,16 @@ def check_internet_connectifity(
         return False
 
 
-def download(url_path: str, local_path=None, filename=None):
+def download(
+    url_path: str, local_path: Optional[str] = None, filename: Optional[str] = None
+) -> str:
     if not local_path and not filename:
         filename = os.path.basename(url_path)
-    if not local_path:
+    elif not local_path and filename:
         local_path = os.path.join(tempfile.mkdtemp(), filename)
+
+    if local_path is None:
+        raise ValueError("local_path is None")
 
     if os.path.exists(local_path):
         return local_path

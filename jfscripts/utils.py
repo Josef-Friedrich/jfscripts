@@ -12,7 +12,6 @@ from typing_extensions import TypedDict, Unpack
 
 
 class SubprocessKwarg(TypedDict, total=False):
-    encoding: str
     stdout: int
     stderr: int
     cwd: str
@@ -21,10 +20,10 @@ class SubprocessKwarg(TypedDict, total=False):
 class Run:
     PIPE = subprocess.PIPE
 
-    def __init__(self, verbose: bool = False, colorize: bool = False):
+    def __init__(self, verbose: bool = False, colorize: bool = False) -> None:
         self.setup(verbose, colorize)
 
-    def setup(self, verbose: bool = False, colorize: bool = False):
+    def setup(self, verbose: bool = False, colorize: bool = False) -> None:
         self.verbose = verbose
         self.colorize = colorize
 
@@ -47,13 +46,9 @@ class Run:
     def run(
         self, cmd: List[str], **kwargs: Unpack[SubprocessKwarg]
     ) -> CompletedProcess[str]:
-        """
-        :return: A `CompletedProcess` object.
-        :rtype: subprocess.CompletedProcess
-        """
         if self.verbose:
             self._print_cmd(cmd)
-        return subprocess.run(cmd, **kwargs)
+        return subprocess.run(cmd, encoding="utf-8", **kwargs)
 
     def check_output(self, cmd: List[str], **kwargs: Unpack[SubprocessKwarg]) -> bytes:
         if self.verbose:

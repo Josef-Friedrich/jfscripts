@@ -22,6 +22,8 @@ types-termcolor = "^1"
 readme-patcher = "^0"
 stdout-stderr-capturing = "^0"
 pytest = "^8"
+Sphinx = "^7"
+sphinx-rtd-theme = "^2"
 
 [build-system]
 requires = ["poetry-core"]
