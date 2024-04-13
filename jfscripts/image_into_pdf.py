@@ -4,6 +4,7 @@ import argparse
 import os
 import re
 import tempfile
+from typing import Literal
 
 from jfscripts import __version__
 from jfscripts.utils import FilePath, Run, check_dependencies
@@ -15,7 +16,7 @@ dependencies = ("pdfinfo", "pdftk", "convert")
 tmp_dir = tempfile.mkdtemp()
 
 
-def do_pdftk_cat_first_page(pdf_file):
+def do_pdftk_cat_first_page(pdf_file: str) -> str:
     """The cmd_args magick identify is very slow on page pages hence it
     examines every page. We extract the first page to get some informations
     about the dimensions of the PDF file."""
@@ -25,10 +26,10 @@ def do_pdftk_cat_first_page(pdf_file):
     return output_file
 
 
-def do_magick_identify_dimensions(pdf_file):
+def do_magick_identify_dimensions(pdf_file: str):
     """"""
 
-    def to_int(number):
+    def to_int(number: str) -> int:
         return int(round(float(number)))
 
     cmd_args = ["identify", "-format", "w: %w h: %h x: %x y: %y\n", str(pdf_file)]
@@ -43,7 +44,7 @@ def do_magick_identify_dimensions(pdf_file):
     }
 
 
-def get_pdf_info(pdf_file):
+def get_pdf_info(pdf_file: str):
     output = run.check_output(["pdfinfo", str(pdf_file)])
     output = output.decode("utf-8")
     # Page size:      522.249 x 644.573 pts
@@ -99,16 +100,21 @@ def convert_image_to_pdf_page(image, image_width, pdf_width, pdf_density_x):
 
 
 def assemble_pdf(
-    main_pdf, insert_pdf, page_count, page_number, mode="add", position="before"
+    main_pdf: str,
+    insert_pdf: str,
+    page_count: int,
+    page_number: int,
+    mode: Literal["add", "replace"] = "add",
+    position: Literal["before", "after"] = "before",
 ):
     """
-    :param str main_pdf: Path of the main PDF file.
-    :param str insert_pdf: Path of the PDF file to insert into the main PDF
+    :param main_pdf: Path of the main PDF file.
+    :param insert_pdf: Path of the PDF file to insert into the main PDF
       file.
-    :param int page_count: Page count of the main PDF file.
-    :param int page_number: Page number in the main PDF file to add / to
+    :param page_count: Page count of the main PDF file.
+    :param page_number: Page number in the main PDF file to add / to
       replace the insert PDF file.
-    :param string mode: Mode how the PDF to insert is treated. Possible choices
+    :param mode: Mode how the PDF to insert is treated. Possible choices
       are: `add` or `replace`.
     :param str position: Possible choices: `before` and `after`
     """

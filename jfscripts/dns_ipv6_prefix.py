@@ -7,7 +7,7 @@ import socket
 from jfscripts import __version__
 
 
-def get_ipv6(dns_name):
+def get_ipv6(dns_name: str) -> str | None:
     result = socket.getaddrinfo(dns_name, port=None)
 
     for entry in result:
@@ -25,9 +25,10 @@ def get_ipv6(dns_name):
         # )
         if entry[0] == 10 and entry[2] == 0:
             return entry[4][0]
+    return None
 
 
-def get_parser():
+def get_parser() -> argparse.ArgumentParser:
     """The argument parser for the command line interface.
 
     :return: A ArgumentParser object.
@@ -50,10 +51,14 @@ def get_parser():
     return parser
 
 
-def main():
+def main() -> None:
     args = get_parser().parse_args()
 
     ipv6 = get_ipv6(args.dnsname)
+
+    if not ipv6:
+        print("No ipv6 address found.")
+        return
 
     prefix = ipaddress.ip_network(ipv6 + "/64", strict=False)
 
