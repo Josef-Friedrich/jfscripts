@@ -56,8 +56,8 @@ def main() -> None:
 
     ipv6 = get_ipv6(args.dnsname)
 
-    if not ipv6:
-        ipv6 = ""
+    # if not ipv6:
+    #     ipv6 = ""
 
     prefix = ipaddress.ip_network(ipv6 + "/64", strict=False)
 
