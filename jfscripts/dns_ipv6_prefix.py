@@ -53,14 +53,10 @@ def get_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = get_parser().parse_args()
-
     ipv6 = get_ipv6(args.dnsname)
-
-    # if not ipv6:
-    #     ipv6 = ""
-
+    if not ipv6:
+        raise Exception("No ipv6 address found.")
     prefix = ipaddress.ip_network(ipv6 + "/64", strict=False)
-
     print(prefix)
 
 
