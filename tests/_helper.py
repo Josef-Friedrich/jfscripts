@@ -2,11 +2,12 @@ import os
 import socket
 import subprocess
 import tempfile
-import unittest
 from urllib.request import urlretrieve
 
 
-def check_internet_connectifity(host="8.8.8.8", port=53, timeout=3):
+def check_internet_connectifity(
+    host: str = "8.8.8.8", port: int = 53, timeout: int = 3
+) -> bool:
     """
     https://stackoverflow.com/a/33117579
     Host: 8.8.8.8 (google-public-dns-a.google.com)
@@ -21,7 +22,7 @@ def check_internet_connectifity(host="8.8.8.8", port=53, timeout=3):
         return False
 
 
-def download(url_path, local_path=None, filename=None):
+def download(url_path: str, local_path=None, filename=None):
     if not local_path and not filename:
         filename = os.path.basename(url_path)
     if not local_path:
@@ -41,29 +42,24 @@ def download(url_path, local_path=None, filename=None):
         return local_path
 
 
-class TestCase(unittest.TestCase):
-    def assertIsExecutable(self, module):
-        command = "{}.py".format(module.replace("_", "-"))
-        usage = "usage: {}".format(command)
+def is_executable(module: str) -> bool:
+    command = "{}.py".format(module.replace("_", "-"))
+    usage = "usage: {}".format(command)
 
-        run = subprocess.run([command], encoding="utf-8", stderr=subprocess.PIPE)
-        self.assertEqual(run.returncode, 2)
-        self.assertTrue(usage in run.stderr)
+    run = subprocess.run([command], encoding="utf-8", stderr=subprocess.PIPE)
+    assert run.returncode == 2
+    assert usage in run.stderr
 
-        run = subprocess.run(
-            ["./jfscripts/{}.py".format(module)],
-            encoding="utf-8",
-            stderr=subprocess.PIPE,
-        )
-        self.assertEqual(run.returncode, 2, run.stderr)
-        self.assertTrue(usage.replace("-", "_") in run.stderr)
+    run = subprocess.run(
+        ["./jfscripts/{}.py".format(module)],
+        encoding="utf-8",
+        stderr=subprocess.PIPE,
+    )
+    assert run.returncode == 2, run.stderr
+    assert usage.replace("-", "_") in run.stderr
 
-        run = subprocess.run([command, "-h"], encoding="utf-8", stdout=subprocess.PIPE)
-        self.assertEqual(run.returncode, 0)
-        self.assertTrue(usage in run.stdout)
+    run = subprocess.run([command, "-h"], encoding="utf-8", stdout=subprocess.PIPE)
+    assert run.returncode == 0
+    assert usage in run.stdout
 
-    def assertExists(self, path, message=None):
-        self.assertTrue(os.path.exists(path), message)
-
-    def assertExistsNot(self, path, message=None):
-        self.assertFalse(os.path.exists(path), message)
+    return True

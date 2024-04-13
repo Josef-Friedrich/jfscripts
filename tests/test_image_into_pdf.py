@@ -5,11 +5,12 @@ import tempfile
 import unittest
 from unittest import mock
 
-from _helper import TestCase, check_internet_connectifity, download
+import pytest
 from stdout_stderr_capturing import Capturing
 
 from jfscripts import image_into_pdf as replace
 from jfscripts.utils import FilePath, check_dependencies
+from tests._helper import check_internet_connectifity, download
 
 
 def copy(path):
@@ -29,19 +30,16 @@ if dependencies and internet:
     )
 
 
-class TestUnits(unittest.TestCase):
-    @unittest.skip("skip")
+class TestUnits:
+    @pytest.mark.skip(reason="skip")
     @mock.patch("jfscripts.image_into_pdf.run.check_output")
     def do_magick_identify_dimensions(self, check_output):
         check_output.return_value = "lol"
         result = replace.get_pdf_info("test.pdf")
-        self.assertEqual(
-            result, {"width": "658.8", "height": "866.52", "page_count": 3}
-        )
+        assert result == {"width": "658.8", "height": "866.52", "page_count": 3}
 
     @mock.patch("jfscripts.image_into_pdf.run.check_output")
     def test_get_pdf_info(self, mock):
-
         return_values = [
             b"Creator:        c42pdf v. 0.12 args:  -p 658.80x866.52\n",
             b"Producer:       PDFlib V0.6 (C) Thomas Merz 1997-98\n",
@@ -62,32 +60,29 @@ class TestUnits(unittest.TestCase):
         mock.return_value = b"".join(return_values)
 
         result = replace.get_pdf_info("test.pdf")
-        self.assertEqual(
-            result, {"width": "658.8", "height": "866.52", "page_count": 3}
-        )
+        assert result == {"width": "658.8", "height": "866.52", "page_count": 3}
 
-    @unittest.skip("skip")
+    @pytest.mark.skip(reason="skip")
     @mock.patch("jfscripts.image_into_pdf.run.run")
     def test_convert_image_to_pdf_page(self, mock):
-
         result = replace.convert_image_to_pdf_page("test.png", "111.1", "222.2")
-        self.assertTrue("tmp.pdf" in result)
+        assert "tmp.pdf" in result
         args = mock.call_args[0][0]
-        self.assertEqual(args[0], "convert")
-        self.assertEqual(args[1], "test.png")
-        self.assertEqual(args[2], "-page")
-        self.assertEqual(args[3], "111.1x222.2")
-        self.assertTrue("tmp.pdf" in args[4])
+        assert args[0] == "convert"
+        assert args[1] == "test.png"
+        assert args[2] == "-page"
+        assert args[3] == "111.1x222.2"
+        assert "tmp.pdf" in args[4]
 
     @mock.patch("jfscripts.image_into_pdf.check_dependencies")
     def test_main(self, check_executable):
         with Capturing(stream="stderr"):
             with unittest.mock.patch("sys.argv", ["cmd"]):
-                with self.assertRaises(SystemExit):
+                with pytest.raises(SystemExit):
                     replace.main()
 
 
-class TestUnitAssemblePdf(TestCase):
+class TestUnitAssemblePdf:
     def assertAssemble(self, kwargs, called_with):
         with mock.patch("jfscripts.image_into_pdf.run.run") as run:
             # m = main
@@ -144,21 +139,21 @@ class TestUnitAssemblePdf(TestCase):
         )
 
 
-class TestIntegration(TestCase):
+class TestIntegration:
     def test_command_line_interface(self):
         self.assertIsExecutable("image_into_pdf")
 
     def test_option_version(self):
         output = subprocess.check_output(["image-into-pdf.py", "--version"])
-        self.assertTrue(output)
-        self.assertIn("image-into-pdf.py", str(output))
+        assert output
+        assert "image-into-pdf.py" in str(output)
 
 
-@unittest.skipIf(
-    not dependencies or not internet, "Some dependencies are not installed"
+@pytest.mark.skipif(
+    not dependencies or not internet, reason="Some dependencies are not installed"
 )
-class TestIntegrationWithDependencies(TestCase):
-    def setUp(self):
+class TestIntegrationWithDependencies:
+    def setup_method(self):
         self.tmp_pdf = copy(tmp_pdf)
         self.tmp_png = copy(tmp_png)
 
@@ -225,12 +220,8 @@ class TestIntegrationWithDependencies(TestCase):
                 self.tmp_pdf,
             ]
         )
-        self.assertEqual(process.returncode, 2)
+        assert process.returncode == 2
 
     def test_convert(self):
         subprocess.run(["image-into-pdf.py", "convert", self.tmp_png, self.tmp_pdf])
         self.assertExists(str(FilePath(self.tmp_pdf).new(append="_insert")))
-
-
-if __name__ == "__main__":
-    unittest.main()

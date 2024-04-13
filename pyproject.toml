@@ -14,17 +14,18 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-termcolor = "^1.1.0"
-typing-extensions = "^4.3.0"
-types-termcolor = "^1.1.5"
+termcolor = "^2"
+typing-extensions = "^4"
+types-termcolor = "^1"
 
 [tool.poetry.group.dev.dependencies]
-readme-patcher = "^0.6.0"
-stdout-stderr-capturing = "^0.2.0"
+readme-patcher = "^0"
+stdout-stderr-capturing = "^0"
+pytest = "^8"
 
 [build-system]
-requires = ["poetry>=1.2.0b2"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 "dns-ipv6-prefix.py" = "jfscripts.dns_ipv6_prefix:main"

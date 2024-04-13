@@ -1,18 +1,13 @@
 import subprocess
-import unittest
 
-from _helper import TestCase
+from tests._helper import is_executable
 
 
-class TestIntetration(TestCase):
-    def test_command_line_interface(self):
-        self.assertIsExecutable("find_dupes_by_size")
+class TestIntetration:
+    def test_command_line_interface(self) -> None:
+        assert is_executable("find_dupes_by_size")
 
-    def test_option_version(self):
+    def test_option_version(self) -> None:
         output = subprocess.check_output(["find-dupes-by-size.py", "--version"])
-        self.assertTrue(output)
-        self.assertIn("find-dupes-by-size.py", str(output))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert output
+        assert "find-dupes-by-size.py" in str(output)

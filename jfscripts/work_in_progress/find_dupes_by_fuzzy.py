@@ -7,7 +7,6 @@ from fuzzywuzzy import process
 
 
 def main(path):
-
     names = []
     for dirpath, dirnames, filenames in os.walk(path):
         for filename in filenames:

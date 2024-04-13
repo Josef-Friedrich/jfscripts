@@ -1,18 +1,13 @@
 import subprocess
-import unittest
 
-from _helper import TestCase
+from tests._helper import is_executable
 
 
-class TestIntegration(TestCase):
-    def test_command_line_interface(self):
-        self.assertIsExecutable("mac_to_eui64")
+class TestIntegration:
+    def test_command_line_interface(self) -> None:
+        assert is_executable("mac_to_eui64")
 
-    def test_option_version(self):
+    def test_option_version(self) -> None:
         output = subprocess.check_output(["mac-to-eui64.py", "--version"])
-        self.assertTrue(output)
-        self.assertIn("mac-to-eui64.py", str(output))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert output
+        assert "mac-to-eui64.py" in str(output)

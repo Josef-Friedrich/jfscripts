@@ -19,7 +19,6 @@ class SubprocessKwarg(TypedDict, total=False):
 
 
 class Run:
-
     PIPE = subprocess.PIPE
 
     def __init__(self, verbose: bool = False, colorize: bool = False):

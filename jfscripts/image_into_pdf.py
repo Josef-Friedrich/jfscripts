@@ -145,7 +145,6 @@ def assemble_pdf(
         cmd_args = [str(main_pdf), str(insert_pdf), "cat"]
 
     else:
-
         cmd_args = ["A={}".format(main_pdf), "B={}".format(insert_pdf), "cat"]
 
         if page_number > 1:
@@ -334,7 +333,6 @@ def main():
     info = get_pdf_info(main_pdf)
 
     if args.subcmd_args in ["add", "ad", "a"]:
-
         if args.after:
             number = int(args.after[0])
             position = "after"

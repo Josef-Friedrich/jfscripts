@@ -1,11 +1,11 @@
 import os
 import subprocess
-import unittest
 
-from _helper import TestCase, check_internet_connectifity, download
+import pytest
 
 from jfscripts import extract_pdftext
 from jfscripts.utils import FilePath, check_dependencies
+from tests._helper import check_internet_connectifity, download, is_executable
 
 dependencies = check_dependencies(*extract_pdftext.dependencies, raise_error=False)
 internet = check_internet_connectifity()
@@ -16,27 +16,23 @@ if dependencies and internet:
     )
 
 
-class TestIntegration(TestCase):
-    def test_command_line_interface(self):
-        self.assertIsExecutable("extract_pdftext")
+class TestIntegration:
+    def test_command_line_interface(self) -> None:
+        assert is_executable("extract_pdftext")
 
-    @unittest.skipIf(
-        not dependencies or not internet, "Some dependencies are not installed"
+    @pytest.mark.skipif(
+        not dependencies or not internet, reason="Some dependencies are not installed"
     )
-    def test_extraction(self):
+    def test_extraction(self) -> None:
         pdf = FilePath(tmp_pdf)
         subprocess.check_output(["extract-pdftext.py", str(pdf)])
         txt = pdf.new(extension="txt")
-        self.assertTrue(os.path.exists(str(txt)))
-        self.assertTrue("## Seite" in open(str(txt)).read())
-        self.assertTrue("Andrew Lloyd Webber" in open(str(txt)).read())
-        self.assertTrue("-" * extract_pdftext.line_length in open(str(txt)).read())
+        assert os.path.exists(str(txt))
+        assert "## Seite" in open(str(txt)).read()
+        assert "Andrew Lloyd Webber" in open(str(txt)).read()
+        assert "-" * extract_pdftext.line_length in open(str(txt)).read()
 
-    def test_option_version(self):
+    def test_option_version(self) -> None:
         output = subprocess.check_output(["extract-pdftext.py", "--version"])
-        self.assertTrue(output)
-        self.assertIn("extract-pdftext.py", str(output))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert output
+        assert "extract-pdftext.py" in str(output)

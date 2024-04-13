@@ -1,18 +1,13 @@
 import subprocess
-import unittest
 
-from _helper import TestCase
+from tests._helper import is_executable
 
 
-class TestIntetration(TestCase):
-    def test_command_line_interface(self):
-        self.assertIsExecutable("dns_ipv6_prefix")
+class TestIntegration:
+    def test_command_line_interface(self) -> None:
+        assert is_executable("dns_ipv6_prefix")
 
-    def test_option_version(self):
+    def test_option_version(self) -> None:
         output = subprocess.check_output(["dns-ipv6-prefix.py", "--version"])
-        self.assertTrue(output)
-        self.assertIn("dns-ipv6-prefix.py", str(output))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert output
+        assert "dns-ipv6-prefix.py" in str(output)

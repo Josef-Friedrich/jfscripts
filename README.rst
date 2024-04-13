@@ -81,9 +81,7 @@ list-files.py
     list-files.py "dir/(asterisk).txt"
 
     positional arguments:
-      input_files    Examples for this arguments are: “a.txt”, “a.txt b.txt
-                     c.txt”, “(asterisk).txt”, “"(asterisk).txt"”, “dir/”,
-                     “"dir/(asterisk).txt"”
+      input_files    Examples for this arguments are: “a.txt”, “a.txt b.txt c.txt”, “(asterisk).txt”, “"(asterisk).txt"”, “dir/”, “"dir/(asterisk).txt"”
 
     options:
       -h, --help     show this help message and exit
@@ -111,11 +109,9 @@ image-into-pdf.py
 
 :: 
 
-    usage: image-into-pdf.py [-h] [-c] [-v] [-V]
-                             {add,ad,a,convert,cv,c,replace,re,r} ...
+    usage: image-into-pdf.py [-h] [-c] [-v] [-V] {add,ad,a,convert,cv,c,replace,re,r} ...
 
-    Add or replace one page in a PDF file with an image file of the same page
-    size.
+    Add or replace one page in a PDF file with an image file of the same page size.
 
     positional arguments:
       {add,ad,a,convert,cv,c,replace,re,r}
